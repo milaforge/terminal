@@ -344,8 +344,8 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       type: "markdown",
       markdown: `
 <div class="intro-hero">
-  <div class="intro-headline">Reliable automation for work that cannot stay manual.</div>
-  <div class="intro-subline font-mono">Internal tools, AI workflows, and ingestion systems with visible state and outcomes.</div>
+  <div class="intro-headline">Stop Building Automations That Break. Build Systems That Last.</div>
+  <div class="intro-subline font-mono">Architect resilient software workflows that automatically recover from failure, reducing toil and keeping your operations running smoothly—even when things go wrong.</div>
     <div class="intro-proofLabel"></div>
     <div class="intro-proofList">
        <div><span class="intro-proofMetric">⯎ fewer manual handoffs</span></div>
@@ -354,6 +354,8 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
        <div><span class="intro-proofMetric">⯎ safer retries and approvals</span></div>
        <div><span class="intro-proofMetric">⯎ visible logs and outcomes</span></div>
        <div><span class="intro-proofMetric">⯎ systems teams can maintain</span></div>
+       <div><span class="intro-proofMetric">⯎ circuit breakers and fallbacks</span></div>
+       <div><span class="intro-proofMetric">⯎ Incident readiness</span></div>
      </div>
   </div>
 </div>
@@ -1143,9 +1145,9 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
     if (!hasInitializedRef.current) {
       const appearanceController = initialPropsRef.current.appearanceController
         ? {
-            color: initialPropsRef.current.appearanceController?.color,
-            font: initialPropsRef.current.appearanceController?.font,
-          }
+          color: initialPropsRef.current.appearanceController?.color,
+          font: initialPropsRef.current.appearanceController?.font,
+        }
         : undefined;
 
       registerDefaultCommands({

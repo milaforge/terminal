@@ -24,8 +24,8 @@ import { DownloadIntegrity } from "./terminal/DownloadIntegrity";
 type ExecuteCommand = TerminalLineProps["executeCommand"];
 
 const MONTH_YEAR_FORMATTER = new Intl.DateTimeFormat("en", {
-  month: "long",
-  year: "numeric",
+  month: "short",
+  year: "2-digit",
   timeZone: "UTC",
 });
 
@@ -808,9 +808,10 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
   return (
     <div className="t-work">
       <div className="t-proofHeader">
-        <div className="t-proofTitle font-extralight">Less fragility. More control</div>
-        <div className="t-proofSubtitle">
+        <div className="t-proofTitle font-extralight">
+          Less fragility. More control
         </div>
+        <div className="t-proofSubtitle"></div>
       </div>
 
       <div className="t-workGrid">
