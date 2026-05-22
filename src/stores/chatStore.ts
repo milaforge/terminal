@@ -147,7 +147,7 @@ export const useChatStore = create<ChatStore>()(
         const last = get().messages.at(-1);
         if (last?.role === "assistant" && last.id === "streaming") return;
         set((state) => {
-          const messages = [
+          const messages: ChatMessage[] = [
             ...state.messages,
             {
               id: "streaming",
@@ -189,18 +189,19 @@ export const useChatStore = create<ChatStore>()(
         if (!pendingText) return;
         ensureStreamingMessage();
         const textToType = pendingText;
+        const baseTyped = currentTyped;
         pendingText = "";
         const { timers, duration } = simulateTypingSequence(textToType, {
-          delayFn: (prev, ch) => humanDelay(currentTyped + prev, ch),
+          delayFn: (prev, ch) => humanDelay(baseTyped + prev, ch),
           onChar: (typed) => {
-            const nextContent = currentTyped + typed;
+            const nextContent = baseTyped + typed;
             currentTyped = nextContent;
             updateStreamingContent(nextContent);
           },
         });
         typingTimers = timers;
         const finalizeTimer = window.setTimeout(() => {
-          typingTimers = typingTimers.filter((t) => t !== finalizeTimer);
+          typingTimers = [];
           if (pendingText.length) {
             startTyping();
           } else if (finalizeWhenQueueEmpty) {
@@ -361,43 +362,61 @@ export const useChatStore = create<ChatStore>()(
             if (!reader) throw new Error("Empty response body");
 
             const decoder = new TextDecoder("utf-8");
+            let streamBuffer = "";
+            const processLine = (rawLine: string) => {
+              const line = rawLine.trim();
+              if (!line.startsWith("data:")) return false;
+              const payload = line.slice(5).trimStart();
+              if (payload === "[DONE]") {
+                finalizeAssistant();
+                abortController = null;
+                return true;
+              }
+              try {
+                const json = JSON.parse(payload);
+                const newText = json.response ?? "";
+                if (newText) pushAssistantChunk(newText);
+              } catch {
+                /* ignore malformed chunks */
+              }
+              return false;
+            };
             const process = async (): Promise<void> => {
               const { done, value } = await reader.read();
               if (done) {
+                const trailing = decoder.decode();
+                if (trailing) streamBuffer += trailing;
+                if (streamBuffer.trim() && processLine(streamBuffer)) return;
                 finalizeAssistant();
                 abortController = null;
                 return;
               }
-              const chunk = decoder.decode(value, { stream: true });
-              const lines = chunk.trim().split("\n");
+              streamBuffer += decoder.decode(value, { stream: true });
+              const lines = streamBuffer.split(/\r?\n/);
+              streamBuffer = lines.pop() ?? "";
               for (const line of lines) {
-                if (!line.startsWith("data: ")) continue;
-                const payload = line.slice(6);
-                if (payload === "[DONE]") {
-                  finalizeAssistant();
-                  abortController = null;
-                  return;
-                }
-                try {
-                  const json = JSON.parse(payload);
-                  const newText = json.response ?? "";
-                  if (newText) pushAssistantChunk(newText);
-                } catch {
-                  /* ignore malformed chunks */
-                }
+                if (processLine(line)) return;
               }
               await process();
             };
 
             await process();
           } catch (error) {
+            const telemetryError =
+              error instanceof Error
+                ? {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack,
+                  }
+                : { message: String(error) };
             console.error("chatbot error", error);
             void sendTelemetryEvent({
               action: "chat_message_error",
               userInput: content,
               message: "chatbot failed",
               level: "error",
-              error,
+              error: telemetryError,
             });
             abortController = null;
             stopTypingLoop();
