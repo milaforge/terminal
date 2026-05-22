@@ -1,0 +1,55 @@
+import { describe, expect, it } from "vitest";
+import {
+  BOOKING_URL,
+  getChatActions,
+  getChatDisplayContent,
+} from "../chat/chatActions";
+
+describe("chat action extraction", () => {
+  it("adds a booking action when the assistant suggests booking", () => {
+    const actions = getChatActions(
+      "Would you like to book a call? https://cal.com/miladtsx/intro",
+      "contact@failuresmith.xyz",
+    );
+
+    expect(actions).toContainEqual({
+      id: "booking",
+      kind: "booking",
+      label: "Book call",
+      href: BOOKING_URL,
+    });
+    expect(actions).toHaveLength(1);
+  });
+
+  it("extracts safe contact links and strips sentence punctuation", () => {
+    const actions = getChatActions(
+      "Email contact@failuresmith.xyz or message https://t.me/miladtsx.",
+      "contact@failuresmith.xyz",
+    );
+
+    expect(actions).toEqual([
+      {
+        id: "link:https://t.me/miladtsx",
+        kind: "link",
+        label: "Message on Telegram",
+        href: "https://t.me/miladtsx",
+      },
+      {
+        id: "email:contact@failuresmith.xyz",
+        kind: "email",
+        label: "Send email",
+        href: "mailto:contact@failuresmith.xyz?subject=Recurring%20workflow%20context",
+      },
+    ]);
+  });
+
+  it("removes targets from visible text when buttons cover them", () => {
+    const content =
+      "Would you like to book a call?\nhttps://cal.com/miladtsx/intro";
+    const actions = getChatActions(content, "contact@failuresmith.xyz");
+
+    expect(getChatDisplayContent(content, actions)).toBe(
+      "Would you like to book a call?",
+    );
+  });
+});

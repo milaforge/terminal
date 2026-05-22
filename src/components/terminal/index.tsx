@@ -554,7 +554,10 @@ export default function Terminal(props: TerminalProps) {
         onOpenSearch={openSearch}
       />
       <SearchModal executeCommand={executeCommand} />
-      <ChatDock />
+      <ChatDock
+        onBookCall={props.onBookCall}
+        contactEmail={props.contact?.email}
+      />
     </div>
   );
 }

@@ -1,11 +1,31 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { marked } from "marked";
-import { Bot, Maximize2, Minus, RotateCcw, SendIcon, StopCircle, X } from "lucide-react";
+import {
+  Bot,
+  CalendarDays,
+  ExternalLink,
+  Mail,
+  Maximize2,
+  Minus,
+  RotateCcw,
+  SendIcon,
+  StopCircle,
+  X,
+} from "lucide-react";
 import { useChatStore } from "@stores/chatStore";
+import { getChatActions, getChatDisplayContent } from "./chatActions";
 import "./chat.css";
 
-export function ChatDock() {
+type ChatDockProps = {
+  onBookCall?: () => void;
+  contactEmail?: string;
+};
+
+export function ChatDock({
+  onBookCall,
+  contactEmail = "contact@failuresmith.xyz",
+}: ChatDockProps) {
   // Select all needed slices in one selector and shallow-compare to cut down on re-renders.
   const {
     messages,
@@ -189,6 +209,15 @@ export function ChatDock() {
             ? "chat-bubble bot"
             : "chat-bubble intro";
 
+      const actions =
+        message.role === "assistant"
+          ? getChatActions(message.content || "", contactEmail)
+          : [];
+      const displayContent =
+        message.role === "assistant"
+          ? getChatDisplayContent(message.content || "", actions)
+          : message.content;
+
       nodes.push(
         <div key={message.id} className={roleClass}>
           {message.role === "assistant" && (
@@ -197,12 +226,50 @@ export function ChatDock() {
             </span>
           )}
           {message.role === "assistant" ? (
-            <div
-              className="chat-content"
-              dangerouslySetInnerHTML={{
-                __html: marked.parse(message.content || ""),
-              }}
-            />
+            <div className="chat-messageBody">
+              <div
+                className="chat-content"
+                dangerouslySetInnerHTML={{
+                  __html: marked.parse(displayContent),
+                }}
+              />
+              {actions.length ? (
+                <div className="chat-actionList" aria-label="Suggested actions">
+                  {actions.map((action) =>
+                    action.kind === "booking" && onBookCall ? (
+                      <button
+                        key={action.id}
+                        type="button"
+                        className="chat-actionButton"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onBookCall();
+                        }}
+                      >
+                        <CalendarDays size={14} />
+                        <span>{action.label}</span>
+                      </button>
+                    ) : (
+                      <a
+                        key={action.id}
+                        className="chat-actionButton"
+                        href={action.href}
+                        target={action.href.startsWith("mailto:") ? undefined : "_blank"}
+                        rel={action.href.startsWith("mailto:") ? undefined : "noreferrer"}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {action.kind === "email" ? (
+                          <Mail size={14} />
+                        ) : (
+                          <ExternalLink size={14} />
+                        )}
+                        <span>{action.label}</span>
+                      </a>
+                    ),
+                  )}
+                </div>
+              ) : null}
+            </div>
           ) : (
             <div className="chat-content">{message.content}</div>
           )}
@@ -254,7 +321,15 @@ export function ChatDock() {
     }
 
     return nodes;
-  }, [messages, showToneSelector, tone, tonePresets, handleTonePreset]);
+  }, [
+    messages,
+    showToneSelector,
+    tone,
+    tonePresets,
+    handleTonePreset,
+    onBookCall,
+    contactEmail,
+  ]);
 
   const send = async () => {
     await sendMessage();
