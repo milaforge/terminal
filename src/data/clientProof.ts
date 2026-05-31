@@ -1,7 +1,7 @@
 import type { ClientProofItem } from "@types";
 
 export const CLIENT_PROOF_TITLE =
-  "Client context behind these outcomes";
+  "Reproducible system, built over a decade of experience";
 
 export const CLIENT_PROOF_ITEMS: ClientProofItem[] = [
   {
