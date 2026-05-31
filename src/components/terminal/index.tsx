@@ -5,8 +5,8 @@ import { useTerminalColors } from "@hooks/useTerminalColors";
 import { useNotificationOverlay } from "@hooks/useNotificationOverlay";
 import { useAppVersionRefresh } from "@hooks/useAppVersionRefresh";
 import { NotificationOverlay } from "@components/NotificationOverlay";
-import { TerminalLineRow } from "@components/TerminalLine";
-import { TerminalProps } from "@types";
+import { Display } from "@components/Display";
+import { ScreenProps } from "@types";
 import {
   useUiStore,
   useShallow,
@@ -20,7 +20,7 @@ const MENU_WIDTH = 260;
 const MENU_HEIGHT = 200;
 const CLAMP_MARGIN = 6;
 
-export default function Terminal(props: TerminalProps) {
+export default function Screen(props: ScreenProps) {
   const fontController = useTerminalFonts();
   const colorController = useTerminalColors();
   const currentColor = colorController.getCurrentColor();
@@ -425,51 +425,18 @@ export default function Terminal(props: TerminalProps) {
         </div>
       ) : null}
       <div className="t-wrap" ref={wrapScrollRef}>
-        <pre className="t-output" aria-live="polite">
-          {lines.map((line, index) => {
-            const isIntroLine =
-              !!introRange &&
-              index >= introRange.start &&
-              index < introRange.start + introRange.count;
-            const introOffset =
-              isIntroLine && introRange ? index - introRange.start : null;
-            const introClassSuffix =
-              introOffset === 1
-                ? " intro-ctaPrimary"
-                : introOffset === 2
-                  ? " intro-ctaNav"
-                  : "";
-            const className = isIntroLine
-              ? `intro-start-line${introStartVisible ? " is-visible" : ""}${introClassSuffix}`
-              : undefined;
-
-            if (hiddenLines.has(index)) return null;
-
-            const commandMeta = commandLookup.get(index);
-            const isCommandLine = Boolean(commandMeta);
-            const isCollapsed = isCommandLine && collapsedCommands[index];
-            const isHistoricalCommand =
-              isCommandLine && latestCommandIndex !== null && index < latestCommandIndex;
-
-            return (
-              <span key={`line-${index}`}>
-                <TerminalLineRow
-                  line={line}
-                  lineIndex={index}
-                  className={className}
-                  executeCommand={executeCommand}
-                  isCommandLine={isCommandLine}
-                  isCollapsed={isCollapsed}
-                  isHistoricalCommand={isHistoricalCommand}
-                  prompt={prompt}
-                  commandText={commandMeta?.commandText}
-                  onToggleCollapse={isCommandLine ? () => toggleCollapse(index) : undefined}
-                />
-                {index < lines.length - 1 ? "\n" : null}
-              </span>
-            );
-          })}
-        </pre>
+        <Display
+          body={lines}
+          prompt={prompt}
+          executeCommand={executeCommand}
+          introStartLineRange={introRange}
+          introStartVisible={introStartVisible}
+          hiddenLines={hiddenLines}
+          commandLookup={commandLookup}
+          latestCommandIndex={latestCommandIndex}
+          collapsedCommands={collapsedCommands}
+          onToggleCommand={toggleCollapse}
+        />
 
         <div
           className={`t-inputRow${showInput ? "" : " intro-hidden"}`}

@@ -8,7 +8,7 @@ import {
 import { TerminalModel } from "@components/terminal/terminalModel";
 import { appendHistory, loadHistory } from "@components/terminal/historyStore";
 import {
-  TerminalProps,
+  ScreenProps,
   TerminalLineInput,
   ControllerReturn,
   TerminalState,
@@ -38,7 +38,7 @@ const isLineSegment = (value: unknown): value is LineSegment =>
   "type" in value &&
   typeof (value as { type?: unknown }).type === "string";
 
-export function useTerminalController(props: TerminalProps): ControllerReturn {
+export function useTerminalController(props: ScreenProps): ControllerReturn {
   const typeSfxRef = useRef<ReturnType<typeof createTypeSfx> | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -458,7 +458,7 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       navCtaLine.push(button);
     });
 
-    const startLines: TerminalLineInput[] = [
+    const introCells: TerminalLineInput[] = [
       [
         buildAvatarSegment([""], {
           label: "",
@@ -476,7 +476,7 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       "",
     ];
 
-    if (!startLines.length) {
+    if (!introCells.length) {
       introTypingRef.current = false;
       setShowIntroInput(true);
       focusInput();
@@ -488,11 +488,11 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
     const renderIntroInstantly = () => {
       const blankIndex = model.lines.length;
       model.pushLine("");
-      model.pushLines(startLines);
+      model.pushLines(introCells);
       setLinesFromModel();
       setIntroStartLineRange({
         start: blankIndex + 1,
-        count: startLines.length,
+        count: introCells.length,
       });
       setIntroStartVisible(true);
       introTypingRef.current = false;
@@ -519,7 +519,7 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
     const timers: number[] = [];
 
     const typeIntroStartLines = (extraTimers: number[]) => {
-      if (!startLines.length) {
+      if (!introCells.length) {
         setShowIntroInput(true);
         focusInput();
         return;
@@ -650,17 +650,17 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
         return out;
       };
 
-      const lineTexts = startLines.map(flattenLine);
+      const lineTexts = introCells.map(flattenLine);
       const blankIndex = model.lines.length;
       model.pushLine("");
-      startLines.forEach(() => model.pushLine(""));
+      introCells.forEach(() => model.pushLine(""));
       setLinesFromModel();
 
       const firstLineIndex = blankIndex + 1;
       // Mark intro suggestion block immediately so mobile layout applies from first paint.
       setIntroStartLineRange({
         start: firstLineIndex,
-        count: startLines.length,
+        count: introCells.length,
       });
       setIntroStartVisible(true);
       let offset = 120;
@@ -672,7 +672,7 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
           const timer = window.setTimeout(() => {
             model.setLine(
               firstLineIndex + lineIndex,
-              sliceLine(startLines[lineIndex], i + 1),
+              sliceLine(introCells[lineIndex], i + 1),
             );
             setLinesFromModel();
           }, offset);
@@ -682,13 +682,13 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       });
 
       const finalizeTimer = window.setTimeout(() => {
-        startLines.forEach((line, index) => {
+        introCells.forEach((line, index) => {
           model.setLine(firstLineIndex + index, line);
         });
         setLinesFromModel();
         setIntroStartLineRange({
           start: firstLineIndex,
-          count: startLines.length,
+          count: introCells.length,
         });
         introTypingRef.current = false;
         setShowIntroInput(true);

@@ -11,7 +11,7 @@ export interface CommandButton {
   typing?: "auto" | "simulate" | "instant";
 }
 
-export interface TerminalProps {
+export interface ScreenProps {
   prompt?: string;
   suggestedCommands?: CommandButton[];
   contact?: ContactInfo;
@@ -20,6 +20,8 @@ export interface TerminalProps {
   onBookCall?: () => void;
   appearanceController?: AppearanceController;
 }
+
+export type TerminalProps = ScreenProps;
 
 export type AppearanceController = {
   font?: TerminalFontController;
@@ -33,11 +35,11 @@ export type TerminalState = {
   tabMatches: string[];
   tabIndex: number;
   tabVisible: boolean;
-  lines: TerminalLine[];
+  lines: Cell[];
 };
 export type ControllerReturn = {
   ready: boolean;
-  lines: TerminalLine[];
+  lines: Cell[];
   input: string;
   prompt: string;
   inputRef: React.RefObject<HTMLTextAreaElement | null>;
@@ -212,8 +214,9 @@ export type LineSegment =
   | ActivityTreeSegment
   | AvatarSegment
   | SearchHitsSegment;
-export type TerminalLine = LineSegment[];
-export type TerminalLineInput = string | TerminalLine;
+export type Cell = LineSegment[];
+export type TerminalLine = Cell;
+export type TerminalLineInput = string | Cell;
 
 export type ContactInfo = {
   email: string;
@@ -241,7 +244,7 @@ export type FileMeta = {
 };
 
 export type TerminalLineProps = {
-  line: TerminalLine;
+  line: Cell;
   lineIndex: number;
   className?: string;
   executeCommand: (
@@ -258,7 +261,7 @@ export type TerminalLineProps = {
 
 export type RegisterDefaultsArgs = {
   registry: CommandRegistry;
-  props: TerminalProps;
+  props: ScreenProps;
   model: TerminalModel;
   setLinesFromModel: (extraLines?: TerminalLineInput[]) => void;
   appearanceController?: AppearanceController;
