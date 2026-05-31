@@ -467,12 +467,12 @@ export function useTerminalController(props: ScreenProps): ControllerReturn {
           disableModal: true,
         }),
         introMarkdown,
+        clientProof,
       ],
       primaryCtaLine,
       navCtaLine,
-      [operatingModel],
+      // [operatingModel],
       // [proofMarkdown],
-      [clientProof],
       "",
     ];
 
