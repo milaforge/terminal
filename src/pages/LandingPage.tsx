@@ -17,6 +17,7 @@ import {
 } from "./landing/HeroSection";
 import { LandingHeader } from "./landing/LandingHeader";
 import { RecognitionSection } from "./landing/RecognitionSection";
+import { SectionProgress } from "./landing/SectionProgress";
 import { WorkSection } from "./landing/WorkSection";
 import { caseStudies } from "./landing/content";
 import type { LandingSectionId } from "./landing/types";
@@ -401,6 +402,11 @@ export default function LandingPage({
         blogHref={blogHref}
         homeHref={homeHref}
         onNavigate={navigateToSection}
+      />
+      <SectionProgress
+        activeSection={activeSection}
+        onNavigate={navigateToSection}
+        sections={landingSectionOrder}
       />
 
       <div

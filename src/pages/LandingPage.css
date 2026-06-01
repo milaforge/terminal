@@ -102,7 +102,8 @@ body:has(.landing-page) {
 
 .landing-nav a:focus-visible,
 .landing-action:focus-visible,
-.landing-brand:focus-visible {
+.landing-brand:focus-visible,
+.landing-sectionProgressDot:focus-visible {
   outline: 1px solid var(--landing-accent);
   outline-offset: 5px;
 }
@@ -182,6 +183,69 @@ body:has(.landing-page) {
 
 .landing-actionPrimary {
   color: var(--landing-ink);
+}
+
+.landing-sectionProgress {
+  position: fixed;
+  inset-inline-end: clamp(0.65rem, 1.8vw, 1.4rem);
+  top: 50%;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.235rem, 3.64vh, 2.015rem);
+  opacity: 0.5;
+  transform: translateY(-50%);
+  transition: opacity 160ms ease;
+}
+
+.landing-sectionProgress:hover,
+.landing-sectionProgress:focus-within {
+  opacity: 1;
+}
+
+.landing-sectionProgress::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  left: 50%;
+  width: 1px;
+  background: var(--landing-rule);
+  transform: translateX(-50%);
+}
+
+.landing-sectionProgressDot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.landing-sectionProgressDot::before {
+  content: "";
+  width: 0.58rem;
+  height: 0.58rem;
+  border: 1px solid var(--landing-rule);
+  border-radius: inherit;
+  background: #ffffff;
+}
+
+.landing-sectionProgressDot:hover::before,
+.landing-sectionProgressDot:focus-visible::before {
+  border-color: var(--landing-accent);
+}
+
+.landing-sectionProgressDot[data-active="true"]::before {
+  border-color: var(--landing-accent);
+  background: var(--landing-accent);
 }
 
 .landing-section {
@@ -428,12 +492,12 @@ body:has(.landing-page) {
 
 @media (max-width: 760px) {
   .landing-section {
-    padding: 6.5rem 1.25rem 3rem;
+    padding: 6.5rem 3rem 3rem 1.25rem;
   }
 
   .landing-hero {
     align-items: center;
-    padding-top: 7.5rem;
+    padding: 7.5rem 3rem 4rem 1.25rem;
   }
 
   .landing-header {
@@ -442,6 +506,21 @@ body:has(.landing-page) {
 
   .landing-nav {
     gap: 0.85rem;
+  }
+
+  .landing-sectionProgress {
+    inset-inline-end: 0.35rem;
+    gap: 1.105rem;
+  }
+
+  .landing-sectionProgressDot {
+    width: 1.1625rem;
+    height: 1.1625rem;
+  }
+
+  .landing-sectionProgress::before {
+    top: 0.58125rem;
+    bottom: 0.58125rem;
   }
 
   .landing-title {
