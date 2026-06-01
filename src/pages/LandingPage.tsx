@@ -1,7 +1,17 @@
+import { type MouseEvent, useEffect, useRef, useState } from "react";
+
 const configuredBasePath = import.meta.env.BASE_URL || "/";
 const basePath = configuredBasePath.replace(/\/$/, "");
 const homeHref = configuredBasePath;
 const blogHref = `${basePath}/blog`;
+const contextMenuWidth = 180;
+const contextMenuHeight = 98;
+const contextMenuMargin = 8;
+
+type LandingPageProps = {
+  onAskAi: () => void;
+  onOpenTerminal: () => void;
+};
 
 const recognitionItems = [
   "Managing multiple freelancers",
@@ -63,9 +73,73 @@ function ArrowTitle({ before, after }: { before: string; after: string }) {
   );
 }
 
-export default function LandingPage() {
+function getContextMenuPosition(clientX: number, clientY: number) {
+  if (typeof window === "undefined") {
+    return { x: clientX, y: clientY };
+  }
+
+  return {
+    x: Math.min(
+      Math.max(clientX, contextMenuMargin),
+      Math.max(
+        contextMenuMargin,
+        window.innerWidth - contextMenuWidth - contextMenuMargin,
+      ),
+    ),
+    y: Math.min(
+      Math.max(clientY, contextMenuMargin),
+      Math.max(
+        contextMenuMargin,
+        window.innerHeight - contextMenuHeight - contextMenuMargin,
+      ),
+    ),
+  };
+}
+
+export default function LandingPage({
+  onAskAi,
+  onOpenTerminal,
+}: LandingPageProps) {
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const firstMenuItemRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    firstMenuItemRef.current?.focus();
+
+    const close = () => setContextMenu(null);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+
+    document.addEventListener("mousedown", close);
+    document.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [contextMenu]);
+
+  const openContextMenu = (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    setContextMenu(getContextMenuPosition(event.clientX, event.clientY));
+  };
+
+  const runContextAction = (action: () => void) => {
+    setContextMenu(null);
+    action();
+  };
+
   return (
-    <main className="landing-page">
+    <main className="landing-page" onContextMenu={openContextMenu}>
       <section className="landing-hero" aria-labelledby="landing-title">
         <header className="landing-header" aria-label="Primary">
           <a className="landing-brand" href={homeHref}>
@@ -184,6 +258,32 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {contextMenu ? (
+        <div
+          className="landing-contextMenu"
+          role="menu"
+          aria-label="Page actions"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          <button
+            ref={firstMenuItemRef}
+            type="button"
+            role="menuitem"
+            onClick={() => runContextAction(onAskAi)}
+          >
+            Ask AI
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => runContextAction(onOpenTerminal)}
+          >
+            Open Terminal
+          </button>
+        </div>
+      ) : null}
     </main>
   );
 }

@@ -7,10 +7,12 @@ import { openChatMaximized, useChatStore } from "@stores/chatStore";
 
 type TerminalToolbarProps = {
   onOpenSearch: () => void;
+  onAskAi?: () => void;
 };
 
 export function TerminalToolbar({
   onOpenSearch,
+  onAskAi,
 }: TerminalToolbarProps) {
   const unread = useChatStore((state) => state.unread);
   const isChatActive = useChatStore((state) => state.isOpen && !state.isMinimized);
@@ -24,9 +26,14 @@ export function TerminalToolbar({
 
   const handleAskClick = () => {
     setIsExpanded(true);
+    if (onAskAi) {
+      onAskAi();
+      return;
+    }
     openChatMaximized();
     requestAnimationFrame(() => {
-      const chatInput = document.querySelector<HTMLTextAreaElement>(".chat-input");
+      const chatInput =
+        document.querySelector<HTMLTextAreaElement>(".chat-input");
       chatInput?.focus();
     });
   };

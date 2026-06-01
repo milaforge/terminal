@@ -173,6 +173,15 @@
     opacity: 1;
   }
 
+  .t-root.is-embedded {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+  }
+
   .t-wrap {
     position: relative;
     z-index: 2;
@@ -189,6 +198,26 @@
 
   @media (max-width: 768px) {
     .t-wrap {
+      padding-right: 16px;
+      padding-bottom: 118px;
+    }
+  }
+
+  .t-root.is-embedded .t-wrap {
+    padding: 18px 96px 92px 16px;
+  }
+
+  .t-root.is-embedded .terminal-toolbar,
+  .t-root.is-embedded .t-searchModal {
+    position: absolute;
+  }
+
+  .t-root.is-embedded .t-fontLoading {
+    position: absolute;
+  }
+
+  @media (max-width: 768px) {
+    .t-root.is-embedded .t-wrap {
       padding-right: 16px;
       padding-bottom: 118px;
     }

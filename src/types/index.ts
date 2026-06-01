@@ -18,7 +18,10 @@ export interface ScreenProps {
   sampleWorks?: SampleWork[];
   aboutLines?: string[];
   onBookCall?: () => void;
+  onAskAi?: () => void;
   appearanceController?: AppearanceController;
+  presentation?: "fullscreen" | "embedded";
+  showChatDock?: boolean;
 }
 
 export type TerminalProps = ScreenProps;

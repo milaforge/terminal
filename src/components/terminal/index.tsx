@@ -15,12 +15,16 @@ import ChatDock from "./chat";
 import { SearchModal } from "./SearchModal";
 import { TerminalToolbar } from "./Toolbar";
 import { searchStore } from "@stores/searchStore";
+import { openChatMaximized } from "@stores/chatStore";
 
 const MENU_WIDTH = 260;
 const MENU_HEIGHT = 200;
 const CLAMP_MARGIN = 6;
 
 export default function Screen(props: ScreenProps) {
+  const { onAskAi } = props;
+  const isEmbedded = props.presentation === "embedded";
+  const showChatDock = props.showChatDock !== false;
   const fontController = useTerminalFonts();
   const colorController = useTerminalColors();
   const currentColor = colorController.getCurrentColor();
@@ -130,13 +134,28 @@ export default function Screen(props: ScreenProps) {
   const contextMenuItems = useMemo(
     () => [
       {
-        id: "human",
-        label: "Hire me",
-        meta: "Get accountable execution ownership",
-        action: () => executeCommand("contact"),
+        id: "ask-ai",
+        label: "Ask AI",
+        action: () => {
+          if (onAskAi) {
+            onAskAi();
+            return;
+          }
+          openChatMaximized();
+          requestAnimationFrame(() => {
+            const chatInput =
+              document.querySelector<HTMLTextAreaElement>(".chat-input");
+            chatInput?.focus();
+          });
+        },
+      },
+      {
+        id: "open-terminal",
+        label: "Open Terminal",
+        action: focusInput,
       },
     ],
-    [executeCommand]
+    [focusInput, onAskAi]
   );
 
   const handleContextMenu = useCallback(
@@ -408,7 +427,11 @@ export default function Screen(props: ScreenProps) {
 
   return (
     <div
-      className={"t-root" + (ready ? " is-ready" : "")}
+      className={
+        "t-root" +
+        (ready ? " is-ready" : "") +
+        (isEmbedded ? " is-embedded" : "")
+      }
       style={rootStyle}
       onMouseDown={handleMouseDown}
       onContextMenu={handleContextMenu}
@@ -514,21 +537,22 @@ export default function Screen(props: ScreenProps) {
                 }}
               >
                 <span>{item.label}</span>
-                <small>{item.meta}</small>
               </button>
             ))}
-            <div className="t-contextMenuDivider" />
           </div>
         ) : null}
       </div>
       <TerminalToolbar
         onOpenSearch={openSearch}
+        onAskAi={onAskAi}
       />
       <SearchModal executeCommand={executeCommand} />
-      <ChatDock
-        onBookCall={props.onBookCall}
-        contactEmail={props.contact?.email}
-      />
+      {showChatDock ? (
+        <ChatDock
+          onBookCall={props.onBookCall}
+          contactEmail={props.contact?.email}
+        />
+      ) : null}
     </div>
   );
 }

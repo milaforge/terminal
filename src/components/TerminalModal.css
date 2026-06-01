@@ -1,0 +1,18 @@
+.terminal-modalWrap {
+  background: rgba(7, 8, 10, 0.42);
+}
+
+.terminal-modalWindow {
+  min-height: 0;
+}
+
+.terminal-modalHeader {
+  cursor: default;
+  touch-action: auto;
+}
+
+.terminal-modalBody {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}

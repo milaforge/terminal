@@ -1,5 +1,14 @@
+import { Suspense, lazy, useCallback, useState } from "react";
+import { openChatMaximized } from "@stores/chatStore";
 import LandingPage from "./pages/LandingPage";
 import BlogPage from "./pages/BlogPage";
+
+const BookingOverlay = lazy(() => import("@components/BookingOverlay"));
+const TerminalModal = lazy(() => import("@components/TerminalModal"));
+const ChatDock = lazy(() => import("@components/terminal/chat"));
+
+const CONTACT_EMAIL =
+  import.meta.env.VITE_CONTACT_EMAIL || "onboarding@failuresmith.xyz";
 
 function safeDecodePathPart(part?: string) {
   if (!part) return undefined;
@@ -32,10 +41,68 @@ export default function App() {
   const route = getRoute(
     typeof window === "undefined" ? "/" : window.location.pathname,
   );
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [chatEnabled, setChatEnabled] = useState(false);
+
+  const focusChatInput = useCallback(() => {
+    let attempts = 0;
+    const focus = () => {
+      const chatInput =
+        document.querySelector<HTMLTextAreaElement>(".chat-input");
+      if (chatInput || attempts >= 10) {
+        chatInput?.focus();
+        return;
+      }
+      attempts += 1;
+      window.setTimeout(focus, 50);
+    };
+
+    window.setTimeout(focus, 0);
+  }, []);
+
+  const handleAskAi = useCallback(() => {
+    setChatEnabled(true);
+    openChatMaximized();
+    focusChatInput();
+  }, [focusChatInput]);
 
   if (route.name === "blog") {
     return <BlogPage slug={route.slug} />;
   }
 
-  return <LandingPage />;
+  return (
+    <>
+      <LandingPage
+        onAskAi={handleAskAi}
+        onOpenTerminal={() => setTerminalOpen(true)}
+      />
+      <Suspense fallback={null}>
+        {terminalOpen ? (
+          <TerminalModal
+            contactEmail={CONTACT_EMAIL}
+            onAskAi={handleAskAi}
+            onBookCall={() => {
+              setTerminalOpen(false);
+              setBookingOpen(true);
+            }}
+            onClose={() => setTerminalOpen(false)}
+          />
+        ) : null}
+        {chatEnabled ? (
+          <ChatDock
+            onBookCall={() => setBookingOpen(true)}
+            contactEmail={CONTACT_EMAIL}
+          />
+        ) : null}
+        {bookingOpen ? (
+          <BookingOverlay
+            open={bookingOpen}
+            onClose={() => setBookingOpen(false)}
+            email={CONTACT_EMAIL}
+          />
+        ) : null}
+      </Suspense>
+    </>
+  );
 }
