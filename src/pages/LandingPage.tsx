@@ -11,7 +11,10 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { AboutSection } from "./landing/AboutSection";
 import { ApproachSection } from "./landing/ApproachSection";
 import { getDragNavigationDirection } from "./landing/dragNavigation";
-import { HeroSection } from "./landing/HeroSection";
+import {
+  HeroSection,
+  type HeroTrustlineState,
+} from "./landing/HeroSection";
 import { LandingHeader } from "./landing/LandingHeader";
 import { RecognitionSection } from "./landing/RecognitionSection";
 import { WorkSection } from "./landing/WorkSection";
@@ -27,6 +30,7 @@ const contextMenuMargin = 8;
 const wheelThreshold = 60;
 const wheelLockMs = 560;
 const clickSuppressionMs = 350;
+const heroTrustlineDelayMs = 5000;
 const calmEase = [0.22, 1, 0.36, 1] as const;
 
 const landingSectionOrder: LandingSectionId[] = [
@@ -87,11 +91,18 @@ function replaceHash(sectionId: LandingSectionId) {
 
 function renderLandingSection(
   sectionId: LandingSectionId,
-  onNavigate: (sectionId: LandingSectionId) => void,
+  heroTrustlineState: HeroTrustlineState,
+  onHeroTrustlineComplete: () => void,
 ) {
   switch (sectionId) {
     case "hero":
-      return <HeroSection hidden={false} onNavigate={onNavigate} />;
+      return (
+        <HeroSection
+          hidden={false}
+          trustlineState={heroTrustlineState}
+          onTrustlineComplete={onHeroTrustlineComplete}
+        />
+      );
     case "recognition":
       return <RecognitionSection hidden={false} />;
     case "approach":
@@ -120,6 +131,8 @@ export default function LandingPage({
   const wheelDeltaRef = useRef(0);
   const wheelLockedRef = useRef(false);
   const wheelUnlockTimerRef = useRef<number | null>(null);
+  const [heroTrustlineState, setHeroTrustlineState] =
+    useState<HeroTrustlineState>("idle");
   const activeSection = landingSectionOrder[activeIndex];
   const shouldReduceMotion = useReducedMotion();
 
@@ -150,9 +163,51 @@ export default function LandingPage({
     [activeIndex, selectSectionIndex],
   );
 
+  const startHeroTrustlineTyping = useCallback(() => {
+    setHeroTrustlineState((currentState) =>
+      currentState === "idle" ? "typing" : currentState,
+    );
+  }, []);
+
+  const completeHeroTrustline = useCallback(() => {
+    setHeroTrustlineState("complete");
+  }, []);
+
+  const advanceHeroTrustlineOnScroll = useCallback(() => {
+    if (activeSection !== "hero") return false;
+
+    if (heroTrustlineState === "idle") {
+      startHeroTrustlineTyping();
+      return true;
+    }
+
+    if (heroTrustlineState === "typing") {
+      completeHeroTrustline();
+      return true;
+    }
+
+    return false;
+  }, [
+    activeSection,
+    completeHeroTrustline,
+    heroTrustlineState,
+    startHeroTrustlineTyping,
+  ]);
+
   useEffect(() => {
     replaceHash(activeSection);
   }, [activeSection]);
+
+  useEffect(() => {
+    if (heroTrustlineState !== "idle") return;
+
+    const timerId = window.setTimeout(
+      startHeroTrustlineTyping,
+      heroTrustlineDelayMs,
+    );
+
+    return () => window.clearTimeout(timerId);
+  }, [heroTrustlineState, startHeroTrustlineTyping]);
 
   useEffect(() => {
     return () => {
@@ -211,6 +266,8 @@ export default function LandingPage({
     if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
     if (wheelLockedRef.current) return;
 
+    if (advanceHeroTrustlineOnScroll()) return;
+
     wheelDeltaRef.current += event.deltaY;
     if (Math.abs(wheelDeltaRef.current) < wheelThreshold) return;
 
@@ -268,6 +325,8 @@ export default function LandingPage({
     }, clickSuppressionMs);
 
     setContextMenu(null);
+    if (advanceHeroTrustlineOnScroll()) return;
+
     navigateByDirection(direction);
   };
 
@@ -320,7 +379,11 @@ export default function LandingPage({
               ease: shouldReduceMotion ? "linear" : calmEase,
             }}
           >
-            {renderLandingSection(activeSection, navigateToSection)}
+            {renderLandingSection(
+              activeSection,
+              heroTrustlineState,
+              completeHeroTrustline,
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

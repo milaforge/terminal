@@ -1,17 +1,58 @@
-import type { MouseEvent } from "react";
-import type { LandingSectionProps, SectionNavigation } from "./types";
+import { useEffect, useState } from "react";
+import { useReducedMotion } from "motion/react";
+import type { LandingSectionProps } from "./types";
 
 type HeroSectionProps = LandingSectionProps & {
-  onNavigate: SectionNavigation;
+  trustlineState: HeroTrustlineState;
+  onTrustlineComplete: () => void;
 };
 
-export function HeroSection({ hidden, onNavigate }: HeroSectionProps) {
-  const handleSectionClick =
-    (sectionId: Parameters<SectionNavigation>[0]) =>
-    (event: MouseEvent<HTMLAnchorElement>) => {
-      event.preventDefault();
-      onNavigate(sectionId);
-    };
+export type HeroTrustlineState = "idle" | "typing" | "complete";
+
+const trustline =
+  "Products stall when nobody owns technical decisions, delivery, and long-term reliability.";
+const trustlineTypingMs = 32;
+
+export function HeroSection({
+  hidden,
+  trustlineState,
+  onTrustlineComplete,
+}: HeroSectionProps) {
+  const shouldReduceMotion = useReducedMotion();
+  const [visibleTrustline, setVisibleTrustline] = useState("");
+
+  useEffect(() => {
+    if (trustlineState === "idle") {
+      setVisibleTrustline("");
+      return;
+    }
+
+    if (trustlineState === "complete") {
+      setVisibleTrustline(trustline);
+      return;
+    }
+
+    if (shouldReduceMotion) {
+      setVisibleTrustline(trustline);
+      onTrustlineComplete();
+      return;
+    }
+
+    let nextLength = 1;
+    setVisibleTrustline(trustline.slice(0, nextLength));
+
+    const intervalId = window.setInterval(() => {
+      nextLength += 1;
+      setVisibleTrustline(trustline.slice(0, nextLength));
+
+      if (nextLength >= trustline.length) {
+        window.clearInterval(intervalId);
+        onTrustlineComplete();
+      }
+    }, trustlineTypingMs);
+
+    return () => window.clearInterval(intervalId);
+  }, [onTrustlineComplete, shouldReduceMotion, trustlineState]);
 
   return (
     <section
@@ -26,28 +67,13 @@ export function HeroSection({ hidden, onNavigate }: HeroSectionProps) {
             <span>You don&apos;t need another developer.</span>
             <span>You need someone who owns execution.</span>
           </h1>
-          <p>
-            Products stall when nobody owns technical decisions, delivery, and
-            long-term reliability.
+          <p className="landing-heroTrustline">
+            <span aria-hidden="true">{visibleTrustline}</span>
+            {trustlineState !== "idle" ? (
+              <span className="landing-srOnly">{trustline}</span>
+            ) : null}
           </p>
         </div>
-
-        <nav className="landing-heroActions" aria-label="Explore">
-          <a
-            className="landing-action landing-actionPrimary"
-            href="#approach"
-            onClick={handleSectionClick("approach")}
-          >
-            See how I work
-          </a>
-          <a
-            className="landing-action"
-            href="#work"
-            onClick={handleSectionClick("work")}
-          >
-            Read case studies
-          </a>
-        </nav>
       </div>
     </section>
   );
