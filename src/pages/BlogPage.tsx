@@ -7,8 +7,7 @@ type BlogPageProps = {
   slug?: string;
 };
 
-const BLOG_DESCRIPTION =
-  "FailureSmith notes on reliability, automation risk, execution ownership, and production systems.";
+const BLOG_DESCRIPTION = "Personal thoughts on systems.";
 const BLOG_ENTRANCE_MS = 1500;
 
 function formatDate(date?: string) {
@@ -21,7 +20,11 @@ function formatDate(date?: string) {
     day: "2-digit",
     year: "numeric",
     timeZone: "UTC",
-  }).format(new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))));
+  }).format(
+    new Date(
+      Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])),
+    ),
+  );
 }
 
 function setMeta(name: string, content: string) {
@@ -180,7 +183,9 @@ export default function BlogPage({ slug }: BlogPageProps) {
                 <h2>{item.title}</h2>
               </a>
               <div className="blog-meta">
-                {writtenAt ? <time dateTime={item.date}>{writtenAt}</time> : null}
+                {writtenAt ? (
+                  <time dateTime={item.date}>{writtenAt}</time>
+                ) : null}
                 <span>{item.readingMinutes} min read</span>
               </div>
               {item.summary ? <p>{item.summary}</p> : null}

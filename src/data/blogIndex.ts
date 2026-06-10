@@ -18,7 +18,6 @@ type SearchHit = {
 
 type ParsedFrontMatter = {
   title?: string;
-  slug?: string;
   date?: string;
   tags?: string[];
   summary?: string;
@@ -26,7 +25,6 @@ type ParsedFrontMatter = {
 
 type BlogSource = {
   slug: string;
-  aliases?: string[];
   raw: string;
 };
 
@@ -36,21 +34,6 @@ const blogModules = import.meta.glob("./blogs/*.md", {
   query: "?raw",
 }) as Record<string, string>;
 
-const legacySlugAliases: Record<string, string[]> = {
-  "70-genai": ["2025-01-15-ship"],
-  "tab-autocomplete": ["2025-01-21-tab"],
-  "chatbot-training-alignment": ["2025-03-08-chatbot"],
-  "cybersecurity-harsh-truth": ["2025-03-20-beautiful-lies"],
-  "design-tradeoffs": ["2025-04-20-design-tradeoffs"],
-  "premature-scaling": ["2025-05-04-overengineering-caching"],
-  "algorithm-beats-language": ["2025-08-09-algorithm-beats-language"],
-  "evm-ctf-eip7702": ["2025-09-11-ctf-eip7702"],
-  "rust-iterators": ["2025-11-05-rust-iterators"],
-  "free-will": ["2026-01-11-freedome"],
-  "agentic-workflow": ["2026-01-17-agentic-workflow"],
-  "automation-risk": ["0_downsides_of_automation"],
-};
-
 const sources: BlogSource[] = Object.entries(blogModules).map(([path, raw]) => {
   const fallbackSlug = path
     .split("/")
@@ -59,7 +42,6 @@ const sources: BlogSource[] = Object.entries(blogModules).map(([path, raw]) => {
 
   return {
     slug: fallbackSlug,
-    aliases: legacySlugAliases[fallbackSlug],
     raw,
   };
 });
@@ -134,16 +116,14 @@ function estimateReadingMinutes(lines: string[]): number {
 }
 
 const blogMap = new Map<string, BlogPost>();
-const aliasMap = new Map<string, string>();
 const tagCounts = new Map<string, number>();
 const invertedIndex = new Map<string, Set<string>>();
 
 function indexOnce() {
   if (blogMap.size) return;
 
-  sources.forEach(({ slug: fallbackSlug, aliases = [], raw }) => {
+  sources.forEach(({ slug, raw }) => {
     const { meta, body } = parseFrontMatter(raw);
-    const slug = meta.slug || fallbackSlug;
     const title = meta.title || slug;
     const tags = meta.tags?.map((t) => t.toLowerCase()) || [];
     const plainLines = markdownToPlainLines(body);
@@ -160,9 +140,6 @@ function indexOnce() {
     };
 
     blogMap.set(slug, post);
-    aliases
-      .concat(legacySlugAliases[slug] || [])
-      .forEach((alias) => aliasMap.set(alias.toLowerCase(), slug));
 
     tags.forEach((tag) => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
@@ -190,9 +167,6 @@ function findBySlugOrTitle(input: string): BlogPost | undefined {
   indexOnce();
   const lowered = input.toLowerCase();
   if (blogMap.has(lowered)) return blogMap.get(lowered);
-
-  const canonicalSlug = aliasMap.get(lowered);
-  if (canonicalSlug) return blogMap.get(canonicalSlug);
 
   const bySlug = Array.from(blogMap.values()).find((p) => p.slug.toLowerCase() === lowered);
   if (bySlug) return bySlug;
@@ -246,7 +220,9 @@ function linesForSearch(): Array<{ slug: string; title: string; lines: string[] 
   return Array.from(blogMap.values()).map((post) => ({
     slug: post.slug,
     title: post.title,
-    lines: post.plainLines,
+    lines: [post.title, post.summary, ...post.plainLines].filter(
+      (line): line is string => Boolean(line),
+    ),
   }));
 }
 

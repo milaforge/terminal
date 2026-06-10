@@ -161,7 +161,7 @@ async function loadPosts() {
     const plain = markdownToPlain(body);
 
     posts.push({
-      slug: meta.slug || fallbackSlug,
+      slug: fallbackSlug,
       title: meta.title || fallbackSlug,
       date: meta.date,
       tags: Array.isArray(meta.tags) ? meta.tags.map((tag) => tag.toLowerCase()) : [],

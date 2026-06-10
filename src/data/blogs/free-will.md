@@ -1,161 +1,222 @@
 ---
-title: "Freewill or Illusion?"
-date: "2026-01-11"
-description: "Is freewill an illusion created by our brains?"
+
+title: "Agency Depends on Conditions"
+date: "2026-06-05"
+summary: "A methodical way to think about agency: inspect the conditions, change one controllable constraint, and measure whether the pattern improves."
 slug: free-will
 tags: ["Personal Growth"]
 authors: ["milad"]
 ---
 
-# Intro
-This writing is all about:
-- Recognizing our unique strengths, weaknesses, values, and goals
-- Developing coping strategies to navigate life's challenges and uncertainties
-- Cultivate self-awareness and emotional intelligence
+When I repeatedly fail to do something, my first explanation is often personal:
 
-**The Power of Self-Reflection**
-Let's dive into the brain chemistry and individual differences; Recognize that personal growth and development are deeply rooted in self-awareness. 
-Gain insights into our own thought patterns, behaviors, and motivations by exploring the interplay between freewill and our brains.
+> I lack discipline.
 
-# What to just accept
+That explanation may feel honest. It is also incomplete.
 
-Every human brain is different. affecting factors:
-1. gene expression [1,2]
-2. variation in neurotransmitter levels [3,4,5]
-3. variation in brain region structure and function [6]
+A decision does not appear in isolation. It happens inside a set of conditions:
 
-Estimating the differences in brain chemistry among individuals can be challenging due to the complexity of the human brain and the vast array of genetic, environmental, and lifestyle factors that influence it. However, here's a rough estimate based on various studies:
+* how tired I am
+* how stressed I am
+* what is visible around me
+* how easy the first step feels
+* which habits have already become automatic
+* whether the environment supports the choice I want to make
 
-> We could conservatively estimate there are **50-70%** **Inter-individual variation** in overall brain chemistry of us humans.
+This does not settle the philosophical question of free will.
 
-That is why the following argument is not yet resolved:
+It gives me a more useful question:
 
-- Freewill, an essential aspect of human existence
+> Under which conditions do I make better choices?
 
-vs 
+That question turns self-improvement into a smaller method: observe the pattern, separate fixed conditions from movable ones, change one condition, and look for evidence.
 
-- An illusion created by our brains.
+<!--truncate-->
 
+## A Small Example
 
+Suppose I decide to spend one hour reading after work.
 
-Note that, these are a rough estimate and should not be taken as an absolute value. Also they are based on averages and should not be interpreted as a fixed percentage. The actual differences between individuals can be significant, and the variability within each group can be substantial.
+Instead, I open my phone and scroll for most of the evening.
 
-## The Impact on our daily lives
-Brain chemistry plays a crucial role in our daily choices, influencing everything from simple decisions like what to eat for breakfast to more complex choices about relationships, career, or personal growth.
+The easy conclusion is:
 
-Here are some ways brain chemistry can impact a normal human's life:
+> I should have more self-control.
 
-### Emotions and Mood
-* **Serotonin:** Regulates mood, appetite, sleep, and social behavior. Low serotonin levels can lead to depression, anxiety, or 
-irritability.
-* **Dopamine:** Involved in pleasure, motivation, and reward processing. Imbalances can affect motivation, pleasure-seeking 
-behaviors, or attention deficit hyperactivity disorder (ADHD).
-* **Norepinephrine:** Regulates arousal, stress response, and attention. Imbalances can impact anxiety, stress management, or 
-concentration.
+That may be partly true. But it does not tell me what to change tomorrow.
 
+A more useful approach is to inspect the conditions:
 
-### Decision-Making and Judgment:
+| Condition   | What happened                             |
+| ----------- | ----------------------------------------- |
+| Time        | I started after an exhausting day         |
+| Environment | My phone was beside me                    |
+| Task shape  | “Read for an hour” felt vague and large   |
+| Friction    | Opening social media required one tap     |
+| Reward      | The phone offered immediate stimulation   |
+| Preparation | I had not chosen a book or starting point |
 
-* **Cortisol:** Released in response to stress, cortisol influences decision-making, motivation, and focus.
-* **Acetylcholine:** Involved in attention, memory, and learning. Low acetylcholine levels can affect cognitive function, memory 
-retention, or learning difficulties.
+The failure was not mysterious.
 
-### Social Interactions and Affections:
+The environment made one behavior easy and the intended behavior difficult.
 
-* **Oxytocin:** Often called the "cuddle hormone," oxytocin regulates social bonding, attachment, and trust.
-* **Vasopressin:** Involved in social recognition, attachment, and bonding. Imbalances can affect relationships, trust, or 
-empathy.
+## Change the Conditions
 
-### Personality Growth Patterns:
+The next experiment should not depend only on stronger willpower.
 
-* **Neuroplasticity:** The brain's ability to reorganize and adapt in response to experiences, learning, and emotions.
-* **Dopamine release:** Repeatedly experiencing pleasure and reward can lead to long-term changes in behavior, motivation, and 
-personality traits.
+I can change the setup:
 
-### Motivation and Productivity:
+1. Choose the book and page number earlier.
+2. Reduce the first step to ten minutes.
+3. Leave the phone in another room.
+4. Start before I am exhausted.
+5. Keep a low-effort fallback for difficult days.
+6. Record whether the change actually helped.
 
-* **Norepinephrine:** Regulates energy, motivation, and focus. Low norepinephrine levels can lead to fatigue, decreased 
-productivity, or motivation.
-* **Serotonin:** Involved in regulating appetite, sleep, and social behavior. Imbalances can affect motivation, pleasure-seeking 
-behaviors, or attention.
+The goal is not to remove all difficulty.
 
-### Addiction and Cravings:
+It is to stop making the desired choice unnecessarily hard.
 
-* **Dopamine release:** Repeatedly experiencing pleasure and reward can lead to cravings for substances that activate the brain's 
-reward system.
-* **Serotonin:** Regulates mood, appetite, sleep, and social behavior. Low serotonin levels can increase craving for certain foods 
-or substances.
+## Influence Is Not Destiny
 
-### Mood Regulation and Coping Mechanisms:
+There are two unhelpful extremes.
 
-* **GABA (Gamma-Aminobutyric acid):** Involved in regulating emotions, anxiety, and stress response. Imbalances can affect mood 
-regulation, anxiety, or stress management.
-* **5-HTP (5-Hydroxytryptophan):** An amino acid precursor to serotonin that regulates mood, appetite, sleep, and social behavior.
+The first is:
 
----
+> Every outcome is entirely my fault.
 
-> These are just a few examples, but individual differences, and the interplay between these factors can be complex.
+This creates blame without explanation.
 
-* A person with low serotonin levels might find it difficult to initiate or complete tasks, leading them to procrastinate.
-* An individual with high dopamine release related to social media habits might spend excessive time scrolling through their feeds, potentially impacting relationships, productivity, or mental health.
-* Someone with norepinephrine imbalances due to chronic stress might experience fatigue, decreased motivation, or difficulty concentrating.
+The second is:
 
-# Some more to accept
-## The Environmental influences
-Lifestyle choices, social environment, and life experiences shape brain chemistry, 
-influencing decision making.
+> My behavior is determined, so nothing can change.
 
-**The Paradox of Control**
+This removes responsibility without testing what is possible.
 
-Human control is often a double-edged sword. While we have 
-some agency over our lives, our environment and circumstances 
-can also exert significant influence over our choices and 
-outcomes. This paradox highlights the importance of:
+A better position is:
 
-1. **Self-awareness:** Recognizing our strengths, weaknesses, 
-values, and goals to make informed decisions that align with 
-our aspirations.
-2. **Resilience:** Developing coping strategies and 
-adaptability to navigate life's challenges and uncertainties.
-3. **Community support:** Building relationships and networks 
-that provide emotional support, practical help, and a sense 
-of belonging.
+> My choices are influenced by conditions. Some conditions are fixed. Some can be changed. I should learn the difference.
 
-By acknowledging the complex interplay between personal 
-agency and environmental influences, we can cultivate a more 
-nuanced understanding of our control over our lives.
+I may not control my initial energy, mood, or impulse.
 
+But I can often influence what happens next:
 
-### Implications for Personal Growth and Development
+* remove a distraction
+* avoid a predictable trigger
+* add friction to an unwanted habit
+* reduce friction for a useful habit
+* move demanding work to a better time
+* ask for support
+* seek professional help when the problem exceeds self-management
 
-* **Self-awareness:** Recognizing one's unique brain chemistry profile and its impact on decision making is crucial for personal growth and development. Recognizing the impact of external factors on our lives can help us develop strategies to mitigate their negative effects.
-* **Resilience:** Building resilience through coping mechanisms, self-care, and social support can help individuals navigate challenges and achieve their goals 
-despite external influences.
-* **Personalized strategies:** Developing tailored strategies to mitigate cognitive biases and improve decision-making skills can lead to increased success and well-being.
-* **Embracing individuality:** Celebrating the diversity of human brain chemistry and promoting acceptance can foster a more inclusive and supportive environment.
+Agency is not the absence of constraints.
 
+It is the ability to work with them deliberately.
 
-# What to plan for
-In light of these complexities, it's essential to adopt a nuanced understanding of personal agency. While we have some degree of control over our lives, external factors also exert significant influence. By acknowledging this interplay, we 
-can:
-* **Practice self-compassion:** Recognize that our values, goals, and aspirations are shaped by a complex array of factors.
-* **Foster resilience:** Develop coping mechanisms, build social support networks, and prioritize self-care to navigate life's challenges.
-* **Seek support:** Leverage resources, such as therapy or counseling, to address the impact of external factors on our lives.
+## Treat Behavior as Evidence
 
+When the same problem happens repeatedly, moral judgment is usually less useful than observation.
 
-## Ask yourself
-> For true seekers of the truth
-* What are my thought patterns and behaviors that may be influenced by brain chemistry?
-* How can I leverage my unique strengths and weaknesses to achieve my goals?
-* What coping mechanisms or strategies can I develop to improve my mental well-being
+Instead of asking:
 
+> Why am I like this?
 
+Ask:
 
-# References 
-1. (Zhang et al., 2019) - Global gene expression analysis
-2. (Esteller, 2008) - Epigenetic variations
-3. (Caspi et al., 2003) - Serotonin transporter gene polymorphism
-4. (Castellanos et al., 1996) - Genetic variation of the dopamine transporter gene is linked to attention deficit hyperactivity disorder"
-5. "Genetic variation in the norepinephrine transporter gene and risk for depression" by Munafo et al., 2002)
-6. "Brain structure and personality" by Frith & Dolan, 1998
-7. "Neural correlates of the 'default mode' in brain imaging" by Raichle et al., 2001
+> What reliably happens before this behavior?
+
+A simple record can help:
+
+```text
+Intended action:
+What I did instead:
+Time:
+Energy level:
+Environment:
+Trigger:
+Smallest change to test tomorrow:
+```
+
+The purpose is not to track every moment of life.
+
+The purpose is to identify patterns that are otherwise easy to miss.
+
+Repeated behavior is data.
+
+## Design Before the Difficult Moment
+
+The worst time to design a better decision is often the moment when the decision becomes difficult.
+
+When I am already tired, stressed, distracted, or emotionally activated, even a reasonable choice may require more effort.
+
+It is better to decide earlier:
+
+* what I will do
+* when I will begin
+* what the first step is
+* which distractions will be unavailable
+* what the fallback plan is
+* when I should stop rather than force progress
+
+This changes the task from:
+
+> Make the right decision repeatedly under pressure.
+
+to:
+
+> Create conditions where the right decision is easier to make.
+
+That is a more reliable strategy.
+
+## Self-Compassion Is Not an Excuse
+
+Understanding the conditions behind a behavior is not the same as avoiding responsibility.
+
+An explanation should produce a better intervention.
+
+If poor sleep makes focused work harder, the lesson is not:
+
+> I cannot work.
+
+It is:
+
+> I should stop scheduling the hardest work when I am least able to do it.
+
+If a phone repeatedly interrupts attention, the lesson is not:
+
+> Technology controls me.
+
+It is:
+
+> I should remove the device before beginning work.
+
+If a problem continues despite repeated attempts, the lesson may be:
+
+> I need support beyond another productivity technique.
+
+Self-compassion is useful when it replaces vague self-criticism with a more accurate response.
+
+## A Practical Checklist
+
+When a pattern keeps repeating, ask:
+
+1. What behavior am I trying to change?
+2. Under which conditions does it usually happen?
+3. What happens immediately before it?
+4. Which part is difficult to control directly?
+5. Which part of the environment can I change?
+6. Can I reduce the size of the first step?
+7. Can I add friction to the unwanted behavior?
+8. Can I make the intended behavior easier?
+9. What small experiment can I run tomorrow?
+10. What result would show that the change helped?
+
+The philosophical question remains interesting:
+
+> How free are our choices?
+
+But the practical question is more useful:
+
+> What conditions help me choose better?
+
+Start there.
