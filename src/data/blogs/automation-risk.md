@@ -1,8 +1,8 @@
 ---
-title: "When Instructions Become Actions"
-date: "2026-01-01"
+title: "The Instruction Worked Too Well"
+date: "2025-02-18"
 slug: "automation-risk"
-summary: "A method for automation risk: name the invariant, bound authority, separate review from execution, and preserve evidence."
+summary: "Authority turns vague intent into real damage."
 tags: ["Artificial Intelligence", "Software Engineering & Practices"]
 ---
 

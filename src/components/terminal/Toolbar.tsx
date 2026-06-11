@@ -82,7 +82,7 @@ export function TerminalToolbar({
               speed={0.5}
             />
           </span>
-          <span className="terminal-askAi-label">Ask AI about fit</span>
+          <span className="terminal-askAi-label">Ask AI</span>
           {unread > 0 ? <span className="terminal-toolbar-dot" aria-hidden="true" /> : null}
         </button>
       </div>

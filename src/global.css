@@ -3121,7 +3121,8 @@
 
   .blog-header,
   .blog-list,
-  .blog-article {
+  .blog-article,
+  .blog-comments {
     width: min(100%, 760px);
     margin: 0 auto;
   }
@@ -3159,10 +3160,13 @@
 
   .blog-homeLink:hover,
   .blog-backLink:hover,
-  .blog-listItem a:hover,
   .blog-inlineLink:hover {
     color: var(--blog-ink);
     text-decoration: underline;
+  }
+
+  .blog-listBody:hover {
+    text-decoration: none;
   }
 
   .blog-homeLink:focus-visible,
@@ -3179,25 +3183,43 @@
     text-underline-offset: 0.18em;
   }
 
+  .blog-activeFilter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    color: var(--blog-muted);
+    font-family: var(--terminal-font, "Fira Code", monospace);
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .blog-activeFilter a {
+    color: var(--blog-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
   .blog-list {
     display: grid;
-    gap: 18px;
+    gap: 0;
+    border-top: 1px solid var(--blog-rule);
     view-transition-name: blog-content;
     contain: layout paint;
   }
 
   .blog-listItem {
-    padding: 0 0 18px;
+    position: relative;
+    display: grid;
+    gap: 12px;
+    padding: 20px 0 18px;
     border-bottom: 1px solid var(--blog-rule);
-    transition:
-      transform 180ms ease,
-      border-color 180ms ease;
+    transition: border-color 180ms ease;
   }
 
   .blog-listItem:hover,
   .blog-listItem:focus-within {
-    border-bottom-color: color-mix(in srgb, var(--blog-accent) 35%, var(--blog-rule));
-    transform: translateX(4px);
+    border-bottom-color: color-mix(in srgb, var(--blog-ink) 12%, var(--blog-rule));
   }
 
   .blog-listItem a {
@@ -3205,25 +3227,146 @@
     text-decoration: none;
   }
 
+  .blog-listItemContent {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: clamp(12px, 2.4vw, 22px);
+    z-index: 0;
+    transition: color 180ms ease;
+  }
+
+  .blog-listBody:hover h2,
+  .blog-listBody:focus-visible h2 {
+    color: color-mix(in srgb, var(--blog-accent) 68%, var(--blog-ink) 32%);
+    transform: scale(1.04);
+  }
+
+  .blog-listTags,
+  .blog-metaTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .blog-listTags {
+    justify-content: center;
+    max-width: 58ch;
+    margin: 0 auto;
+    color: color-mix(in srgb, var(--blog-muted) 86%, var(--blog-ink) 14%);
+    text-align: center;
+  }
+
+  .blog-metaTags {
+    color: color-mix(in srgb, var(--blog-muted) 90%, var(--blog-ink) 10%);
+  }
+
+  .blog-topicTagItem {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .blog-topicDot {
+    margin: 0 0.58em;
+    color: color-mix(in srgb, currentColor 58%, var(--blog-bg) 42%);
+    font-family: var(--terminal-font, "Fira Code", monospace);
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .blog-topicTag {
+    display: inline-block;
+    max-width: 100%;
+    padding: 1px 5px;
+    border: 0.5px solid color-mix(in srgb, currentColor 34%, transparent);
+    border-radius: 20%;
+    background: transparent;
+    color: inherit;
+    font-family: var(--terminal-font, "Fira Code", monospace);
+    font-size: 11px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    transition:
+      color 180ms ease,
+      text-decoration-color 180ms ease;
+  }
+
+  .blog-listItem .blog-topicTag:hover,
+  .blog-topicTag:focus-visible,
+  .blog-topicTag.is-active {
+    border-color: color-mix(in srgb, var(--blog-accent) 52%, transparent);
+    color: color-mix(in srgb, var(--blog-accent) 76%, var(--blog-ink) 24%);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .blog-listBody {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+
   .blog-listItem h2 {
-    margin: 0 0 8px;
-    font-size: 22px;
-    line-height: 1.25;
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(24px, 3vw, 31px);
+    font-weight: 400;
+    line-height: 1.08;
     letter-spacing: 0;
+    transform-origin: left center;
+    transition:
+      color 220ms cubic-bezier(0.2, 0, 0, 1),
+      transform 260ms cubic-bezier(0.2, 0, 0, 1);
+    will-change: transform;
   }
 
   .blog-listItem p {
-    margin: 10px 0 0;
-    color: var(--blog-muted);
+    max-width: 58ch;
+    margin: 0;
+    color: color-mix(in srgb, var(--blog-muted) 92%, var(--blog-ink) 8%);
+    font-size: clamp(0.95rem, 1.6vw, 1.03rem);
+    line-height: 1.5;
   }
 
   .blog-meta {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 8px 14px;
     color: var(--blog-muted);
     font-family: var(--terminal-font, "Fira Code", monospace);
     font-size: 12px;
+  }
+
+  .blog-readTime {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: color-mix(in srgb, var(--blog-muted) 72%, var(--blog-bg) 28%);
+    font-family: var(--terminal-font, "Fira Code", monospace);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .blog-readTimeIcon {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
   }
 
   .blog-articleHeader {
@@ -3244,6 +3387,63 @@
 
   .blog-article .t-markdownBody {
     max-width: 68ch;
+  }
+
+  .blog-comments {
+    margin-top: clamp(34px, 6vw, 56px);
+    padding-top: clamp(18px, 4vw, 28px);
+    border-top: 1px solid var(--blog-rule);
+  }
+
+  .blog-comments h2 {
+    margin: 0 0 14px;
+    color: var(--blog-accent);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.1;
+  }
+
+  .blog-commentsEmbed {
+    min-height: 140px;
+    color-scheme: light;
+  }
+
+  .blog-commentsEmbed .utterances {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .blog-commentsEmbed .utterances-frame {
+    color-scheme: light;
+  }
+
+  @media (max-width: 620px) {
+    .blog-listItem {
+      gap: 10px;
+      padding: 19px 0 18px;
+    }
+
+    .blog-listItemContent {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px 14px;
+    }
+
+    .blog-listItem h2 {
+      font-size: clamp(23px, 7.8vw, 30px);
+    }
+
+    .blog-listBody:hover h2,
+    .blog-listBody:focus-visible h2 {
+      transform: scale(1.025);
+    }
+
+    .blog-readTime {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: end;
+    }
   }
 
   .blog-page .t-markdownBody h1,
@@ -3356,7 +3556,8 @@
     html.js .blog-page.is-entering .blog-header,
     html.js .blog-page.is-entering .blog-listItem,
     html.js .blog-page.is-entering .blog-articleHeader,
-    html.js .blog-page.is-entering .blog-article .t-markdown {
+    html.js .blog-page.is-entering .blog-article .t-markdown,
+    html.js .blog-page.is-entering .blog-comments {
       opacity: 0;
       transform: translateY(-18px);
       will-change: opacity, transform;
@@ -3366,7 +3567,8 @@
     html.js .blog-page.is-ready .blog-header,
     html.js .blog-page.is-ready .blog-listItem,
     html.js .blog-page.is-ready .blog-articleHeader,
-    html.js .blog-page.is-ready .blog-article .t-markdown {
+    html.js .blog-page.is-ready .blog-article .t-markdown,
+    html.js .blog-page.is-ready .blog-comments {
       opacity: 1;
       transform: translateY(0);
       transition:
@@ -3392,6 +3594,8 @@
 
     .blog-page.is-entering .blog-article .t-markdown,
     .blog-page.is-ready .blog-article .t-markdown,
+    .blog-page.is-entering .blog-comments,
+    .blog-page.is-ready .blog-comments,
     .blog-page.is-entering .blog-listItem:nth-child(2),
     .blog-page.is-ready .blog-listItem:nth-child(2) {
       --blog-enter-delay: 240ms;
@@ -3442,11 +3646,13 @@
     html[data-blog-transition] .blog-page.is-entering .blog-listItem,
     html[data-blog-transition] .blog-page.is-entering .blog-articleHeader,
     html[data-blog-transition] .blog-page.is-entering .blog-article .t-markdown,
+    html[data-blog-transition] .blog-page.is-entering .blog-comments,
     html[data-blog-transition] .blog-page.is-ready .blog-siteHeader,
     html[data-blog-transition] .blog-page.is-ready .blog-header,
     html[data-blog-transition] .blog-page.is-ready .blog-listItem,
     html[data-blog-transition] .blog-page.is-ready .blog-articleHeader,
-    html[data-blog-transition] .blog-page.is-ready .blog-article .t-markdown {
+    html[data-blog-transition] .blog-page.is-ready .blog-article .t-markdown,
+    html[data-blog-transition] .blog-page.is-ready .blog-comments {
       opacity: 1;
       transform: none;
       transition: none;
@@ -3459,11 +3665,13 @@
     .blog-page.is-entering .blog-listItem,
     .blog-page.is-entering .blog-articleHeader,
     .blog-page.is-entering .blog-article .t-markdown,
+    .blog-page.is-entering .blog-comments,
     .blog-page.is-ready .blog-siteHeader,
     .blog-page.is-ready .blog-header,
     .blog-page.is-ready .blog-listItem,
     .blog-page.is-ready .blog-articleHeader,
-    .blog-page.is-ready .blog-article .t-markdown {
+    .blog-page.is-ready .blog-article .t-markdown,
+    .blog-page.is-ready .blog-comments {
       opacity: 1;
       transform: none;
       transition: none;
@@ -3521,9 +3729,9 @@
       transition: none;
     }
 
-    .blog-listItem:hover,
-    .blog-listItem:focus-within {
-      transform: none;
+    .blog-listItemContent,
+    .blog-listItem h2 {
+      transition: none;
     }
   }
 

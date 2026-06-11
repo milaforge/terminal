@@ -12,6 +12,9 @@ const ROOT = process.cwd();
 const BLOG_DIR = path.join(ROOT, "src", "data", "blogs");
 const DIST_DIR = path.join(ROOT, "dist");
 const BASE_PATH = process.env.BASE_PATH || "/terminal/";
+const BLOG_COMMENTS_REPO = "failuresmith/terminal";
+const BLOG_COMMENTS_ISSUE_TERM = "pathname";
+const BLOG_TAG_PARAM = "tag";
 
 hljs.registerLanguage("bash", bash);
 hljs.registerLanguage("javascript", javascript);
@@ -127,24 +130,70 @@ function estimateReadingMinutes(plain) {
   return Math.max(1, Math.ceil(words.length / 200));
 }
 
-function formatDate(date) {
-  if (!date) return "";
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  if (!match) return escapeHtml(date);
+function renderReadTime(minutes) {
+  const safeMinutes = Math.max(1, Number(minutes) || 1);
+  const label = `${safeMinutes} ${safeMinutes === 1 ? "minute" : "minutes"} read`;
 
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(
-    new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))),
-  );
+  return `
+    <span class="blog-readTime" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
+      <span aria-hidden="true">${safeMinutes}'</span>
+      <svg class="blog-readTimeIcon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 6v6l4 2"></path>
+      </svg>
+    </span>`.trim();
 }
 
 function withBase(relativePath) {
   const base = BASE_PATH.endsWith("/") ? BASE_PATH.slice(0, -1) : BASE_PATH;
   return `${base}${relativePath}`;
+}
+
+function normalizeTag(tag) {
+  return String(tag || "").trim().toLowerCase();
+}
+
+function formatTagLabel(tag) {
+  return normalizeTag(tag)
+    .split(/(\s+|-)/)
+    .map((part) => {
+      if (!part.trim() || part === "-") return part;
+      if (part === "&") return part;
+      if (part === "ai") return "AI";
+      return `${part[0].toUpperCase()}${part.slice(1)}`;
+    })
+    .join("");
+}
+
+function tagHref(tag) {
+  const params = new URLSearchParams({ [BLOG_TAG_PARAM]: normalizeTag(tag) });
+  return `${withBase("/blog/")}?${params.toString()}`;
+}
+
+function renderTopicTags(tags, className) {
+  const uniqueTags = Array.from(new Set(tags.map(normalizeTag))).filter(Boolean);
+  if (!uniqueTags.length) return "";
+
+  const items = uniqueTags
+    .map((tag, index) => {
+      const label = formatTagLabel(tag);
+      const dot = index
+        ? '<span class="blog-topicDot" aria-hidden="true">·</span>'
+        : "";
+
+      return `
+        <span class="blog-topicTagItem">
+          ${dot}
+          <a
+            class="blog-topicTag"
+            href="${escapeHtml(tagHref(tag))}"
+            aria-label="Filter blog posts tagged ${escapeHtml(label)}"
+          >${escapeHtml(label)}</a>
+        </span>`.trim();
+    })
+    .join("\n");
+
+  return `<div class="${escapeHtml(className)}" aria-label="Blog topics">${items}</div>`;
 }
 
 async function loadPosts() {
@@ -220,24 +269,33 @@ function renderBlogNavigation({ showBlogLink = false } = {}) {
     </header>`.trim();
 }
 
+function renderBlogComments() {
+  return `
+    <section class="blog-comments" aria-labelledby="blog-comments-title">
+      <h2 id="blog-comments-title">Comments</h2>
+      <div
+        class="blog-commentsEmbed"
+        data-comments-repo="${escapeHtml(BLOG_COMMENTS_REPO)}"
+        data-comments-issue-term="${escapeHtml(BLOG_COMMENTS_ISSUE_TERM)}"
+      ></div>
+    </section>`.trim();
+}
+
 function renderBlogIndex(posts) {
   const items = posts
     .map((post) => {
-      const date = post.date
-        ? `<time datetime="${escapeHtml(post.date)}">${escapeHtml(formatDate(post.date))}</time>`
-        : "";
       const summary = post.summary ? `<p>${escapeHtml(post.summary)}</p>` : "";
 
       return `
         <article class="blog-listItem">
-          <a href="${escapeHtml(withBase(`/blog/${encodeURIComponent(post.slug)}/`))}">
-            <h2>${escapeHtml(post.title)}</h2>
-          </a>
-          <div class="blog-meta">
-            ${date}
-            <span>${post.readingMinutes} min read</span>
+          <div class="blog-listItemContent">
+            <a class="blog-listBody" href="${escapeHtml(withBase(`/blog/${encodeURIComponent(post.slug)}/`))}">
+              <h2>${escapeHtml(post.title)}</h2>
+              ${summary}
+            </a>
+            ${renderReadTime(post.readingMinutes)}
           </div>
-          ${summary}
+          ${renderTopicTags(post.tags, "blog-listTags")}
         </article>`.trim();
     })
     .join("\n");
@@ -247,7 +305,7 @@ function renderBlogIndex(posts) {
       ${renderBlogNavigation()}
       <header class="blog-header">
         <h1>Blog</h1>
-        <p>FailureSmith notes on reliability, automation risk, execution ownership, and production systems.</p>
+        <p>Notes by topic on systems, security, automation, and life.</p>
       </header>
       <section class="blog-list" aria-label="Blog posts">
         ${items}
@@ -256,9 +314,6 @@ function renderBlogIndex(posts) {
 }
 
 async function renderPost(post) {
-  const date = post.date
-    ? `<time datetime="${escapeHtml(post.date)}">${escapeHtml(formatDate(post.date))}</time>`
-    : "";
   const summary = post.summary ? `<p>${escapeHtml(post.summary)}</p>` : "";
   const body = await marked.parse(post.body);
 
@@ -269,8 +324,8 @@ async function renderPost(post) {
         <header class="blog-articleHeader">
           <h1>${escapeHtml(post.title)}</h1>
           <div class="blog-meta">
-            ${date}
-            <span>${post.readingMinutes} min read</span>
+            ${renderTopicTags(post.tags, "blog-metaTags")}
+            ${renderReadTime(post.readingMinutes)}
           </div>
           ${summary}
         </header>
@@ -278,6 +333,7 @@ async function renderPost(post) {
           <div class="t-markdownBody">${body}</div>
         </div>
       </article>
+      ${renderBlogComments()}
     </main>`.trim();
 }
 

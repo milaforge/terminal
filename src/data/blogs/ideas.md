@@ -1,10 +1,12 @@
 ---
-title: "Ideas"
+title: "Failures Worth Writing Down"
 date: "2025-08-09"
-description: "Write about"
+summary: "A backlog for turning concern into inspectable proof."
 slug: ideas
 tags: ["writings"]
 ---
+
+The useful posts here should follow the same shape: identify the failure, name the violated invariant, show why agents or automation amplify it, then define containment that leaves evidence.
 
 1. **“Most AI Safety Failures Are Actually Interface Failures”**
 

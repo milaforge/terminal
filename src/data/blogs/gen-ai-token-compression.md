@@ -1,9 +1,9 @@
 ---
-title: "Optimize Without Moving Risk"
+title: "Savings Can Move Risk"
 date: "2026-01-15"
 slug: "gen-ai-token-compression"
 tags: ["resourcefulness", "optimization", "gen-ai"]
-summary: "How I optimize methodically: reduce waste first, state invariants, cap blast radius, and compare against the old path."
+summary: "Token cuts must preserve the delivery promise."
 ---
 
 Optimization is not only about lowering a number.

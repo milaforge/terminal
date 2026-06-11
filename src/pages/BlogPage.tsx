@@ -2,29 +2,103 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MarkdownBlock } from "@components/MarkdownBlock";
 import { blogIndex, BlogPost } from "@data/blogIndex";
 import { withBasePath } from "@utils/appRouting";
+import { Clock } from "lucide-react";
+import { BlogComments } from "./BlogComments";
 
 type BlogPageProps = {
   slug?: string;
 };
 
-const BLOG_DESCRIPTION = "Personal thoughts on systems.";
+const BLOG_DESCRIPTION = "Notes by topic on systems, security, automation, and life.";
 const BLOG_ENTRANCE_MS = 1500;
+const BLOG_TAG_PARAM = "tag";
 
-function formatDate(date?: string) {
-  if (!date) return null;
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  if (!match) return date;
+function normalizeTag(tag?: string | null) {
+  return tag?.trim().toLowerCase() || "";
+}
 
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(
-    new Date(
-      Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])),
-    ),
+function formatTagLabel(tag: string) {
+  return tag
+    .split(/(\s+|-)/)
+    .map((part) => {
+      if (!part.trim() || part === "-") return part;
+      if (part === "&") return part;
+      if (part === "ai") return "AI";
+      return `${part[0].toUpperCase()}${part.slice(1)}`;
+    })
+    .join("");
+}
+
+function tagHref(tag: string, activeTag?: string) {
+  if (normalizeTag(tag) === activeTag) return withBasePath("/blog/");
+  const params = new URLSearchParams({ [BLOG_TAG_PARAM]: normalizeTag(tag) });
+  return `${withBasePath("/blog/")}?${params.toString()}`;
+}
+
+function BlogReadTime({ minutes }: { minutes: number }) {
+  const label = `${minutes} ${minutes === 1 ? "minute" : "minutes"} read`;
+
+  return (
+    <span
+      className="blog-readTime"
+      aria-label={label}
+      title={label}
+    >
+      <span aria-hidden="true">{minutes}'</span>
+      <Clock className="blog-readTimeIcon" size={14} strokeWidth={2.2} />
+    </span>
   );
+}
+
+type BlogTagListProps = {
+  activeTag?: string;
+  className: string;
+  tags: string[];
+};
+
+function BlogTagList({ activeTag, className, tags }: BlogTagListProps) {
+  const uniqueTags = Array.from(new Set(tags.map(normalizeTag))).filter(Boolean);
+  if (!uniqueTags.length) return null;
+
+  return (
+    <div className={className} aria-label="Blog topics">
+      {uniqueTags.map((tag, index) => {
+        const label = formatTagLabel(tag);
+        const isActive = tag === activeTag;
+
+        return (
+          <span key={tag} className="blog-topicTagItem">
+            {index > 0 ? (
+              <span className="blog-topicDot" aria-hidden="true">
+                ·
+              </span>
+            ) : null}
+            <a
+              className={`blog-topicTag${isActive ? " is-active" : ""}`}
+              href={tagHref(tag, activeTag)}
+              aria-label={
+                isActive
+                  ? `Clear ${label} topic filter`
+                  : `Filter blog posts tagged ${label}`
+              }
+            >
+              {label}
+            </a>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function getActiveTagFromLocation(knownTags: Set<string>) {
+  if (typeof window === "undefined") return undefined;
+
+  const tag = normalizeTag(
+    new URLSearchParams(window.location.search).get(BLOG_TAG_PARAM),
+  );
+
+  return tag && knownTags.has(tag) ? tag : undefined;
 }
 
 function setMeta(name: string, content: string) {
@@ -108,6 +182,15 @@ function useBlogEntranceClass(slug?: string) {
 
 export default function BlogPage({ slug }: BlogPageProps) {
   const posts = useMemo(() => blogIndex.getAll(), []);
+  const knownTags = useMemo(
+    () => new Set(blogIndex.listTags().map(({ tag }) => tag)),
+    [],
+  );
+  const activeTag = getActiveTagFromLocation(knownTags);
+  const visiblePosts = useMemo(
+    () => (activeTag ? blogIndex.filterByTag(activeTag) : posts),
+    [activeTag, posts],
+  );
   const post = useMemo(
     () => (slug ? blogIndex.findBySlugOrTitle(slug) : undefined),
     [slug],
@@ -140,8 +223,6 @@ export default function BlogPage({ slug }: BlogPageProps) {
   }
 
   if (post) {
-    const writtenAt = formatDate(post.date);
-
     return (
       <main className={pageClassName}>
         <BlogNavigation showBlogLink />
@@ -149,8 +230,8 @@ export default function BlogPage({ slug }: BlogPageProps) {
           <header className="blog-articleHeader">
             <h1>{post.title}</h1>
             <div className="blog-meta">
-              {writtenAt ? <time dateTime={post.date}>{writtenAt}</time> : null}
-              <span>{post.readingMinutes} min read</span>
+              <BlogTagList className="blog-metaTags" tags={post.tags} />
+              <BlogReadTime minutes={post.readingMinutes} />
             </div>
             {post.summary ? <p>{post.summary}</p> : null}
           </header>
@@ -162,6 +243,7 @@ export default function BlogPage({ slug }: BlogPageProps) {
             }}
           />
         </article>
+        <BlogComments postSlug={post.slug} />
       </main>
     );
   }
@@ -172,23 +254,36 @@ export default function BlogPage({ slug }: BlogPageProps) {
       <header className="blog-header">
         <h1>Blog</h1>
         <p>{BLOG_DESCRIPTION}</p>
+        {activeTag ? (
+          <div className="blog-activeFilter" aria-live="polite">
+            <span>Topic: {formatTagLabel(activeTag)}</span>
+            <a href={withBasePath("/blog/")}>All topics</a>
+          </div>
+        ) : null}
       </header>
-      <section className="blog-list" aria-label="Blog posts">
-        {posts.map((item) => {
-          const writtenAt = formatDate(item.date);
-
+      <section
+        className="blog-list"
+        aria-label={
+          activeTag
+            ? `Blog posts tagged ${formatTagLabel(activeTag)}`
+            : "Blog posts"
+        }
+      >
+        {visiblePosts.map((item) => {
           return (
             <article key={item.slug} className="blog-listItem">
-              <a href={postHref(item)}>
-                <h2>{item.title}</h2>
-              </a>
-              <div className="blog-meta">
-                {writtenAt ? (
-                  <time dateTime={item.date}>{writtenAt}</time>
-                ) : null}
-                <span>{item.readingMinutes} min read</span>
+              <div className="blog-listItemContent">
+                <a className="blog-listBody" href={postHref(item)}>
+                  <h2>{item.title}</h2>
+                  {item.summary ? <p>{item.summary}</p> : null}
+                </a>
+                <BlogReadTime minutes={item.readingMinutes} />
               </div>
-              {item.summary ? <p>{item.summary}</p> : null}
+              <BlogTagList
+                activeTag={activeTag}
+                className="blog-listTags"
+                tags={item.tags}
+              />
             </article>
           );
         })}

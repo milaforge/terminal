@@ -1,8 +1,8 @@
 ---
 
-title: "Agency Depends on Conditions"
-date: "2026-06-05"
-summary: "A methodical way to think about agency: inspect the conditions, change one controllable constraint, and measure whether the pattern improves."
+title: "Willpower Was Not the System"
+date: "2022-03-14"
+summary: "Change the conditions that keep choosing for you."
 slug: free-will
 tags: ["Personal Growth"]
 authors: ["milad"]

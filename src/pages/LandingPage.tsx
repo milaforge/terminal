@@ -595,8 +595,8 @@ export default function LandingPage({
           <button
             type="button"
             className="landing-askAiPrompt"
-            aria-label="Ask AI about my method"
-            title="Ask AI about my method"
+            aria-label="Ask AI"
+            title="Ask AI"
             onClick={onAskAi}
           >
             <span className="landing-askAiSparkles" aria-hidden="true">
@@ -613,7 +613,7 @@ export default function LandingPage({
               </Suspense>
             </span>
             <span className="landing-askAiPromptLabel">
-              Ask AI about method
+              Ask AI
             </span>
           </button>
         </motion.div>
@@ -674,7 +674,7 @@ export default function LandingPage({
             role="menuitem"
             onClick={() => runContextAction(onAskAi)}
           >
-            Ask AI about method
+            Ask AI
           </button>
           <button
             type="button"

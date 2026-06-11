@@ -56,4 +56,25 @@ describe("blog index", () => {
       expect(blogIndex.findBySlugOrTitle(legacySlug)).toBeUndefined();
     });
   });
+
+  it("keeps every indexed post attached to at least one topic tag", () => {
+    expect(blogIndex.getAll().every((post) => post.tags.length > 0)).toBe(true);
+  });
+
+  it("filters posts by topic tags case-insensitively", () => {
+    const securityPosts = blogIndex.filterByTag("Security");
+
+    expect(securityPosts.length).toBeGreaterThan(0);
+    expect(securityPosts.every((post) => post.tags.includes("security"))).toBe(
+      true,
+    );
+  });
+
+  it("lists topic tags with post counts", () => {
+    const security = blogIndex
+      .listTags()
+      .find(({ tag }) => tag === "security");
+
+    expect(security?.count).toBeGreaterThan(0);
+  });
 });

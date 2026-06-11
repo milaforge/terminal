@@ -1,8 +1,8 @@
 ---
-title: "Scale the Proven Bottleneck"
-date: "2021-05-04"
+title: "The Bottleneck Was Smaller"
+date: "2021-11-04"
 slug: premature-scaling
-summary: "A latency problem showing my default method: measure the path, isolate the bottleneck, make the smallest change, then measure again."
+summary: "Measure before buying complexity you must operate."
 tags: ["Architecture & System Design", "Performance"]
 authors: ["milad"]
 ---

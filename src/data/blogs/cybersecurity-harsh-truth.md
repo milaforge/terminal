@@ -1,7 +1,7 @@
 ---
-title: "Design for Compromise"
-date: "2026-06-05"
-summary: "A compromise-first method: assume one control fails, then bound authority, detection, revocation, and recovery."
+title: "Prevention Will Fail Somewhere"
+date: "2024-10-02"
+summary: "Design the blast radius before compromise arrives."
 slug: cybersecurity-harsh-truth
 authors: ["milad"]
 tags: ["Security", "Software Engineering & Practices"]

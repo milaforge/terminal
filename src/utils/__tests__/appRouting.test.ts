@@ -43,6 +43,16 @@ describe("app routing", () => {
     ).toBe("/terminal/blog/");
   });
 
+  it("keeps blog topic filters in client-handled routes", () => {
+    expect(
+      getClientRoutePath(
+        "https://failuresmith.dev/terminal/blog/?tag=security",
+        current,
+        base,
+      ),
+    ).toBe("/terminal/blog/?tag=security");
+  });
+
   it("keeps external and out-of-app links as document navigations", () => {
     expect(
       getClientRoutePath(

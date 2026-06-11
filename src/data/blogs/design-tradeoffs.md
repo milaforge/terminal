@@ -1,8 +1,8 @@
 ---
-title: "Design Tradeoffs"
+title: "Flexibility Hides Runtime Cost"
 date: "2023-04-20"
 slug: design-tradeoffs
-summary: "How I make design tradeoffs: identify the layer, expose constraints, and ask what must stay predictable under misuse."
+summary: "Visible limits make misuse easier to contain."
 tags: ["Architecture & System Design"]
 authors: ["milad"]
 ---

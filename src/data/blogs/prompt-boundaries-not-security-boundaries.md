@@ -1,8 +1,8 @@
 ---
 
-title: "Prompts Are Not Security Boundaries"
+title: "A Prompt Is Not a Lock"
 date: "2026-06-05"
-summary: "A security method for LLM systems: reproduce the failure, move enforcement out of prompts, validate tools, and keep evidence."
+summary: "Real boundaries must sit outside the model."
 slug: prompt-boundaries-not-security-boundaries
 authors: ["milad"]
 tags: ["Artificial Intelligence", "Security"]

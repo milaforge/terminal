@@ -1,9 +1,9 @@
 ---
 
-title: "Find the Fixed Constraint"
-date: "2026-06-05"
+title: "Find What Cannot Change"
+date: "2026-05-19"
 slug: problem-solving-habit
-summary: "A practical method for reducing unfamiliar engineering problems: find the fixed constraint, isolate the state change, and verify the result directly."
+summary: "The fixed constraint makes the problem smaller."
 tags: ["Engineering", "Problem Solving", "Ethereum", "Security"]
 authors: ["milad"]
 ---
