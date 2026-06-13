@@ -456,6 +456,12 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
               <p className="story-sub">
                 {STORY_TAGLINE} Maybe it takes me to you.
               </p>
+              <a
+                href={`${BASE}blog/`}
+                className="story-blogLink"
+              >
+                Or read my writing →
+              </a>
               <div className="story-ctaRow" role="group" aria-label="Contact options">
                 <span className="story-ctaLabel" aria-hidden>Reach out:</span>
                 <button

@@ -162,6 +162,23 @@
   }
 }
 
+.story-blogLink {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.story-blogLink:hover,
+.story-blogLink:focus-visible {
+  opacity: 1;
+  color: var(--text);
+  outline: none;
+}
+
 .story-ctaRow {
   display: flex;
   align-items: center;

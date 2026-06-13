@@ -123,7 +123,7 @@ export const STORY_CHAPTERS: StoryChapter[] = [
     year: "2026",
     span: "2026 – present",
     hook: "Founder, take two.",
-    sub: "Technical founder · BlockByBlock — AI-assisted community growth, engagement, analytics",
+    sub: "Technical co-founder · BlockByBlock — LLM-powered feature and workflow for community growth",
     accent: "#fb7185",
     glow: "rgba(251, 113, 133, 0.13)",
   },
