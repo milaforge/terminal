@@ -7,7 +7,7 @@ import {
 
 const base = "/terminal/";
 const current = {
-  origin: "https://failuresmith.dev",
+  origin: "https://milaforge.dev",
   pathname: "/terminal/blog/",
   search: "",
   hash: "",
@@ -30,7 +30,7 @@ describe("app routing", () => {
   it("allows same-origin app routes to be handled by React", () => {
     expect(
       getClientRoutePath(
-        "https://failuresmith.dev/terminal/blog/automation-risk/",
+        "https://milaforge.dev/terminal/blog/automation-risk/",
         current,
         base,
       ),
@@ -39,14 +39,14 @@ describe("app routing", () => {
 
   it("normalizes the blog index to the prerendered slash route", () => {
     expect(
-      getClientRoutePath("https://failuresmith.dev/terminal/blog", current, base),
+      getClientRoutePath("https://milaforge.dev/terminal/blog", current, base),
     ).toBe("/terminal/blog/");
   });
 
   it("keeps blog topic filters in client-handled routes", () => {
     expect(
       getClientRoutePath(
-        "https://failuresmith.dev/terminal/blog/?tag=security",
+        "https://milaforge.dev/terminal/blog/?tag=security",
         current,
         base,
       ),
@@ -62,7 +62,7 @@ describe("app routing", () => {
       ),
     ).toBeNull();
     expect(
-      getClientRoutePath("https://failuresmith.dev/other/blog/", current, base),
+      getClientRoutePath("https://milaforge.dev/other/blog/", current, base),
     ).toBeNull();
   });
 });

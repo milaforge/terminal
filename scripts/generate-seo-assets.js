@@ -5,7 +5,7 @@ import path from "node:path";
 const ROOT = process.cwd();
 const DIST_DIR = path.join(ROOT, "dist");
 const BASE_PATH = process.env.BASE_PATH || "/terminal/";
-const DEFAULT_HOST = "https://failuresmith.github.io";
+const DEFAULT_HOST = "https://milaforge.github.io";
 
 function normalizeBasePath(value) {
   if (!value || value === "/") return "/";
