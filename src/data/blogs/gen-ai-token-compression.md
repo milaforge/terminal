@@ -3,12 +3,14 @@ title: "Savings Can Move Risk"
 date: "2026-01-15"
 slug: "gen-ai-token-compression"
 tags: ["resourcefulness", "optimization", "gen-ai"]
-summary: "Token cuts must preserve the delivery promise."
+summary: "Lower cost without hiding new failure."
 ---
 
 Optimization is not only about lowering a number.
 
 A change is useful only if it reduces cost without quietly making the system less reliable.
+
+The example here is generative-AI token usage, but the decision model is older and more durable: every optimization should be reviewed for the cost it reduces, the risk it moves, and the promise it must still keep.
 
 I faced this while replacing a legacy decision point with a small generative-AI task. The model call worked well enough, but it sat inside a high-volume workflow. At peak, the system processed millions of items.
 
@@ -269,3 +271,5 @@ The final result was useful:
 The important result was not only that the model call became cheaper.
 
 The system became cheaper without making its failure boundaries harder to see.
+
+That is the reusable test for any optimization, whether the cost is tokens, database queries, queue time, cloud spend, or human review effort: accept the savings only after the moved risk is named, bounded, observable, and recoverable.

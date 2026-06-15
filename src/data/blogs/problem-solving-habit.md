@@ -18,7 +18,9 @@ A better first question is:
 
 Once the fixed constraint is visible, the problem usually becomes smaller.
 
-I learned this while solving an Ethereum security puzzle.
+That is the durable part. Specific tools and protocols change, but the habit is to separate fixed boundaries from movable conditions before choosing a tactic.
+
+The example below comes from an Ethereum security puzzle. The lesson is broader than Ethereum.
 
 ## The Puzzle
 
@@ -86,7 +88,9 @@ The contradiction revealed the missing condition.
 
 ## Change One External Condition
 
-EIP-7702 provided the mechanism.
+In this puzzle, EIP-7702 provided the mechanism.
+
+It mattered because it changed the right boundary: the wallet's execution behavior, not the challenge bytecode or the wallet address.
 
 It allows a wallet address to delegate calls to implementation code. The wallet keeps the same address, but incoming calls can execute the delegated behavior.
 
@@ -121,4 +125,6 @@ The goal is to reduce the problem until only one blocked condition remains.
 
 Then change that condition without violating the constraint.
 
-That is the habit I want visible in my work: do not rush to cleverness, reduce the problem until the necessary move can be verified.
+The names of the mechanisms will change. The habit should not: hold the constraint fixed, find the state transition, expose why ordinary approaches fail, and change only the condition that actually needs to move.
+
+That is the method I want visible in my work: do not rush to cleverness, reduce the problem until the necessary move can be verified.
