@@ -195,7 +195,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   const reduced = useReducedMotion() ?? false;
   const contactEmail = contact?.email ?? "milaforge@proton.me";
   const emailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
-    "HI Milad!",
+    "Let’s build this to last",
   )}`;
   const [activeScene, setActiveScene] = useState(0);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(
