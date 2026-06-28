@@ -193,7 +193,7 @@ function ChapterScene({
 export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
-  const contactEmail = contact?.email ?? "miladtsx@gmail.com";
+  const contactEmail = contact?.email ?? "milaforge@proton.me";
   const emailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
     "HI Milad!",
   )}`;

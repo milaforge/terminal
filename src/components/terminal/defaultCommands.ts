@@ -541,7 +541,7 @@ export function registerDefaultCommands({
   const fontController = appearanceController?.font;
   const colorController = appearanceController?.color;
   const contact = props.contact || {
-    email: "miladtsx@gmail.com",
+    email: "milaforge@proton.me",
   };
   if (typeof document !== "undefined") {
     applyMotionMode(readStoredMotion());

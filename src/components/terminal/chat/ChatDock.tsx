@@ -38,7 +38,7 @@ type ChatDockProps = {
 
 export function ChatDock({
   onBookCall,
-  contactEmail = "miladtsx@gmail.com",
+  contactEmail = "milaforge@proton.me",
 }: ChatDockProps) {
   // Select all needed slices in one selector and shallow-compare to cut down on re-renders.
   const {

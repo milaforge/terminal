@@ -6,7 +6,7 @@ import BlogPage from "./pages/BlogPage";
 import { parseAppRoute } from "./utils/appRouting";
 
 const CONTACT_EMAIL =
-  import.meta.env.VITE_CONTACT_EMAIL || "miladtsx@gmail.com";
+  import.meta.env.VITE_CONTACT_EMAIL || "milaforge@proton.me";
 
 function useHashRoute() {
   const [hash, setHash] = useState(() => window.location.hash);
