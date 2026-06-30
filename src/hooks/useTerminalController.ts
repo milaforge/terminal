@@ -36,6 +36,35 @@ const isLineSegment = (value: unknown): value is LineSegment =>
   "type" in value &&
   typeof (value as { type?: unknown }).type === "string";
 
+export function deletePreviousTerminalWord(
+  value: string,
+  selectionStart: number,
+  selectionEnd = selectionStart,
+): { value: string; caret: number } {
+  const start = Math.max(0, Math.min(selectionStart, value.length));
+  const end = Math.max(start, Math.min(selectionEnd, value.length));
+
+  if (start !== end) {
+    return {
+      value: value.slice(0, start) + value.slice(end),
+      caret: start,
+    };
+  }
+
+  let wordStart = start;
+  while (wordStart > 0 && /\s/.test(value[wordStart - 1])) {
+    wordStart -= 1;
+  }
+  while (wordStart > 0 && !/\s/.test(value[wordStart - 1])) {
+    wordStart -= 1;
+  }
+
+  return {
+    value: value.slice(0, wordStart) + value.slice(start),
+    caret: wordStart,
+  };
+}
+
 export function useTerminalController(props: TerminalProps): ControllerReturn {
   const isEmbeddedController = props.controllerMode === "embedded";
   const typeSfxRef = useRef<ReturnType<typeof createTypeSfx> | null>(null);
@@ -996,6 +1025,32 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
           }
           return;
         }
+      }
+
+      if (
+        event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        event.key === "Backspace"
+      ) {
+        const inputEl = inputRef.current;
+        if (!inputEl) return;
+
+        event.preventDefault();
+        resetTabState();
+        inputFromHistory.current = false;
+
+        const next = deletePreviousTerminalWord(
+          inputEl.value,
+          inputEl.selectionStart ?? inputEl.value.length,
+          inputEl.selectionEnd ?? inputEl.value.length,
+        );
+
+        setState((prev) => ({ ...prev, input: next.value }));
+        window.requestAnimationFrame(() => {
+          inputRef.current?.setSelectionRange(next.caret, next.caret);
+        });
+        return;
       }
 
       const metaOrCtrl = event.ctrlKey || event.metaKey;
