@@ -379,10 +379,13 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
           <button type="button" className="story-brand" onClick={scrollToTop}>
             Milad
           </button>
-          <a className="story-brandSecondary" title="Read Blog" href={`${BASE}blog/`}>
+          <a
+            className="story-brandSecondary"
+            title="Read Blog"
+            href={`${BASE}blog/`}
+          >
             Blog
           </a>
-
           <a
             className="story-brandIconLink"
             href={emailHref}
@@ -419,7 +422,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
             className="story-skip t-commandLink t-pressable is-secondary"
             onClick={() => jumpToScene(sceneCount - 1)}
           >
-            <span className="t-commandLabel">Let's talk</span>
+            <span className="t-commandLabel">Discuss your project</span>
           </button>
         )}
       </header>
@@ -464,13 +467,16 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                 {STORY_START_YEAR} → {STORY_END_YEAR}
               </p>
               <h1 className="story-hook">{STORY_TAGLINE}</h1>
-              <p className="story-sub">20 years of software Engineering</p>
+              <p className="story-sub">
+                20 years turning ideas and fragile software into dependable
+                products.
+              </p>
               <button
                 type="button"
                 className="story-introProof t-commandLink t-pressable is-secondary"
                 onClick={() => openTerminal(SELECTED_WORK_COMMAND)}
               >
-                <span className="t-commandLabel">Proof</span>
+                <span className="t-commandLabel">See selected work</span>
               </button>
               <motion.p
                 className="story-scrollHint"
@@ -512,14 +518,15 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
               reduced={reduced}
             />
             <div className="story-chapter story-outro">
-              <p className="story-outroEyebrow">PREDICTABLE SOFTWARE</p>
+              <p className="story-outroEyebrow">DEPENDABLE SOFTWARE</p>
               <h2 className="story-hook">
-                Bring me the system
+                Bring me the idea or the software
                 <br />
-                you don’t trust.
+                you no longer trust.
               </h2>
               <p className="story-sub story-outroSub">
-                Retries, crashes, duplicate effects, unsafe automation.
+                I build new products, strengthen fragile systems, and make
+                automation safer and easier to operate.
               </p>
               <div className="story-outroPrimary">
                 <button
@@ -527,7 +534,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                   className="story-primaryCta"
                   onClick={onBookCall}
                 >
-                  Evaluate your case
+                  Discuss your project
                 </button>
               </div>
             </div>
