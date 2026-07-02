@@ -7,6 +7,50 @@ type ClientProofStripProps = {
   segment: ClientProofSegment;
 };
 
+type TooltipRect = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  width: number;
+};
+
+type ClientTooltipPositionInput = {
+  anchorRect: TooltipRect;
+  tooltipWidth: number;
+  tooltipHeight: number;
+  viewportWidth: number;
+  viewportHeight: number;
+  preferredCenterX?: number;
+  preferredTop?: number;
+  margin?: number;
+  gap?: number;
+};
+
+export function getClientTooltipPosition({
+  anchorRect,
+  tooltipWidth,
+  tooltipHeight,
+  viewportWidth,
+  viewportHeight,
+  preferredCenterX,
+  preferredTop,
+  margin = 12,
+  gap = 10,
+}: ClientTooltipPositionInput) {
+  const width = Math.min(tooltipWidth, Math.max(0, viewportWidth - margin * 2));
+  const minX = margin;
+  const maxX = Math.max(minX, viewportWidth - margin - width);
+  const anchorCenter = anchorRect.left + anchorRect.width / 2;
+  const tooltipCenter = preferredCenterX ?? anchorCenter;
+  const x = Math.min(Math.max(tooltipCenter - width / 2, minX), maxX);
+  const maxY = Math.max(margin, viewportHeight - margin - tooltipHeight);
+  const y = Math.min(Math.max(preferredTop ?? anchorRect.bottom + gap, margin), maxY);
+  const arrowX = Math.min(Math.max(anchorCenter - x, 18), Math.max(18, width - 18));
+
+  return { x, y, width, arrowX };
+}
+
 export function ClientProofStrip({ segment }: ClientProofStripProps) {
   const [activeClient, setActiveClient] = useState<ClientProofItem | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -69,6 +113,32 @@ export function ClientProofStrip({ segment }: ClientProofStripProps) {
         )
       : null;
 
+  const updateTooltipPosition = (button: HTMLButtonElement) => {
+    const tooltip = button.querySelector<HTMLElement>(".intro-clientTooltip");
+    if (!tooltip) return;
+
+    const gridRect = button
+      .closest<HTMLElement>(".intro-clientGrid")
+      ?.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const position = getClientTooltipPosition({
+      anchorRect: button.getBoundingClientRect(),
+      tooltipWidth: tooltipRect.width || 320,
+      tooltipHeight: tooltipRect.height || 120,
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      preferredCenterX: gridRect
+        ? gridRect.left + gridRect.width / 2
+        : undefined,
+      preferredTop: gridRect ? gridRect.bottom + 10 : undefined,
+    });
+
+    tooltip.style.setProperty("--intro-tooltip-x", `${position.x}px`);
+    tooltip.style.setProperty("--intro-tooltip-y", `${position.y}px`);
+    tooltip.style.setProperty("--intro-tooltip-width", `${position.width}px`);
+    tooltip.style.setProperty("--intro-tooltip-arrow-x", `${position.arrowX}px`);
+  };
+
   return (
     <>
       <span
@@ -97,6 +167,8 @@ export function ClientProofStrip({ segment }: ClientProofStripProps) {
                   aria-describedby={tooltipId}
                   aria-haspopup="dialog"
                   aria-expanded={activeClient?.slug === item.slug}
+                  onMouseEnter={(event) => updateTooltipPosition(event.currentTarget)}
+                  onFocus={(event) => updateTooltipPosition(event.currentTarget)}
                   onClick={(event) => {
                     event.stopPropagation();
                     setActiveClient(item);
