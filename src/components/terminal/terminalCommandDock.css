@@ -10,8 +10,8 @@
 .terminal-session-wrap.is-maximized {
   inset: 0;
   width: 100vw;
-  height: 100vh;
-  padding: 10px;
+  height: 100dvh;
+  padding: 0;
   background: var(--surface, #0a0d12);
   z-index: var(--z-chat-max, 70);
 }
@@ -35,7 +35,7 @@
 .terminal-session-window.is-maximized {
   width: 100%;
   height: 100%;
-  border-radius: 12px;
+  border-radius: 0;
   box-shadow: none;
 }
 

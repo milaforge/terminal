@@ -789,8 +789,7 @@
   inset: 0;
   z-index: var(--z-chat-max, 70);
   display: grid;
-  place-items: center;
-  padding: 14px;
+  padding: 0;
   background: color-mix(in srgb, var(--bg, #04060a) 82%, transparent);
   backdrop-filter: blur(16px) saturate(130%);
   cursor: text;
@@ -798,11 +797,11 @@
 
 .story-terminalPanel {
   position: relative;
-  width: min(1180px, 100%);
-  height: min(820px, calc(100dvh - 28px));
+  width: 100vw;
+  height: 100dvh;
   overflow: hidden;
-  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-  border-radius: 18px;
+  border: 0;
+  border-radius: 0;
   background: var(--surface, #07080a);
   box-shadow: var(--shadow, 0 22px 70px rgba(0, 0, 0, 0.55));
 }

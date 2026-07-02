@@ -41,7 +41,7 @@ export function TerminalCommandDock({
     appearanceController,
     controllerMode: "embedded",
   });
-  const [isMaximized, setIsMaximized] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(true);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -64,7 +64,7 @@ export function TerminalCommandDock({
   }, [lines, open, scrollRef]);
 
   useEffect(() => {
-    if (!open) setIsMaximized(false);
+    if (open) setIsMaximized(true);
   }, [open]);
 
   useEffect(() => {
