@@ -3434,9 +3434,9 @@
 
   .t-workGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
-    max-width: 960px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 744px;
     margin: 0;
   }
 
@@ -3446,31 +3446,27 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
-    background: linear-gradient(145deg,
-        color-mix(in srgb, var(--surface) 80%, var(--accent) 10%),
-        color-mix(in srgb, var(--surface) 90%, #000 5%));
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-    transition: transform 160ms ease, border-color 160ms ease,
-      box-shadow 160ms ease, background 160ms ease;
+    min-height: 250px;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid #e2e8f4;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(22, 40, 80, 0.05), 0 2px 10px rgba(22, 40, 80, 0.045);
+    color: #18233b;
+    overflow: hidden;
+    transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      box-shadow 300ms ease, border-color 300ms ease, background 300ms ease;
   }
 
   .t-proofCard {
-    gap: 10px;
+    gap: 0;
     align-items: stretch;
-    overflow: hidden;
     justify-content: space-between;
   }
 
   .t-proofCard.is-headline {
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
-    background: linear-gradient(145deg,
-        color-mix(in srgb, var(--surface) 76%, var(--accent) 10%),
-        color-mix(in srgb, var(--surface) 90%, #000 5%));
-    box-shadow: inset 2px 0 0 color-mix(in srgb, var(--accent) 22%, var(--border) 78%), 0 12px 24px rgba(0, 0, 0, 0.26);
+    border-color: #d7e1f5;
+    background: #fff;
   }
 
   .t-proofMain {
@@ -3480,20 +3476,162 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    gap: 9px;
+    padding: 18px 17px 0;
+  }
+
+  .t-workSpark {
+    position: relative;
+    height: 76px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(58, 91, 208, 0.11), rgba(255, 255, 255, 0));
+    flex: none;
+  }
+
+  .t-workSparkDots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(58, 91, 208, 0.42) 0.9px, transparent 1.4px);
+    background-size: 11px 11px;
+    opacity: 0.32;
+  }
+
+  .t-workSparkLine {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 76px;
+    fill: none;
+  }
+
+  .t-workSparkArea {
+    fill: #3a5bd0;
+    opacity: 0.1;
+    transition: opacity 350ms ease;
+  }
+
+  .t-workSparkStroke {
+    stroke: #3a5bd0;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.7;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 300ms ease, opacity 350ms ease, stroke-width 350ms ease;
+  }
+
+  .t-workSparkCircle {
+    fill: #3a5bd0;
+    opacity: 0.9;
+    transition: opacity 350ms ease;
+  }
+
+  .t-workSheen {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 42%;
+    transform: translateX(-60%);
+    opacity: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    pointer-events: none;
+  }
+
+  .t-workCard.is-active .t-workSparkStroke {
+    animation: t-workLineDraw 750ms cubic-bezier(0.4, 0, 0.1, 1);
+    opacity: 1;
+    stroke-width: 2.4;
+  }
+
+  .t-workCard.is-active .t-workSparkArea {
+    opacity: 0.2;
+  }
+
+  .t-workCard.is-active .t-workSparkCircle {
+    opacity: 1;
+  }
+
+  .t-workCard.is-active .t-workSheen {
+    animation: t-workSheen 900ms ease;
+  }
+
+  @keyframes t-workLineDraw {
+    from {
+      stroke-dashoffset: 1;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes t-workSheen {
+    0% {
+      opacity: 0;
+      transform: translateX(-60%);
+    }
+
+    15% {
+      opacity: 0.55;
+    }
+
+    100% {
+      opacity: 0.55;
+      transform: translateX(170%);
+    }
+  }
+
+  .t-workTitleRow {
+    display: flex;
+    align-items: baseline;
     gap: 8px;
+    min-width: 0;
+  }
+
+  .t-workNumber {
+    flex: none;
+    color: #c3cddf;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .t-workMetric {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .t-workMetricValue {
+    color: #3a5bd0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  .t-workMetricLabel {
+    color: #93a0b6;
+    font-size: 11px;
+    line-height: 1.2;
   }
 
   .t-workCard:hover,
-  .t-workCard:focus-visible {
-    border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.32);
-    transform: translateY(-2px);
+  .t-workCard:focus-visible,
+  .t-workCard.is-active {
+    border-color: rgba(58, 91, 208, 0.42);
+    box-shadow: 0 16px 40px -14px rgba(28, 52, 120, 0.26), 0 6px 16px rgba(28, 52, 120, 0.1);
+    transform: translateY(-4px);
     outline: none;
   }
 
   .t-workCard:active {
-    transform: translateY(1px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -16px rgba(16, 29, 62, 0.44);
   }
 
   .t-workTags {
@@ -3510,13 +3648,15 @@
   }
 
   .t-workTag {
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--accent) 16%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--border));
-    font-size: 0.8em;
-    letter-spacing: 0.1px;
-    color: color-mix(in srgb, var(--text) 86%, var(--accent) 20%);
+    background: rgba(58, 91, 208, 0.1);
+    border: 0;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.2;
+    color: #33489f;
   }
 
   .t-workIntro {
@@ -3528,11 +3668,11 @@
   }
 
   .t-proofPain {
-    color: color-mix(in srgb, var(--text) 90%, var(--accent) 18%);
-    font-size: 0.9em;
-    font-weight: 500;
-    letter-spacing: 0.1px;
-    line-height: 1.28;
+    color: #17233f;
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.32;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -3542,10 +3682,10 @@
   }
 
   .t-proofOutcome {
-    color: color-mix(in srgb, var(--muted) 18%, var(--text) 82%);
-    font-size: 11.5px;
-    line-height: 1.42;
-    letter-spacing: 0.1px;
+    color: #5a6a86;
+    font-size: 12.5px;
+    line-height: 1.6;
+    letter-spacing: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -3569,6 +3709,31 @@
     justify-content: space-between;
     gap: 10px;
     margin-top: auto;
+    padding: 13px 17px 15px;
+  }
+
+  .t-workArrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid rgba(58, 91, 208, 0.42);
+    color: #3a5bd0;
+    font-size: 13px;
+    line-height: 1;
+    flex: none;
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+
+  .t-workCard:hover .t-workArrow,
+  .t-workCard:focus-visible .t-workArrow,
+  .t-workCard.is-active .t-workArrow {
+    background: #3a5bd0;
+    border-color: #3a5bd0;
+    color: #fff;
+    transform: scale(1.06);
   }
 
   .t-proofCta {
@@ -3604,23 +3769,22 @@
     }
 
     .t-workGrid {
-      gap: 14px;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }
 
     .t-proofCard {
-      min-height: 128px;
-      padding: 14px;
-      gap: 8px;
+      min-height: 244px;
     }
 
     .t-proofPain {
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1.28;
     }
 
     .t-proofOutcome {
-      font-size: 14px;
-      line-height: 1.42;
+      font-size: 12.5px;
+      line-height: 1.5;
     }
 
     .t-proofTimeframe {

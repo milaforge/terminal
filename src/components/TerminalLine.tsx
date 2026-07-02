@@ -1,4 +1,6 @@
 import {
+  type ButtonHTMLAttributes,
+  type ReactNode,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -907,6 +909,57 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
 function WorkGrid({ segment }: { segment: WorkSegment }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const items = segment.items || [];
+  const metricsByTitle: Record<string, { prefix: string; value: number; suffix: string; label: string; points: number[] }> = {
+    "Release Gates for Live Funds": {
+      prefix: "$",
+      value: 120,
+      suffix: "M",
+      label: "funds protected, zero loss",
+      points: [0.55, 0.5, 0.53, 0.5, 0.52, 0.5],
+    },
+    "Containment Under 20x Load": {
+      prefix: "",
+      value: 20,
+      suffix: "x",
+      label: "peak load sustained",
+      points: [0.18, 0.28, 0.5, 0.74, 0.84, 0.86],
+    },
+    "Cost Control Without Reliability Regression": {
+      prefix: "-",
+      value: 43,
+      suffix: "%",
+      label: "infra spend, SLA held",
+      points: [0.86, 0.72, 0.6, 0.46, 0.34, 0.3],
+    },
+    "Reliable Transaction Completion at Lower Cost": {
+      prefix: "-",
+      value: 38,
+      suffix: "%",
+      label: "cost per transaction",
+      points: [0.82, 0.8, 0.58, 0.52, 0.36, 0.32],
+    },
+    "Security Triage Automation": {
+      prefix: "-",
+      value: 72,
+      suffix: "%",
+      label: "manual triage time",
+      points: [0.9, 0.66, 0.46, 0.3, 0.22, 0.2],
+    },
+    "Internal Ownership of a Critical Workflow": {
+      prefix: "",
+      value: 100,
+      suffix: "%",
+      label: "owned in-house",
+      points: [0.3, 0.32, 0.5, 0.78, 0.92, 0.95],
+    },
+    "Scope Control for Investor Proof": {
+      prefix: "",
+      value: 3,
+      suffix: " wks",
+      label: "to investor-ready proof",
+      points: [0.2, 0.42, 0.7, 0.9],
+    },
+  };
 
   const openItem = openIndex !== null ? items[openIndex] : null;
 
@@ -936,6 +989,20 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
       .replace(/\*([^*]+)\*/g, "$1");
   };
 
+  const getSpark = (points: number[]) => {
+    const width = 100;
+    const height = 36;
+    const xs = points.map((_, idx) => (idx / Math.max(points.length - 1, 1)) * width);
+    const ys = points.map((point) => height - 2 - point * 30);
+    const line = xs.map((x, idx) => `${idx === 0 ? "M" : "L"} ${x.toFixed(1)} ${ys[idx].toFixed(1)}`).join(" ");
+    return {
+      line,
+      area: `${line} L ${xs[xs.length - 1].toFixed(1)} 36 L ${xs[0].toFixed(1)} 36 Z`,
+      endX: xs[xs.length - 1],
+      endY: ys[ys.length - 1],
+    };
+  };
+
   const modalMarkdown = openItem ? openItem.description.trim() : "";
 
   return (
@@ -950,29 +1017,73 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
       </div>
 
       <div className="t-workGrid">
-        {items.map((item, idx) => (
-          <button
-            key={idx}
-            type="button"
-            className={`t-workCard t-proofCard${idx < 3 ? " is-headline" : ""}`}
-            onClick={() => setOpenIndex(idx)}
-            aria-label={`Open ${item.title} details`}
-          >
-            <div className="t-proofMain">
-              <div className="t-proofPain">{item.title}</div>
-              <div className="t-proofOutcome">{getCardSummary(item)}</div>
-            </div>
-            <div className="t-proofFooter">
-              <div className="t-workTags" aria-label="Tags">
-                {(item.tags || []).slice(0, 3).map((tag) => (
-                  <span key={tag} className="t-workTag">
-                    {tag}
-                  </span>
-                ))}
+        {items.map((item, idx) => {
+          const metric = metricsByTitle[item.title] || {
+            prefix: "",
+            value: idx + 1,
+            suffix: "",
+            label: "case study",
+            points: [0.35, 0.5, 0.42, 0.62],
+          };
+          const spark = getSpark(metric.points);
+          const display = `${metric.prefix}${metric.value.toLocaleString()}${metric.suffix}`;
+
+          return (
+            <WorkCardButton
+              key={idx}
+              headline={idx < 3}
+              onClick={() => setOpenIndex(idx)}
+              aria-label={`Open ${item.title} details`}
+              metric={metric}
+              metricDisplay={display}
+            >
+              <div className="t-workSpark" aria-hidden="true">
+                <div className="t-workSparkDots" />
+                <svg
+                  className="t-workSparkLine"
+                  viewBox="0 0 100 36"
+                  preserveAspectRatio="none"
+                  focusable="false"
+                >
+                  <path className="t-workSparkArea" d={spark.area} />
+                  <path className="t-workSparkStroke" d={spark.line} pathLength={1} />
+                  <circle
+                    className="t-workSparkCircle"
+                    cx={spark.endX}
+                    cy={spark.endY}
+                    r="2.4"
+                  />
+                </svg>
+                <div className="t-workSheen" />
               </div>
-            </div>
-          </button>
-        ))}
+              <div className="t-proofMain">
+                <div className="t-workTitleRow">
+                  <span className="t-workNumber">{String(idx + 1).padStart(2, "0")}</span>
+                  <div className="t-proofPain">{item.title}</div>
+                </div>
+                <div className="t-proofOutcome">{getCardSummary(item)}</div>
+                <div className="t-workMetric">
+                  <span className="t-workMetricValue" data-work-count>
+                    {display}
+                  </span>
+                  <span className="t-workMetricLabel">{metric.label}</span>
+                </div>
+              </div>
+              <div className="t-proofFooter">
+                <div className="t-workTags" aria-label="Tags">
+                  {(item.tags || []).slice(0, 3).map((tag) => (
+                    <span key={tag} className="t-workTag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <span className="t-workArrow" aria-hidden="true">
+                  →
+                </span>
+              </div>
+            </WorkCardButton>
+          );
+        })}
       </div>
 
       {openItem ? (
@@ -1018,6 +1129,79 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
         </div>
       ) : null}
     </div>
+  );
+}
+
+function WorkCardButton({
+  headline,
+  metric,
+  metricDisplay,
+  children,
+  onClick,
+  ...props
+}: {
+  headline: boolean;
+  metric: { prefix: string; value: number; suffix: string };
+  metricDisplay: string;
+  children: ReactNode;
+  onClick: () => void;
+} & ButtonHTMLAttributes<HTMLButtonElement>) {
+  const [active, setActive] = useState(false);
+  const frameRef = useRef<number | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    const metricElement = buttonRef.current?.querySelector("[data-work-count]");
+
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+
+    if (!active || metric.value <= 0) {
+      if (metricElement) metricElement.textContent = metricDisplay;
+      return;
+    }
+
+    const start = performance.now();
+    const duration = 720;
+    const tick = (time: number) => {
+      const progress = Math.min(1, (time - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(metric.value * eased);
+      if (metricElement) {
+        metricElement.textContent = `${metric.prefix}${current.toLocaleString()}${metric.suffix}`;
+      }
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      } else {
+        if (metricElement) metricElement.textContent = metricDisplay;
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+      }
+      if (metricElement) metricElement.textContent = metricDisplay;
+    };
+  }, [active, metric.prefix, metric.suffix, metric.value, metricDisplay]);
+
+  return (
+    <button
+      {...props}
+      ref={buttonRef}
+      type="button"
+      className={`t-workCard t-proofCard${headline ? " is-headline" : ""}${active ? " is-active" : ""}`}
+      onClick={onClick}
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
+      onFocus={() => setActive(true)}
+      onBlur={() => setActive(false)}
+    >
+      {children}
+    </button>
   );
 }
 
