@@ -5,6 +5,9 @@
   background: var(--bg-layer, var(--bg));
   color: var(--text);
   font-family: var(--terminal-font);
+  --story-sidebar-hover-y: -1px;
+  --story-sidebar-hover-scale: 1.08;
+  --story-sidebar-hover-transition: 250ms ease;
 }
 
 .story-topbar {
@@ -50,7 +53,10 @@
   font-family: inherit;
   opacity: 0.85;
   cursor: pointer;
-  transition: color 250ms ease, opacity 250ms ease, transform 250ms ease;
+  transition:
+    color var(--story-sidebar-hover-transition),
+    opacity var(--story-sidebar-hover-transition),
+    transform var(--story-sidebar-hover-transition);
 }
 
 .story-brandSecondary {
@@ -67,13 +73,19 @@
   font-family: inherit;
   text-decoration: none;
   cursor: pointer;
-  transition: color 250ms ease, opacity 250ms ease, transform 250ms ease;
+  transition:
+    color var(--story-sidebar-hover-transition),
+    opacity var(--story-sidebar-hover-transition),
+    transform var(--story-sidebar-hover-transition);
 }
 
 .story-brandIconLink {
   color: color-mix(in srgb, var(--text) 66%, var(--muted) 34%);
   text-decoration: none;
-  transition: color 250ms ease, opacity 250ms ease, transform 250ms ease;
+  transition:
+    color var(--story-sidebar-hover-transition),
+    opacity var(--story-sidebar-hover-transition),
+    transform var(--story-sidebar-hover-transition);
 }
 
 .story-brandIconLink svg {
@@ -96,7 +108,8 @@
 .story-brandIconLink:hover,
 .story-brandIconLink:focus-visible {
   color: var(--text);
-  transform: translateY(-1px) scale(1.08);
+  transform: translateY(var(--story-sidebar-hover-y))
+    scale(var(--story-sidebar-hover-scale));
 }
 
 .story-brand:focus-visible,
@@ -255,32 +268,27 @@
   --story-avatar-translate-x: -50%;
   --story-avatar-translate-y: -50%;
   --story-avatar-scale: 1;
-  --story-avatar-hover-y: 0px;
   --story-avatar-hover-scale: 1;
   position: fixed;
   top: calc(50dvh - 168px);
   left: 50%;
   z-index: 31;
   margin: 0;
-  transform: translate(
-      var(--story-avatar-translate-x),
-      var(--story-avatar-translate-y)
-    )
-    translateY(var(--story-avatar-hover-y))
-    scale(calc(var(--story-avatar-scale) * var(--story-avatar-hover-scale)));
+  translate: var(--story-avatar-translate-x) var(--story-avatar-translate-y);
+  scale: calc(var(--story-avatar-scale) * var(--story-avatar-hover-scale));
+  transform: none;
   transform-origin: center;
   transition:
     top 520ms cubic-bezier(0.22, 1, 0.36, 1),
     left 520ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    scale var(--story-sidebar-hover-transition),
     box-shadow 520ms ease;
-  will-change: top, left, transform;
+  will-change: top, left, scale;
 }
 
 .story-avatarLauncher:hover,
 .story-avatarLauncher:focus-visible {
-  --story-avatar-hover-y: -1px;
-  --story-avatar-hover-scale: 1.08;
+  --story-avatar-hover-scale: 1.025;
 }
 
 .story-avatarLauncher.is-docked {
@@ -288,6 +296,11 @@
   --story-avatar-scale: 0.42;
   top: 134px;
   left: 41px;
+}
+
+.story-avatarLauncher.is-docked:hover,
+.story-avatarLauncher.is-docked:focus-visible {
+  --story-avatar-hover-scale: var(--story-sidebar-hover-scale);
 }
 
 .story-avatarSpacer {
