@@ -12,6 +12,7 @@ import { ClientProofStrip } from "@components/ClientProofStrip";
 import { SparklesCore } from "@components/ui/sparkles";
 import { useTerminalTone } from "@hooks/useTerminalTone";
 import { copyToClipboard, buildShareLink } from "@utils";
+import { getSelectedCaseMetric } from "@data/selectedCases";
 import { ArrowUp, Clock, Info } from "lucide-react";
 import {
   CommandSegment,
@@ -20,6 +21,7 @@ import {
   FaqSegment,
   LogSegment,
   LineSegment,
+  TerminalLine,
   TerminalLineProps,
   MarkdownSegment,
   WorkSegment,
@@ -34,6 +36,14 @@ import {
 import { DownloadIntegrity } from "./terminal/DownloadIntegrity";
 
 type ExecuteCommand = TerminalLineProps["executeCommand"];
+
+type CommandLineButtonProps = {
+  commandLabel: string;
+  isCollapsed?: boolean;
+  isHistoricalCommand?: boolean;
+  onToggleCollapse?: () => void;
+  promptGlyph: string;
+};
 
 const MONTH_YEAR_FORMATTER = new Intl.DateTimeFormat("en", {
   month: "short",
@@ -909,57 +919,6 @@ function LogAccordion({ items }: { items: LogSegment["items"] }) {
 function WorkGrid({ segment }: { segment: WorkSegment }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const items = segment.items || [];
-  const metricsByTitle: Record<string, { prefix: string; value: number; suffix: string; label: string; points: number[] }> = {
-    "Release Gates for Live Funds": {
-      prefix: "$",
-      value: 120,
-      suffix: "M",
-      label: "funds protected, zero loss",
-      points: [0.55, 0.5, 0.53, 0.5, 0.52, 0.5],
-    },
-    "Containment Under 20x Load": {
-      prefix: "",
-      value: 20,
-      suffix: "x",
-      label: "peak load sustained",
-      points: [0.18, 0.28, 0.5, 0.74, 0.84, 0.86],
-    },
-    "Cost Control Without Reliability Regression": {
-      prefix: "-",
-      value: 43,
-      suffix: "%",
-      label: "infra spend, SLA held",
-      points: [0.86, 0.72, 0.6, 0.46, 0.34, 0.3],
-    },
-    "Reliable Transaction Completion at Lower Cost": {
-      prefix: "-",
-      value: 38,
-      suffix: "%",
-      label: "cost per transaction",
-      points: [0.82, 0.8, 0.58, 0.52, 0.36, 0.32],
-    },
-    "Security Triage Automation": {
-      prefix: "-",
-      value: 72,
-      suffix: "%",
-      label: "manual triage time",
-      points: [0.9, 0.66, 0.46, 0.3, 0.22, 0.2],
-    },
-    "Internal Ownership of a Critical Workflow": {
-      prefix: "",
-      value: 100,
-      suffix: "%",
-      label: "owned in-house",
-      points: [0.3, 0.32, 0.5, 0.78, 0.92, 0.95],
-    },
-    "Scope Control for Investor Proof": {
-      prefix: "",
-      value: 3,
-      suffix: " wks",
-      label: "to investor-ready proof",
-      points: [0.2, 0.42, 0.7, 0.9],
-    },
-  };
 
   const openItem = openIndex !== null ? items[openIndex] : null;
 
@@ -992,9 +951,16 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
   const getSpark = (points: number[]) => {
     const width = 100;
     const height = 36;
-    const xs = points.map((_, idx) => (idx / Math.max(points.length - 1, 1)) * width);
+    const xs = points.map(
+      (_, idx) => (idx / Math.max(points.length - 1, 1)) * width,
+    );
     const ys = points.map((point) => height - 2 - point * 30);
-    const line = xs.map((x, idx) => `${idx === 0 ? "M" : "L"} ${x.toFixed(1)} ${ys[idx].toFixed(1)}`).join(" ");
+    const line = xs
+      .map(
+        (x, idx) =>
+          `${idx === 0 ? "M" : "L"} ${x.toFixed(1)} ${ys[idx].toFixed(1)}`,
+      )
+      .join(" ");
     return {
       line,
       area: `${line} L ${xs[xs.length - 1].toFixed(1)} 36 L ${xs[0].toFixed(1)} 36 Z`,
@@ -1018,13 +984,7 @@ function WorkGrid({ segment }: { segment: WorkSegment }) {
 
       <div className="t-workGrid">
         {items.map((item, idx) => {
-          const metric = metricsByTitle[item.title] || {
-            prefix: "",
-            value: idx + 1,
-            suffix: "",
-            label: "case study",
-            points: [0.35, 0.5, 0.42, 0.62],
-          };
+          const metric = getSelectedCaseMetric(item, idx);
           const spark = getSpark(metric.points);
           const display = `${metric.prefix}${metric.value.toLocaleString()}${metric.suffix}`;
 
@@ -1333,55 +1293,67 @@ function ActivityTree({
   );
 }
 
-export function TerminalLineRow({
+export function terminalLineHasCommandSegments(line: TerminalLine): boolean {
+  return line.some((segment) => segment.type === "command");
+}
+
+export function getTerminalLineCommandLabel({
+  commandText,
+  line,
+  promptGlyph,
+}: {
+  commandText?: string;
+  line: TerminalLine;
+  promptGlyph: string;
+}): string {
+  if (commandText) return commandText;
+
+  const firstSegment = line[0];
+  if (line.length === 1 && firstSegment?.type === "text") {
+    const raw = firstSegment.text || "";
+    const promptPrefix = `${promptGlyph} `;
+    return raw.startsWith(promptPrefix) ? raw.slice(promptPrefix.length) : raw;
+  }
+
+  return "";
+}
+
+export function getTerminalLineClassName({
+  className,
+  hasCommandSegments,
+}: {
+  className?: string;
+  hasCommandSegments: boolean;
+}): string {
+  return `${className || ""}${hasCommandSegments ? " has-commands" : ""}`.trim();
+}
+
+function renderLineContent({
+  executeCommand,
   line,
   lineIndex,
-  className,
-  executeCommand,
-  isCommandLine,
+}: Pick<TerminalLineProps, "executeCommand" | "line" | "lineIndex">) {
+  if (line.length === 0) return [<span key={`line-${lineIndex}-empty`}></span>];
+
+  return line.map((segment, idx) =>
+    renderSegment(segment, `line-${lineIndex}-seg-${idx}`, executeCommand),
+  );
+}
+
+function CommandLineButton({
+  commandLabel,
   isCollapsed,
   isHistoricalCommand,
-  prompt,
-  commandText,
   onToggleCollapse,
-}: TerminalLineProps) {
-  const hasCommandSegments = line.some(
-    (segment) => typeof segment !== "string" && segment.type === "command",
-  );
+  promptGlyph,
+}: CommandLineButtonProps) {
+  const stateClass = isCollapsed ? " is-collapsed" : " is-open";
+  const historyClass = isHistoricalCommand ? " is-historical" : "";
 
-  const content =
-    line.length === 0
-      ? [<span key={`line-${lineIndex}-empty`}></span>]
-      : line.map((segment, idx) =>
-          renderSegment(
-            segment,
-            `line-${lineIndex}-seg-${idx}`,
-            executeCommand,
-          ),
-        );
-
-  const promptGlyph = prompt || ">";
-  const commandLabel = (() => {
-    if (commandText) return commandText;
-    const first = line[0];
-    if (
-      line.length === 1 &&
-      typeof first !== "string" &&
-      first.type === "text"
-    ) {
-      const raw = first.text || "";
-      const prefix = `${promptGlyph} `;
-      return raw.startsWith(prefix) ? raw.slice(prefix.length) : raw;
-    }
-    return typeof line[0] === "string" ? (line[0] as string) : "";
-  })();
-
-  const interactiveContent = isCommandLine ? (
+  return (
     <button
       type="button"
-      className={`t-lineCommand${isCollapsed ? " is-collapsed" : " is-open"}${
-        isHistoricalCommand ? " is-historical" : ""
-      }`}
+      className={`t-lineCommand${stateClass}${historyClass}`}
       aria-expanded={!isCollapsed}
       aria-label={`${isCollapsed ? "Expand" : "Collapse"} output for ${commandLabel || "command"}`}
       onClick={(event) => {
@@ -1394,13 +1366,44 @@ export function TerminalLineRow({
       </span>
       <span className="t-lineCommandText">{commandLabel}</span>
     </button>
+  );
+}
+
+export function TerminalLineRow({
+  line,
+  lineIndex,
+  className,
+  executeCommand,
+  isCommandLine,
+  isCollapsed,
+  isHistoricalCommand,
+  prompt,
+  commandText,
+  onToggleCollapse,
+}: TerminalLineProps) {
+  const promptGlyph = prompt || ">";
+  const hasCommandSegments = terminalLineHasCommandSegments(line);
+  const commandLabel = getTerminalLineCommandLabel({
+    commandText,
+    line,
+    promptGlyph,
+  });
+
+  const interactiveContent = isCommandLine ? (
+    <CommandLineButton
+      commandLabel={commandLabel}
+      isCollapsed={isCollapsed}
+      isHistoricalCommand={isHistoricalCommand}
+      onToggleCollapse={onToggleCollapse}
+      promptGlyph={promptGlyph}
+    />
   ) : (
-    content
+    renderLineContent({ executeCommand, line, lineIndex })
   );
 
   return (
     <span
-      className={`${className || ""}${hasCommandSegments ? " has-commands" : ""}`.trim()}
+      className={getTerminalLineClassName({ className, hasCommandSegments })}
       data-line-index={lineIndex}
     >
       {interactiveContent}
