@@ -293,9 +293,6 @@ describe("default commands", () => {
       model,
       registry,
     });
-    expect(JSON.stringify(listOut)).toContain("Release Gates for Live Funds");
-    expect(JSON.stringify(listOut)).toContain("VENT Finance");
-    expect(JSON.stringify(listOut)).toContain("Saman Bank");
     const listLines = Array.isArray(listOut) ? listOut : [listOut];
     const workLine = listLines.find(
       (line): line is TerminalLine => Array.isArray(line),
@@ -304,16 +301,23 @@ describe("default commands", () => {
       (segment): segment is Extract<TerminalLine[number], { type: "work" }> =>
         segment.type === "work",
     );
+    expect(workSegment?.items.map((item) => item.title)).toContain(
+      "A Bad Release Could Put Customer Funds at Risk",
+    );
     expect(workSegment?.clientProof?.title).toBe("Trusted by leaders ");
-    expect(workSegment?.clientProof?.items).toHaveLength(8);
+    expect(workSegment?.clientProof?.items.map((item) => item.name)).toEqual(
+      expect.arrayContaining(["VENT Finance", "Saman Bank"]),
+    );
 
     const readOut = await selectedCasesHandler?.({
-      args: ["read", "security-triage-automation"],
-      raw: "selected_cases read security-triage-automation",
+      args: ["read", "skilled-people-were-buried-in-repetitive-work"],
+      raw: "selected_cases read skilled-people-were-buried-in-repetitive-work",
       model,
       registry,
     });
-    expect(JSON.stringify(readOut)).toContain("Security Triage Automation");
+    expect(JSON.stringify(readOut)).toContain(
+      "Skilled People Were Buried in Repetitive Work",
+    );
   });
 
   it("uses only blog as the markdown command", async () => {

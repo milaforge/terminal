@@ -257,15 +257,14 @@ const ACTIVITY_TREE_NODES: ActivityTreeNode[] = [
         title: "Reliability programs",
         period: "Q1–Q2",
         summary: "Cost control, safer rollout, stronger observability.",
-        command:
-          "selected_cases read cost-control-without-reliability-regression",
+        command: "selected_cases read cloud-spend-was-eating-the-runway",
       },
       {
         id: "2026-scale",
         title: "Scale under load",
         period: "Q2",
         summary: "Increased concurrency and kept p95 and uptime stable.",
-        command: "selected_cases read containment-under-20x-load",
+        command: "selected_cases read growth-was-breaking-the-product",
       },
     ],
   },
@@ -281,7 +280,8 @@ const ACTIVITY_TREE_NODES: ActivityTreeNode[] = [
         title: "Scope-controlled product proof",
         period: "10-day sprints",
         summary: "Shipped investor proof before larger build spend.",
-        command: "selected_cases read scope-control-for-investor-proof",
+        command:
+          "selected_cases read building-too-much-before-proving-the-product",
       },
       {
         id: "2025-secops",
@@ -289,7 +289,8 @@ const ACTIVITY_TREE_NODES: ActivityTreeNode[] = [
         period: "ongoing",
         summary:
           "Reduced repetitive manual checks, improved analyst throughput.",
-        command: "selected_cases read security-triage-automation",
+        command:
+          "selected_cases read skilled-people-were-buried-in-repetitive-work",
       },
     ],
   },
