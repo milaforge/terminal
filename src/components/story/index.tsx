@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -29,6 +29,8 @@ const BASE = import.meta.env.BASE_URL;
 const AVATAR_SRC = `${BASE}images/avatar.jpg`;
 /** viewport-heights of scroll runway per scene — pacing of the scrub */
 const VH_PER_SCENE = 110;
+const WHEEL_SNAP_MIN_DELTA = 8;
+const WHEEL_SNAP_LOCK_MS = 850;
 const MENU_WIDTH = 240;
 const MENU_HEIGHT = 48;
 const MENU_MARGIN = 6;
@@ -45,6 +47,38 @@ type StoryPageProps = {
 };
 
 type SceneEdge = "first" | "last" | "middle";
+
+export function getStorySceneScrollTarget({
+  index,
+  sceneCount,
+  trackTop,
+  scrollable,
+}: {
+  index: number;
+  sceneCount: number;
+  trackTop: number;
+  scrollable: number;
+}) {
+  const boundedIndex = Math.min(sceneCount - 1, Math.max(0, index));
+  if (boundedIndex === 0) return trackTop;
+  return trackTop + ((boundedIndex + 0.5) / sceneCount) * scrollable;
+}
+
+export function getNextStorySceneIndex({
+  activeScene,
+  deltaY,
+  sceneCount,
+}: {
+  activeScene: number;
+  deltaY: number;
+  sceneCount: number;
+}) {
+  if (Math.abs(deltaY) < WHEEL_SNAP_MIN_DELTA) return null;
+  const direction = deltaY > 0 ? 1 : -1;
+  const next = activeScene + direction;
+  if (next < 0 || next >= sceneCount) return null;
+  return next;
+}
 
 /**
  * Maps the global scroll progress onto one scene's segment, producing
@@ -200,6 +234,8 @@ function ChapterScene({
 export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   const unread = useChatStore((state) => state.unread);
   const trackRef = useRef<HTMLDivElement>(null);
+  const activeSceneRef = useRef(0);
+  const wheelLockRef = useRef<number | null>(null);
   const reduced = useReducedMotion() ?? false;
   const [activeScene, setActiveScene] = useState(0);
   const [avatarDocked, setAvatarDocked] = useState(false);
@@ -235,6 +271,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
       sceneCount - 1,
       Math.max(0, Math.floor(v * sceneCount)),
     );
+    activeSceneRef.current = next;
     setActiveScene(next);
     setAvatarDocked(v > 0.035);
   });
@@ -326,14 +363,65 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
     return () => document.removeEventListener("keydown", handleTerminalEscape);
   }, [terminalOpen]);
 
-  const jumpToScene = (index: number) => {
+  const jumpToScene = useCallback((index: number) => {
     const track = trackRef.current;
     if (!track) return;
     const top = window.scrollY + track.getBoundingClientRect().top;
     const scrollable = track.offsetHeight - window.innerHeight;
-    const target = top + ((index + 0.5) / sceneCount) * scrollable;
+    const target = getStorySceneScrollTarget({
+      index,
+      sceneCount,
+      trackTop: top,
+      scrollable,
+    });
     window.scrollTo({ top: target, behavior: reduced ? "auto" : "smooth" });
-  };
+  }, [reduced, sceneCount]);
+
+  useEffect(() => {
+    const clearWheelLock = () => {
+      if (wheelLockRef.current === null) return;
+      window.clearTimeout(wheelLockRef.current);
+      wheelLockRef.current = null;
+    };
+
+    const handleWheel = (event: WheelEvent) => {
+      if (event.defaultPrevented || event.ctrlKey || terminalOpen) return;
+      if (wheelLockRef.current !== null) {
+        event.preventDefault();
+        return;
+      }
+
+      const track = trackRef.current;
+      if (!track) return;
+      const rect = track.getBoundingClientRect();
+      const isWithinTrack =
+        rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
+      if (!isWithinTrack) return;
+
+      const nextScene = getNextStorySceneIndex({
+        activeScene: activeSceneRef.current,
+        deltaY: event.deltaY,
+        sceneCount,
+      });
+      if (nextScene === null) return;
+
+      event.preventDefault();
+      activeSceneRef.current = nextScene;
+      setActiveScene(nextScene);
+      jumpToScene(nextScene);
+      wheelLockRef.current = window.setTimeout(
+        clearWheelLock,
+        reduced ? 120 : WHEEL_SNAP_LOCK_MS,
+      );
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      clearWheelLock();
+      window.removeEventListener("wheel", handleWheel);
+    };
+  }, [jumpToScene, reduced, sceneCount, terminalOpen]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
   };
