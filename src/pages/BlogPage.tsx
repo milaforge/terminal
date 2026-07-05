@@ -32,9 +32,9 @@ function formatTagLabel(tag: string) {
 }
 
 function tagHref(tag: string, activeTag?: string) {
-  if (normalizeTag(tag) === activeTag) return withBasePath("/blog/");
+  if (normalizeTag(tag) === activeTag) return withBasePath("/book/");
   const params = new URLSearchParams({ [BLOG_TAG_PARAM]: normalizeTag(tag) });
-  return `${withBasePath("/blog/")}?${params.toString()}`;
+  return `${withBasePath("/book/")}?${params.toString()}`;
 }
 
 type BlogTagListProps = {
@@ -99,7 +99,7 @@ function setMeta(name: string, content: string) {
 }
 
 function entryHref(entry: Pick<BookEntryWithPost, "slug">) {
-  return withBasePath(`/blog/${encodeURIComponent(entry.slug)}/`);
+  return withBasePath(`/book/${encodeURIComponent(entry.slug)}/`);
 }
 
 function formatBookDate(value: string) {
@@ -204,7 +204,7 @@ type BlogNavigationProps = {
 
 function BlogNavigation({ showBlogLink = false, isLight, onToggleTheme }: BlogNavigationProps) {
   const blogCrumb = showBlogLink ? (
-    <a className="blog-backLink" href={withBasePath("/blog/")}>
+    <a className="blog-backLink" href={withBasePath("/book/")}>
       Book
     </a>
   ) : (
@@ -418,7 +418,7 @@ function BookHome({
         {activeTag ? (
           <div className="blog-activeFilter" aria-live="polite">
             <span>Topic: {formatTagLabel(activeTag)}</span>
-            <a href={withBasePath("/blog/")}>All entries</a>
+            <a href={withBasePath("/book/")}>All entries</a>
           </div>
         ) : null}
       </header>
@@ -574,7 +574,7 @@ export default function BlogPage({ slug }: BlogPageProps) {
   const entranceClass = useBlogEntranceClass(slug);
   const { isLight, toggle: toggleTheme } = useBlogTheme();
   const pageClassName = `${entranceClass}${isLight ? " is-light" : ""}`;
-  const title = "Blog | Milad";
+  const title = "The Unfinished Book | Milad";
   const description = bookEntry?.summary || post?.summary || BLOG_DESCRIPTION;
 
   const headings = useMemo(
@@ -599,8 +599,8 @@ export default function BlogPage({ slug }: BlogPageProps) {
           <h1>Post not found</h1>
           <p>
             The requested note is not available.{" "}
-            <a className="blog-inlineLink" href={withBasePath("/blog/")}>
-              Back to blog
+            <a className="blog-inlineLink" href={withBasePath("/book/")}>
+              Back to book
             </a>
             .
           </p>

@@ -14,6 +14,8 @@ const BOOK_CHAPTERS_PATH = path.join(ROOT, "src", "data", "bookChapters.json");
 const BOOK_ENTRIES_PATH = path.join(ROOT, "src", "data", "bookEntries.json");
 const DIST_DIR = path.join(ROOT, "dist");
 const BASE_PATH = process.env.BASE_PATH || "/terminal/";
+const BOOK_ROUTE = "book";
+const LEGACY_BLOG_ROUTE = "blog";
 const BLOG_COMMENTS_REPO = "milaforge/terminal";
 const BLOG_COMMENTS_ISSUE_TERM = "pathname";
 const BLOG_TAG_PARAM = "tag";
@@ -217,7 +219,7 @@ function formatTagLabel(tag) {
 
 function tagHref(tag) {
   const params = new URLSearchParams({ [BLOG_TAG_PARAM]: normalizeTag(tag) });
-  return `${withBase("/blog/")}?${params.toString()}`;
+  return `${withBase("/book/")}?${params.toString()}`;
 }
 
 function renderTopicTags(tags, className) {
@@ -336,9 +338,30 @@ async function writeHtml(routePath, template, seo, content) {
   await fs.writeFile(path.join(outputDir, "index.html"), html);
 }
 
+async function writeRedirectHtml(routePath, targetPath) {
+  const target = withBase(targetPath);
+  const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=${escapeHtml(target)}" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="${escapeHtml(target)}" />
+    <title>Redirecting to The Unfinished Book</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href="${escapeHtml(target)}">The Unfinished Book</a>.</p>
+  </body>
+</html>
+`;
+  const outputDir = path.join(DIST_DIR, routePath);
+  await fs.mkdir(outputDir, { recursive: true });
+  await fs.writeFile(path.join(outputDir, "index.html"), html);
+}
+
 function renderBlogNavigation({ showBlogLink = false } = {}) {
   const blogLink = showBlogLink
-    ? `<a class="blog-backLink" href="${escapeHtml(withBase("/blog/"))}">Book</a>`
+    ? `<a class="blog-backLink" href="${escapeHtml(withBase("/book/"))}">Book</a>`
     : `<span class="blog-backLink" aria-current="page">Book</span>`;
   return `
     <header class="blog-siteHeader" aria-label="Primary">
@@ -372,7 +395,7 @@ function renderBlogComments() {
 }
 
 function entryHref(entry) {
-  return withBase(`/blog/${encodeURIComponent(entry.slug)}/`);
+  return withBase(`/book/${encodeURIComponent(entry.slug)}/`);
 }
 
 function renderBookEntryCard(entry) {
@@ -542,7 +565,7 @@ async function main() {
   const posts = await loadPosts();
   const book = await loadBookContent(posts);
   await writeHtml(
-    "blog",
+    BOOK_ROUTE,
     template,
     {
       title: "The Unfinished Book | Milad",
@@ -550,10 +573,11 @@ async function main() {
     },
     renderBlogIndex(book),
   );
+  await writeRedirectHtml(LEGACY_BLOG_ROUTE, "/book/");
 
   for (const entry of book.readingPath) {
     await writeHtml(
-      path.join("blog", entry.slug),
+      path.join(BOOK_ROUTE, entry.slug),
       template,
       {
         title: `${entry.title} | Milad`,
@@ -563,9 +587,13 @@ async function main() {
       },
       await renderPost(entry, book),
     );
+    await writeRedirectHtml(
+      path.join(LEGACY_BLOG_ROUTE, entry.slug),
+      `/book/${encodeURIComponent(entry.slug)}/`,
+    );
   }
 
-  console.log(`prerendered blog index and ${posts.length} blog posts`);
+  console.log(`prerendered book index and ${posts.length} book entries`);
 }
 
 main().catch((error) => {

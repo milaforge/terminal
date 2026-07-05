@@ -10,7 +10,8 @@ Observed stack:
 * Vite `^5.0.0` using `@vitejs/plugin-react`.
 * TypeScript source files, with `tsconfig.json`, but no exposed `typecheck` script.
 * Handwritten client routing in `src/utils/appRouting.ts`.
-* `/blog/` and `/blog/:slug/` routes rendered by `src/pages/BlogPage.tsx`.
+* `/book/` and `/book/:slug/` routes rendered by `src/pages/BlogPage.tsx`.
+* Legacy `/blog/` and `/blog/:slug/` routes are accepted only for compatibility and should canonicalize to `/book/`.
 * Markdown articles stored in `src/data/blogs/*.md`.
 * Article metadata parsed from lightweight front matter in `src/data/blogIndex.ts`.
 * Markdown is loaded in the app through `import.meta.glob("./blogs/*.md", { eager: true, import: "default", query: "?raw" })`.
@@ -194,14 +195,21 @@ Recent revisions should sort by `revisedAt` descending.
 
 ## Routes
 
-Preserve:
+Use canonical routes:
+
+```text
+/book/
+/book/:slug/
+```
+
+Preserve legacy compatibility:
 
 ```text
 /blog/
 /blog/:slug/
 ```
 
-The existing app route parser in `src/utils/appRouting.ts` already supports those routes. Do not change route shape unless redirects are implemented and tested.
+The app route parser in `src/utils/appRouting.ts` accepts both route families. Generated links and prerendered content should use `/book/`; `/blog/` should redirect or canonicalize to `/book/`.
 
 ## Layout components
 
@@ -261,7 +269,7 @@ No lint or typecheck command is currently exposed in `package.json`.
    Add chapter and entry registries, typed model, derived indexes, and validation tests. Do not redesign UI.
 
 2. **Homepage and article layout**
-   Convert `/blog/` and `/blog/:slug/` to render book identity, chapter navigation, entry status, central claim, and reading path while preserving URLs.
+   Convert `/book/` and `/book/:slug/` to render book identity, chapter navigation, entry status, central claim, and reading path while preserving legacy `/blog/` compatibility.
 
 3. **Relationships and reflection sections**
    Render relationship groups, current belief, what could change my mind, and unresolved questions from metadata.

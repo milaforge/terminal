@@ -14,7 +14,7 @@ The instruction was clear. The result was disastrous. Food, water, and eventuall
 
 <p align="center">
   <img
-    src="https://milaforge.github.io/terminal/images/blog/midas.jpeg"
+    src="https://milaforge.github.io/terminal/images/book/midas.jpeg"
     alt="Midas myth, Midas' daughter turns to a golden statue when he touches her (illustration by Walter Crane for the 1893 edition)"
   />
 </p>

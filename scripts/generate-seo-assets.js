@@ -58,6 +58,11 @@ async function findHtmlFiles(dir) {
   return files;
 }
 
+async function isIndexableHtml(filePath) {
+  const html = await fs.readFile(filePath, "utf8");
+  return !/<meta\s+name=["']robots["']\s+content=["'][^"']*\bnoindex\b/i.test(html);
+}
+
 function routeFromHtmlFile(filePath) {
   const relative = path.relative(DIST_DIR, filePath).split(path.sep).join("/");
   const route = relative.replace(/(?:^|\/)index\.html$/, "");
@@ -81,7 +86,13 @@ function sitemapXml(urls) {
 async function main() {
   const siteUrl = normalizeSiteUrl(inferSiteUrl());
   const htmlFiles = await findHtmlFiles(DIST_DIR);
-  const routes = htmlFiles.map(routeFromHtmlFile).sort((a, b) => a.localeCompare(b));
+  const indexableHtmlFiles = [];
+  for (const file of htmlFiles) {
+    if (await isIndexableHtml(file)) indexableHtmlFiles.push(file);
+  }
+  const routes = indexableHtmlFiles
+    .map(routeFromHtmlFile)
+    .sort((a, b) => a.localeCompare(b));
   const urls = routes.map((route) => new URL(route, siteUrl).toString());
   const sitemapUrl = new URL("sitemap.xml", siteUrl).toString();
 

@@ -1,6 +1,6 @@
 export type AppRoute =
   | { name: "home" }
-  | { name: "blog"; slug?: string };
+  | { name: "book"; slug?: string; legacy?: boolean };
 
 type LocationLike = {
   hash?: string;
@@ -42,9 +42,9 @@ function pathInsideBase(pathname: string, base: string) {
 }
 
 function appRoutePathname(route: AppRoute, base: string) {
-  if (route.name === "blog") {
+  if (route.name === "book") {
     return withBasePath(
-      route.slug ? `/blog/${encodeURIComponent(route.slug)}/` : "/blog/",
+      route.slug ? `/book/${encodeURIComponent(route.slug)}/` : "/book/",
       base,
     );
   }
@@ -72,10 +72,11 @@ export function parseAppRoute(
       : pathname;
   const parts = path.split("/").filter(Boolean);
 
-  if (parts[0] === "blog") {
+  if (parts[0] === "book" || parts[0] === "blog") {
     return {
-      name: "blog",
+      name: "book",
       slug: safeDecodePathPart(parts[1]),
+      legacy: parts[0] === "blog",
     };
   }
 
@@ -113,7 +114,7 @@ export function getClientRoutePath(
   const cleanBase = cleanBasePath(base);
   const isHomeRoute =
     target.pathname === withBasePath("/", base) || target.pathname === cleanBase;
-  if (route.name !== "blog" && !isHomeRoute) return null;
+  if (route.name !== "book" && !isHomeRoute) return null;
 
   return `${appRoutePathname(route, base)}${target.search}${target.hash}`;
 }
@@ -165,7 +166,7 @@ export function getClientRoutePathForClick(
     const isHomeRoute =
       targetUrl.pathname === withBasePath("/", base) ||
       targetUrl.pathname === cleanBase;
-    if (route.name === "blog" || isHomeRoute) {
+    if (route.name === "book" || isHomeRoute) {
       return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
     }
   }

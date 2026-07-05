@@ -2,7 +2,9 @@
 
 ## Product definition
 
-`/blog` should become **The Unfinished Book**: an interconnected inventory of ideas about systems, failure, reliability, boundaries, judgment, authority, human systems, and trustworthy operation under uncertainty.
+`/book` should be **The Unfinished Book**: an interconnected inventory of ideas about systems, failure, reliability, boundaries, judgment, authority, human systems, and trustworthy operation under uncertainty.
+
+Legacy `/blog` URLs should remain as compatibility redirects so previously shared links do not break.
 
 Homepage identity:
 
@@ -32,7 +34,7 @@ Each entry may establish, extend, support, challenge, depend on, or remain in te
 
 A reader should be able to:
 
-* understand the book's central territory from the `/blog` homepage;
+* understand the book's central territory from the `/book` homepage;
 * browse by chapter instead of only reverse chronology;
 * see how mature each entry is;
 * follow a previous or next idea through a deliberate reading path;
@@ -91,7 +93,7 @@ A chapter is a conceptual grouping. A fragment is an incomplete observation, que
 
 ## Desired homepage
 
-The `/blog` homepage should lead with the book identity and explanation, then provide chapter navigation, a deliberate reading path, and recent revisions. It should not behave primarily as a chronological feed.
+The `/book` homepage should lead with the book identity and explanation, then provide chapter navigation, a deliberate reading path, and recent revisions. It should not behave primarily as a chronological feed.
 
 The homepage should make the structure inspectable without requiring the reader to understand implementation details.
 
@@ -157,7 +159,7 @@ The book should remain static-friendly and lightweight. Derived indexes and vali
 
 The conversion is acceptable when:
 
-* `/blog` presents The Unfinished Book identity;
+* `/book` presents The Unfinished Book identity;
 * all existing article URLs continue to work;
 * entries have validated structured metadata;
 * chapters, statuses, central claims, revisions, and relationships render from a central model;

@@ -63,7 +63,18 @@ export default function App() {
   const route = parseAppRoute(location.pathname);
   const isStory = shouldShowStoryRoute(location.hash);
 
-  if (route.name === "blog") {
+  useEffect(() => {
+    if (route.name !== "book" || !route.legacy) return;
+
+    const slug = route.slug ? `${encodeURIComponent(route.slug)}/` : "";
+    window.history.replaceState(
+      null,
+      "",
+      `${import.meta.env.BASE_URL}book/${slug}${location.search}${location.hash}`,
+    );
+  }, [location.hash, location.search, route]);
+
+  if (route.name === "book") {
     return <BlogPage slug={route.slug} />;
   }
 

@@ -1,6 +1,6 @@
 # Current phase
 
-Homepage and article layout slice implemented. `/blog` now renders the unfinished-book identity from centralized metadata.
+Homepage and article layout slice implemented. `/book` now renders the unfinished-book identity from centralized metadata. Legacy `/blog` URLs are compatibility routes only.
 
 # Repository findings
 
@@ -27,20 +27,21 @@ Observed from current files:
 
 # Existing blog architecture
 
-`/blog/` and `/blog/:slug/` are parsed by handwritten pathname routing in `src/utils/appRouting.ts` and rendered by `BlogPage`.
+`/book/` and `/book/:slug/` are parsed by handwritten pathname routing in `src/utils/appRouting.ts` and rendered by `BlogPage`. Legacy `/blog/` and `/blog/:slug/` are accepted and canonicalized to `/book/`.
 
 Markdown files are loaded in the client bundle with `import.meta.glob` using `?raw`. Front matter currently supports title, date, tags, and summary. Reading time and search lines are derived in `blogIndex.ts`.
 
-`scripts/prerender-blog.js` independently reads `src/data/blogs/*.md`, parses similar front matter, renders Markdown with `marked`, and writes static `dist/blog/index.html` plus one `dist/blog/<slug>/index.html` per article after Vite build.
+`scripts/prerender-blog.js` independently reads `src/data/blogs/*.md`, parses similar front matter, renders Markdown with `marked`, and writes static `dist/book/index.html` plus one `dist/book/<slug>/index.html` per article after Vite build. It also writes legacy `dist/blog` redirect pages.
 
-Current `/blog/` UI renders The Unfinished Book identity, chapter-grouped entries, entry statuses, central claims, revision dates, and recent revisions.
+Current `/book/` UI renders The Unfinished Book identity, chapter-grouped entries, entry statuses, central claims, revision dates, and recent revisions.
 
-Current `/blog/:slug/` UI preserves Markdown body rendering and existing article routes while adding book metadata, central claim, first-written/revised dates, status, chapter metadata, and previous/next idea navigation.
+Current `/book/:slug/` UI preserves Markdown body rendering while adding book metadata, central claim, first-written/revised dates, status, chapter metadata, and previous/next idea navigation.
 
 # Decisions already made
 
 * Keep the existing React/Vite application.
-* Preserve existing `/blog/` and `/blog/:slug/` URLs.
+* Make `/book/` and `/book/:slug/` canonical.
+* Preserve existing `/blog/` and `/blog/:slug/` URLs as compatibility redirects/canonicalized routes.
 * Prefer a typed metadata registry and validation before visual redesign.
 * Use stable entry IDs for relationships.
 * Do not use titles as relationship foreign keys.
@@ -83,6 +84,8 @@ Implemented homepage and article layout slice:
 * Reworked book typography toward `DM Sans` and `Space Grotesk` instead of the heavier terminal/monospace feel.
 * Compressed entry metadata from full code/status/date strings to readable labels such as `Boundary 01`, `Stable`, and `Updated 4 wk ago`, with exact/full values preserved in tooltips and accessible labels.
 * Increased chapter-row pattern opacity, border visibility, and row text contrast after visual review.
+* Changed generated and client-visible book links from `/blog/` to `/book/`.
+* Added legacy `/blog/` route canonicalization in the client router and static redirect pages in prerender output.
 
 # In-progress work
 

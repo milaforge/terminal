@@ -503,7 +503,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
           <a
             className="story-brandSecondary"
             title="Read The Unfinished Book"
-            href={`${BASE}blog/`}
+            href={`${BASE}book/`}
           >
             Book
           </a>
