@@ -55,11 +55,15 @@ describe("app routing", () => {
 
   it("canonicalizes legacy blog links to book links", () => {
     expect(
-      getClientRoutePath("https://example.com/terminal/blog", current, base),
+      getClientRoutePath(
+        "https://milaforge.dev/terminal/blog",
+        current,
+        base,
+      ),
     ).toBe("/terminal/book/");
     expect(
       getClientRoutePath(
-        "https://example.com/terminal/blog/automation-risk/",
+        "https://milaforge.dev/terminal/blog/automation-risk/",
         current,
         base,
       ),
