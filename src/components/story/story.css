@@ -293,14 +293,36 @@
 
 .story-avatarLauncher.is-docked {
   --story-avatar-translate-y: 0;
-  --story-avatar-scale: 0.42;
+  --story-avatar-scale: 0.82;
   top: 134px;
-  left: 41px;
+  left: 55px;
+}
+
+.story-avatarLauncher.is-docked .story-avatar,
+.story-avatarLauncher.is-docked .story-avatarStatus {
+  animation: story-avatar-breathe 2.8s ease-in-out infinite;
 }
 
 .story-avatarLauncher.is-docked:hover,
 .story-avatarLauncher.is-docked:focus-visible {
   --story-avatar-hover-scale: var(--story-sidebar-hover-scale);
+}
+
+.story-avatarLauncher.is-docked:hover .story-avatar,
+.story-avatarLauncher.is-docked:hover .story-avatarStatus,
+.story-avatarLauncher.is-docked:focus-visible .story-avatar,
+.story-avatarLauncher.is-docked:focus-visible .story-avatarStatus {
+  animation-play-state: paused;
+}
+
+@keyframes story-avatar-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
 }
 
 .story-avatarSpacer {
@@ -327,10 +349,10 @@
 
 .story-avatarStatus {
   position: absolute;
-  right: 4px;
-  bottom: 10px;
-  width: 12px;
-  height: 12px;
+  right: 2px;
+  bottom: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 999px;
   background: #13d96f;
   border: 3px solid #f4f7f8;
@@ -897,8 +919,8 @@
   }
 
   .story-avatarLauncher.is-docked {
-    top: 112px;
-    left: 35px;
+    top: 512px;
+    left: 48px;
   }
 
   .story-avatarSpacer {
@@ -970,6 +992,12 @@
 @media (prefers-reduced-motion: reduce) {
   .story-avatarLauncher {
     transition: none;
+    animation: none;
+  }
+
+  .story-avatarLauncher .story-avatar,
+  .story-avatarLauncher .story-avatarStatus {
+    animation: none;
   }
 
   .story-hintArrow {

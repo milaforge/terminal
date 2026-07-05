@@ -32,8 +32,8 @@
   --press-ring-opacity: 0.28;
   --press-grain-opacity: 0.12;
   --press-backdrop: blur(14px);
-  width: 48px;
-  height: 48px;
+  width: 60px;
+  height: 60px;
   border-radius: 999px;
   background: var(--press-bg);
   border: 1px solid var(--press-border);
@@ -44,7 +44,7 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
-  animation: chat-launcher-in 220ms ease-out both;
+  animation: chat-launcher-in 220ms ease-out both, chat-launcher-breathe 3.2s ease-in-out 220ms infinite;
 }
 
 .chat-launcher:hover,
@@ -53,11 +53,13 @@
   border-color: var(--press-hover-border);
   outline: none;
   box-shadow: var(--press-shadow-half);
+  animation-play-state: paused;
+  transform: scale(1.04);
 }
 
 .chat-launcherPhoto {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--accent, #8dd0ff) 48%, rgba(255, 255, 255, 0.26));
@@ -92,10 +94,10 @@
 
 .chat-launcherStatus {
   position: absolute;
-  right: 1px;
-  bottom: 7px;
-  width: 12px;
-  height: 12px;
+  right: 0px;
+  bottom: 9px;
+  width: 16px;
+  height: 16px;
   border-radius: 999px;
   background: #13d96f;
   border: 3px solid #f4f7f8;
@@ -112,6 +114,16 @@
   border: 1px solid color-mix(in srgb, #13d96f 46%, transparent);
   animation: chat-status-wave 1.7s ease-out 160ms infinite;
   pointer-events: none;
+}
+
+@keyframes chat-launcher-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
 }
 
 @keyframes chat-launcher-in {
