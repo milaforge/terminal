@@ -429,7 +429,7 @@ function renderBlogIndex(book) {
     <main class="blog-page is-entering">
       ${renderBlogNavigation()}
       <header class="blog-header blog-bookHero">
-        <p class="blog-bookEyebrow">The Unfinished Book</p>
+        <p class="blog-bookEyebrow">Systems under uncertainty</p>
         <h1>The Unfinished Book</h1>
         <p>${escapeHtml(BOOK_DESCRIPTION)}</p>
         <p class="blog-bookExplanation">${escapeHtml(BOOK_EXPLANATION)}</p>

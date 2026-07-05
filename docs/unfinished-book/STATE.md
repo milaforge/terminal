@@ -78,6 +78,7 @@ Implemented homepage and article layout slice:
 * Changed visible book dates to relative text such as `4 weeks before`, with exact original dates exposed through native hover tooltips.
 * Added a minimal diagonal-pattern background to chapter titles using dark/light blog theme variables.
 * Expanded the chapter pattern from the title chip to the full chapter header row and strengthened row text contrast for both themes.
+* Removed redundant hero labeling by keeping `The Unfinished Book` as the H1 and using `Systems under uncertainty` as the eyebrow in both React and prerendered `/blog/` output.
 * Removed visible estimated reading time from book homepage and article metadata.
 * Reworked book typography toward `DM Sans` and `Space Grotesk` instead of the heavier terminal/monospace feel.
 * Compressed entry metadata from full code/status/date strings to readable labels such as `Boundary 01`, `Stable`, and `Updated 4 wk ago`, with exact/full values preserved in tooltips and accessible labels.

@@ -11,9 +11,7 @@ type BlogPageProps = {
 };
 
 const BLOG_DESCRIPTION =
-  "Notes toward building systems—and a life—that remain trustworthy under uncertainty.";
-const BOOK_EXPLANATION =
-  "This is not a chronological blog. It is a book in progress: arguments being refined, principles being tested, and observations connected over time.";
+  "Notes on systems, judgment, and living with uncertainty";
 const BLOG_ENTRANCE_MS = 1500;
 const BLOG_TAG_PARAM = "tag";
 
@@ -405,10 +403,8 @@ function BookHome({
   return (
     <>
       <header className="blog-header blog-bookHero">
-        <p className="blog-bookEyebrow">The Unfinished Book</p>
         <h1>The Unfinished Book</h1>
         <p>{BLOG_DESCRIPTION}</p>
-        <p className="blog-bookExplanation">{BOOK_EXPLANATION}</p>
         <div className="blog-bookActions" aria-label="Book actions">
           {firstEntry ? (
             <a className="blog-bookAction" href={entryHref(firstEntry)}>
