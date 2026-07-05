@@ -1,0 +1,38 @@
+[
+  {
+    "id": "boundaries",
+    "title": "Boundaries",
+    "description": "Where authority begins and where it must stop.",
+    "order": 1
+  },
+  {
+    "id": "failure",
+    "title": "Failure",
+    "description": "How systems behave after prevention loses.",
+    "order": 2
+  },
+  {
+    "id": "reliable-agency",
+    "title": "Reliable Agency",
+    "description": "How automated systems should act under uncertainty.",
+    "order": 3
+  },
+  {
+    "id": "judgment",
+    "title": "Judgment",
+    "description": "Reducing complex situations to the condition that matters.",
+    "order": 4
+  },
+  {
+    "id": "human-systems",
+    "title": "Human Systems",
+    "description": "How conditions shape attention, habits, and choices.",
+    "order": 5
+  },
+  {
+    "id": "open-questions",
+    "title": "Open Questions",
+    "description": "Unresolved fragments and ideas still being tested.",
+    "order": 6
+  }
+]

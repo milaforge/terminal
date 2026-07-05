@@ -1,449 +1,384 @@
 # AGENTS.md
 
-## Mission
+## Repository Purpose
 
-This codebase exists to make me **hire-obvious in Production Autonomy Governance** through a **reliability lab**.
+This repository produces two primary public artifacts:
 
-The lab must produce public, inspectable proof of this chain:
+1. **The website landing page** — a concise representation of the problems I work on, how I think, and the evidence supporting those claims.
+2. **The Unfinished Book** — an evolving, interconnected body of writing about systems, failure, reliability, authority, judgment, human systems, and trustworthy operation under uncertainty.
 
-**failure modes → invariants → containment primitives → postmortems**
+Both should create inspectable evidence of:
 
-The goal is not to build a generic app, polished demo, or aesthetic portfolio.
-The goal is to show credible usefulness in:
+* engineering judgment;
+* reliability mindset;
+* clarity under failure;
+* containment and recovery thinking;
+* operational ownership;
+* ability to reduce complex situations to useful decisions;
+* ability to explain technical relevance to both technical and non-technical readers.
 
-- agent reliability
-- production safety
-- containment of side effects
-- observable execution
-- failure-oriented systems thinking
-- defensive infrastructure
-
-Every change must strengthen that proof.
-
----
-
-## Primary Output Standard
-
-Agents working in this repo must optimize for:
-
-1. **Executable proof over narrative**
-2. **Public artifacts over private notes**
-3. **Failure reproduction over feature building**
-4. **Containment primitives over convenience abstractions**
-5. **Regression-proof tests over one-off demos**
-6. **Observable state over hidden behavior**
-
-Preferred artifacts:
-
-- failure-mode reproductions
-- invariant docs
-- containment mechanisms
-- replayable scenarios
-- audit trails
-- recovery logic
-- postmortems
-- minimal reproducible experiments
-
-Avoid:
-
-- generic product features
-- UI work unless it exposes reliability evidence
-- speculative architecture
-- trend-chasing
-- prompt collections
-- “smart” behavior without inspectability
+The repository should demonstrate these qualities through its structure and artifacts rather than merely claiming them.
 
 ---
 
-## Repo Identity
+## Instruction Authority
 
-This is a **reliability lab**, not a product.
+When instructions or documentation conflict, use this order:
 
-That means:
+1. the current user instruction;
+2. current working code and tests;
+3. this `AGENTS.md`;
+4. stable project goal and architecture documents;
+5. mutable state or handoff documents.
 
-- We intentionally build unsafe baselines first when needed.
-- We make failures reproducible before fixing them.
-- We define correctness explicitly as invariants.
-- We prefer narrow mechanisms that prove a point.
-- We preserve inspectable state so tests and postmortems can explain what happened.
+Code and tests are stronger evidence than stale documentation.
 
----
-
-## Non-Negotiable Questions
-
-Every task, PR, file, or feature must answer:
-
-1. **What breaks?**
-2. **Under what conditions?**
-3. **Why does it matter?**
-4. **Why do agents/autonomous workflows amplify it?**
-5. **What invariant is violated?**
-6. **How is it detected?**
-7. **What containment or recovery mechanism prevents recurrence?**
-8. **What artifact proves this?**
-
-If these questions cannot be answered, the work is not ready.
+Do not silently reinterpret an explicit current request based on older project notes.
 
 ---
 
-## Definition of Good Work
+## Repository Context
 
-Good work in this repo has all of the following properties:
+Before making meaningful changes:
 
-- narrow
-- testable
-- durable
-- inspectable
-- reproducible
-- failure-anchored
-- relevant to autonomy governance or reliability engineering
+1. inspect the relevant code;
+2. inspect `git status` and the current diff;
+3. identify the existing architecture and conventions;
+4. preserve unrelated functionality;
+5. choose the smallest coherent implementation that satisfies the task.
 
-Examples of good work:
+Do not begin with a broad redesign when a focused change is sufficient.
 
-- a test that reproduces duplicate side effects after lease expiry
-- a SQLite-backed append-only effect ledger
-- an idempotent commit boundary
-- a reconciler for committed-but-not-finalized jobs
-- a postmortem mapping the incident to agent tool retries
-
-Examples of bad work:
-
-- a new abstraction without a motivating failure
-- UI polish that does not expose state or evidence
-- a framework migration with no reliability gain
-- broad “agent platform” plans
-- refactors that reduce clarity of failure mechanics
+Do not stop after producing a plan when the task asks for implementation.
 
 ---
 
-## Work Sequence
+# Website Landing Page
 
-Agents must follow this order whenever possible:
+## Landing-Page Objective
 
-1. **Failure**
-   - identify the failure mode
-   - name it
-   - define trigger and impact
+The landing page should let a serious technical lead, hiring manager, founder, or reliability team quickly determine:
 
-2. **Invariant**
-   - state the correctness property in explicit, testable language
+* what problems I am equipped to own;
+* how I reason about those problems;
+* what evidence supports that positioning;
+* where they can inspect the work;
+* what action they should take next.
 
-3. **Reproduction**
-   - create the minimal scenario that demonstrates the failure
+The page is not a résumé rendered as a website.
 
-4. **Containment**
-   - implement the smallest mechanism that prevents or bounds the failure
+It is an evidence-oriented interface to the work.
 
-5. **Recovery**
-   - handle crash, retry, timeout, and partial-progress states
+## Landing-Page Priorities
 
-6. **Observability**
-   - ensure the system leaves durable evidence of what happened
+When editing the landing page, prioritize:
 
-7. **Postmortem**
-   - explain the failure, the fix, and the agent relevance
+1. clear positioning;
+2. concrete evidence;
+3. selected work and inspectable artifacts;
+4. operational or business relevance;
+5. readable information hierarchy;
+6. accessibility and responsive behavior;
+7. visual polish.
 
-Do not skip reproduction and jump directly to a fix unless explicitly instructed.
+A claim should preferably point to evidence such as:
 
----
-
-## Invariants Policy
-
-Invariants are first-class objects in this repo.
-
-Rules:
-
-- Every important mechanism must trace back to one or more documented invariants.
-- Invariants must be concrete and falsifiable.
-- “Reliable,” “safe,” and “robust” are not invariants.
-- Good invariants describe state or effect constraints.
-
-Examples:
-
-- A job may be retried, but its logical effect may commit at most once.
-- Durable commit must precede finalization.
-- Recovery must not create new side effects.
-- Every effect must be attributable to a job and time.
-- Expired leases may cause re-execution attempts, but not duplicate logical outcomes.
-
-When writing code, name the invariant in comments, test names, or docs where helpful.
-
----
-
-## Failure-Mode Policy
-
-Failure modes must be explicit and tracked.
-
-Each failure mode should have:
-
-- ID (for example `FM-001`)
-- name
-- definition
-- trigger
-- impact
-- violated invariants
-- observables
-- containment class
-- related tests
-- related postmortems
-
-Failure modes should be concrete, not thematic.
-
-Good:
-- duplicate execution via retry after timeout
-
-Bad:
-- reliability problems in async systems
-
----
-
-## Baseline vs Protected Mode
-
-When useful, maintain two paths:
-
-- **baseline / unsafe mode**
-- **protected / contained mode**
-
-Reason:
-A prevention claim is only credible when the baseline failure is reproduced first.
-
-Rules:
-
-- Do not quietly remove the unsafe baseline if it is needed for pedagogical proof.
-- Repro tests for known failure modes should remain intact.
-- Prevention tests should use the same scenario with a different policy/mechanism.
-
----
-
-## Durability and Observability Rules
-
-Agents must preserve inspectable state.
+* a working system;
+* a failure-mode demonstration;
+* an experiment;
+* a postmortem;
+* an article;
+* a repository;
+* an architectural decision;
+* a measurable outcome;
+* a reproducible scenario.
 
 Prefer:
 
-- SQLite or other durable local state for tests
-- append-only ledgers for effects
-- explicit job states
-- timestamps and attempt counters
-- durable commit records
-- state transitions that can be queried after the fact
+> Designed command acknowledgement semantics that distinguish intent, receipt, execution, and observed robot state.
+
+Over:
+
+> Passionate about reliable systems.
+
+## Public Claims
+
+Do not introduce inflated claims, unverifiable metrics, or implied experience unsupported by the repository.
+
+Distinguish clearly between:
+
+* production experience;
+* experiments;
+* prototypes;
+* research;
+* hypotheses;
+* current interests.
+
+Do not present a demo as a production deployment.
+
+Do not present an idea as an established result.
+
+## Landing-Page Design Rules
+
+Preserve the existing visual identity unless the task explicitly requires a broader redesign.
+
+The page should feel:
+
+* deliberate;
+* restrained;
+* technically credible;
+* readable;
+* compact;
+* evidence-led.
 
 Avoid:
 
-- hidden in-memory correctness assumptions
-- magic behavior without traceability
-- side effects with no ledger or audit trail
+* generic personal-brand language;
+* excessive animation;
+* decorative terminal effects without meaning;
+* large areas of visual polish unsupported by useful content;
+* duplicated claims;
+* dense résumé-style inventories;
+* SaaS-dashboard styling;
+* claims that require the visitor to trust the author without inspecting evidence.
 
-If a test proves something important, the evidence should be queryable.
+Every significant section should answer at least one of these questions:
 
----
+* What does this person understand?
+* What can this person build or own?
+* What evidence can I inspect?
+* Why does this matter operationally?
+* Where should I go next?
 
-## Recovery Rules
+## Landing-Page Completion Standard
 
-Correctness under crash is mandatory.
+A landing-page change is not complete merely because it looks better.
 
-Agents must assume failures can happen:
+It should improve at least one of:
 
-- before lease
-- during execution
-- after side effect
-- after durable commit
-- before finalization
-- during retry
-- during reconciliation
-
-Any mechanism that is correct only in the happy path is incomplete.
-
-Recovery work should prefer:
-
-- idempotent reconciliation
-- explicit state transitions
-- no duplicate logical effects
-- no unsafe assumptions about exactly-once execution
-
----
-
-## Agent-Relevance Rule
-
-This lab is about production autonomy governance, not generic queue theory.
-
-When building or documenting a mechanism, connect it to agent/tool execution where applicable.
-
-Examples of relevant mappings:
-
-- tool timeout → retry → duplicate side effect
-- model uncertainty → repeated action attempt
-- planner/executor split → stale leases or double execution
-- long-running tool call → crash after commit before finalization
-- external API action → expensive irreversible effect
-
-Each major artifact should say why a serious team building agents would care.
+* comprehension;
+* credibility;
+* discoverability of evidence;
+* navigation;
+* accessibility;
+* performance;
+* conversion to a relevant next action.
 
 ---
 
-## PR / Change Acceptance Criteria
+# The Unfinished Book
 
-A change is acceptable only if it improves at least one of:
+The unfinished-book project converts `/blog` from a chronological post index into an interconnected book in progress.
 
-- failure reproduction quality
-- invariant clarity
-- containment strength
-- recovery correctness
-- observability
-- postmortem quality
-- inspectable hiring signal
+Future agents must treat this section as a map, not the full product specification. Read the permanent project documents in order:
 
-Each meaningful change should include some combination of:
+```text
+docs/unfinished-book/
+├── GOAL.md
+├── ARCHITECTURE.md
+└── STATE.md
+```
 
-- test
-- doc update
-- scenario update
-- schema change
-- postmortem note
+1. `docs/unfinished-book/GOAL.md`
+2. `docs/unfinished-book/ARCHITECTURE.md`
+3. `docs/unfinished-book/STATE.md`
 
-A change should be rejected if it is merely interesting, sophisticated, or aesthetic.
+Authority order for unfinished-book work:
 
----
+1. current user instruction;
+2. current code and tests;
+3. `docs/unfinished-book/GOAL.md`;
+4. `docs/unfinished-book/ARCHITECTURE.md`;
+5. `docs/unfinished-book/STATE.md`.
 
-## Comments and Explanations
+Before modifying code, inspect the current implementation and Git diff. Repository code and tests are stronger evidence than stale statements in `STATE.md`.
 
-When leaving comments in code or docs:
+Preserve existing article URLs. Avoid modifying unrelated website surfaces, large framework migrations, and one-off architecture that cannot be validated.
 
-- explain failure mechanics
-- explain why the invariant matters
-- explain why the containment works
-- explain what evidence a test provides
-
-Do not write decorative comments.
-Do not write vague comments like “handle edge cases.”
-
-Prefer comments like:
-- “Lease expiry permits retry, so logical effect must be guarded by a durable commit boundary.”
-- “This reconciler finalizes committed jobs without re-emitting side effects.”
+Implement one coherent vertical slice at a time, run the repository's relevant checks, and update `docs/unfinished-book/STATE.md` before ending a meaningful implementation session.
 
 ---
 
-## Testing Rules
+# Public Signal Rule
 
-Tests are the primary proof artifact.
+This repository is expected to produce public evidence.
 
-Prefer tests that show:
+When creating code, documentation, experiments, or editorial artifacts, consider whether the result can be surfaced through:
 
-- bug reproduction
-- violated invariant
-- prevention after mitigation
-- recovery after crash
-- idempotency under retry
-- stable behavior under controlled time
-
-Test naming should be descriptive and failure-oriented.
-
-Good:
-- `test_repro_duplicate_effect_after_lease_expiry`
-- `test_commit_boundary_allows_only_first_logical_effect`
-- `test_reconciler_finalizes_committed_job_without_new_effect`
-
-Bad:
-- `test_queue`
-- `test_policy`
-- `test_happy_path`
-
----
-
-## Simplicity Rule
-
-Use the smallest implementation that proves the reliability point.
-
-Agents must resist:
-
-- premature abstractions
-- framework adoption
-- over-engineered architecture
-- generalized orchestration before one failure mode is fully closed
-
-This repo wins through sharpness, not breadth.
-
-One convincing failure + fix + postmortem is more valuable than a half-built platform.
-
----
-
-## Homepage / Public Signal Rule
-
-This repo is expected to feed public evidence.
-
-When creating docs or artifacts, prefer outputs that can be surfaced on the website, README, or case studies page.
-
-Artifacts should be legible to a hiring manager or technical lead scanning for:
-
-- judgment
-- reliability mindset
-- clarity under failure
-- ability to design containment
-- ability to explain operational relevance
+* the landing page;
+* selected work;
+* the unfinished book;
+* a repository README;
+* a technical case study;
+* a reproducible demonstration;
+* a postmortem.
 
 Ask:
-**Would this make me more obviously useful to a serious reliability or agent-safety team?**
 
-If not, it is likely drift.
+> Would this artifact provide useful, inspectable evidence to a serious engineering, reliability, autonomous-systems, or agent-safety team?
 
----
+If not, determine whether the work is:
 
-## Anti-Drift Protocol
+* a necessary dependency;
+* maintenance required for correctness;
+* or drift.
 
-Stop work immediately if the task is becoming:
-
-- branding without proof
-- planning without output
-- research without reproduction
-- refactoring without reliability gain
-- abstraction without a motivating incident
-- feature work unrelated to failure containment
-
-When drift is detected, redirect to the nearest concrete artifact:
-- a failing test
-- an invariant
-- a minimal schema
-- a reproducible scenario
-- a postmortem
-- a README mapping to agent relevance
+Not every internal change must be publicly visible, but it should support a defensible user-facing or engineering outcome.
 
 ---
 
-## Default Decision Rule
+# Anti-Drift Protocol
 
-When multiple paths are available, choose the one that creates the most credible inspectable signal fastest.
+Stop and reassess when work is becoming:
 
-Priority order:
+* branding without evidence;
+* planning without implementation;
+* research without a reproducible result or useful synthesis;
+* refactoring without correctness, reliability, maintainability, or delivery benefit;
+* abstraction without a concrete motivating case;
+* visual polish that does not improve comprehension;
+* book structure that does not help readers navigate ideas;
+* feature work unrelated to the repository’s stated goals;
+* a framework migration undertaken for novelty rather than need.
 
-1. executable failure-mode repro
-2. prevention test
-3. containment primitive
-4. recovery mechanism
-5. postmortem
-6. supporting docs
-7. refactor
-8. polish
+Redirect to the nearest concrete artifact appropriate to the task.
+
+## For technical and reliability work
+
+Prefer:
+
+* a failing test;
+* a reproducible failure scenario;
+* an invariant;
+* a minimal schema;
+* a containment primitive;
+* a recovery mechanism;
+* a postmortem;
+* a measurable validation.
+
+## For the landing page
+
+Prefer:
+
+* a clearer claim;
+* an evidence-backed section;
+* a selected-work entry;
+* a direct path to an artifact;
+* a responsive or accessibility fix;
+* a reduction in ambiguity;
+* a demonstrably improved information hierarchy.
+
+## For the unfinished book
+
+Prefer:
+
+* a valid content entry;
+* a chapter assignment;
+* centralized metadata;
+* a defensible relationship;
+* relationship validation;
+* a useful navigation path;
+* an unresolved question;
+* a revision note;
+* an article or fragment with a clear claim.
+
+Communication work is not automatically drift.
+
+It becomes drift when presentation grows while evidence, meaning, or usability does not.
 
 ---
 
-## Done Criteria
+# Default Decision Rules
 
-A task is done only when it leaves behind visible proof.
+When multiple implementation paths are available, prefer the one that:
 
-Usually that means:
-- code exists
-- test passes
-- docs are updated
-- failure/invariant linkage is explicit
-- the artifact is understandable by someone outside the repo
+1. preserves correctness and existing URLs;
+2. creates a coherent user-visible improvement;
+3. produces inspectable evidence;
+4. is easy to validate;
+5. introduces the least unnecessary architecture;
+6. remains maintainable;
+7. can be extended without duplication.
 
-“Implemented but not demonstrated” is not done.
+## Reliability work priority
+
+1. executable failure-mode reproduction;
+2. prevention test;
+3. containment primitive;
+4. recovery mechanism;
+5. postmortem;
+6. supporting documentation;
+7. refactor;
+8. polish.
+
+## Landing-page priority
+
+1. truthful positioning;
+2. evidence;
+3. information hierarchy;
+4. navigation to work;
+5. accessibility and responsiveness;
+6. performance;
+7. polish.
+
+## Unfinished-book priority
+
+1. content model and validation;
+2. preservation of existing content and routes;
+3. chapter and entry navigation;
+4. article reading experience;
+5. meaningful relationships;
+6. revisions and open questions;
+7. conceptual map;
+8. polish.
+
+Do not allow polish to precede a stable content or interaction foundation.
 
 ---
 
-## Final Standard
+# Engineering Standards
 
-This codebase should make one thing obvious:
+Follow the repository’s existing conventions unless there is a concrete reason to change them.
 
-**I do not just build systems that work in demos.  
-I build systems that remain correct under retries, crashes, partial failure, and expensive side effects.**
+Prefer:
+
+* small coherent vertical slices;
+* explicit data models;
+* deterministic behavior;
+* reusable components with clear responsibility;
+* central sources of truth;
+* build-time validation where possible;
+* accessible semantic HTML;
+* responsive layouts;
+* minimal dependencies;
+* tests for structural and behavioral assumptions.
+
+Avoid:
+
+* broad unrelated rewrites;
+* duplicate sources of truth;
+* hidden coupling;
+* speculative abstraction;
+* unnecessary dependencies;
+* silent fallback for corrupted content;
+* complex systems where static generation or simple data structures are sufficient.
+
+When adding a dependency, be prepared to explain:
+
+* what problem it solves;
+* why the existing stack is insufficient;
+* its runtime and maintenance cost;
+* the simpler alternatives considered.
+
+---
+
+# Final Standard
+
+This repository should make the following evident without relying on unsupported claims:
+
+> I do not only build systems that work in demonstrations.
+> I examine what happens under retries, crashes, stale state, partial failure, ambiguous authority, and expensive side effects.
+
+It should also show:
+
+> I can turn those observations into clear systems, useful artifacts, and connected ideas that other people can inspect, understand, and act on.

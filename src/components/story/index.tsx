@@ -414,10 +414,10 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
           </button>
           <a
             className="story-brandSecondary"
-            title="Read Blog"
+            title="Read The Unfinished Book"
             href={`${BASE}blog/`}
           >
-            Blog
+            Book
           </a>
         </div>
       </header>

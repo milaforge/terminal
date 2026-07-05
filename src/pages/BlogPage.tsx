@@ -1,15 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MarkdownBlock } from "@components/MarkdownBlock";
-import { blogIndex, BlogPost } from "@data/blogIndex";
+import { blogIndex } from "@data/blogIndex";
+import { BookEntryWithPost, bookIndex } from "@data/bookIndex";
 import { withBasePath } from "@utils/appRouting";
-import { ChevronRight, Clock, Home, Moon, Sun } from "lucide-react";
+import { ChevronRight, Home, Moon, Sun } from "lucide-react";
 import { BlogComments } from "./BlogComments";
 
 type BlogPageProps = {
   slug?: string;
 };
 
-const BLOG_DESCRIPTION = "Notes by topic on systems, security, automation, and life.";
+const BLOG_DESCRIPTION =
+  "Notes toward building systems—and a life—that remain trustworthy under uncertainty.";
+const BOOK_EXPLANATION =
+  "This is not a chronological blog. It is a book in progress: arguments being refined, principles being tested, and observations connected over time.";
 const BLOG_ENTRANCE_MS = 1500;
 const BLOG_TAG_PARAM = "tag";
 
@@ -33,21 +37,6 @@ function tagHref(tag: string, activeTag?: string) {
   if (normalizeTag(tag) === activeTag) return withBasePath("/blog/");
   const params = new URLSearchParams({ [BLOG_TAG_PARAM]: normalizeTag(tag) });
   return `${withBasePath("/blog/")}?${params.toString()}`;
-}
-
-function BlogReadTime({ minutes }: { minutes: number }) {
-  const label = `${minutes} ${minutes === 1 ? "minute" : "minutes"} read`;
-
-  return (
-    <span
-      className="blog-readTime"
-      aria-label={label}
-      title={label}
-    >
-      <span aria-hidden="true">{minutes}'</span>
-      <Clock className="blog-readTimeIcon" size={14} strokeWidth={2.2} />
-    </span>
-  );
 }
 
 type BlogTagListProps = {
@@ -111,8 +100,76 @@ function setMeta(name: string, content: string) {
   node.content = content;
 }
 
-function postHref(post: BlogPost) {
-  return withBasePath(`/blog/${encodeURIComponent(post.slug)}/`);
+function entryHref(entry: Pick<BookEntryWithPost, "slug">) {
+  return withBasePath(`/blog/${encodeURIComponent(entry.slug)}/`);
+}
+
+function formatBookDate(value: string) {
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+  return `${year}-${month}-${day}`;
+}
+
+function formatRelativeBookDate(value: string) {
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  const now = new Date();
+  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const diffDays = Math.max(
+    0,
+    Math.floor((todayUtc - parsed.getTime()) / 86_400_000),
+  );
+
+  if (diffDays < 1) return "today";
+  if (diffDays < 14) return `${diffDays}d ago`;
+
+  const weeks = Math.floor(diffDays / 7);
+  if (diffDays < 60) return `${weeks} wk ago`;
+
+  const months = Math.floor(diffDays / 30);
+  if (diffDays < 730) return `${months} mo ago`;
+
+  const years = Math.floor(diffDays / 365);
+  return `${years} yr ago`;
+}
+
+function BookDate({
+  label,
+  value,
+}: {
+  label?: string;
+  value: string;
+}) {
+  const exactDate = formatBookDate(value);
+  const relativeDate = formatRelativeBookDate(value);
+
+  return (
+    <span title={exactDate} aria-label={label ? `${label} ${exactDate}` : exactDate}>
+      {label ? `${label} ` : ""}
+      {relativeDate}
+    </span>
+  );
+}
+
+function formatEntryCode(code: string) {
+  const match = code.match(/^(.+)-(\d+)$/);
+  if (!match) return code;
+
+  const family = match[1]
+    .toLowerCase()
+    .split("-")
+    .map((part) => `${part[0].toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+
+  return `${family} ${match[2]}`;
+}
+
+function formatStatus(status: string) {
+  if (status === "Stable for now") return "Stable";
+  if (status === "Working chapter") return "Working";
+  if (status === "Under revision") return "Revising";
+  return status;
 }
 
 const BLOG_THEME_KEY = "blog-theme";
@@ -150,11 +207,11 @@ type BlogNavigationProps = {
 function BlogNavigation({ showBlogLink = false, isLight, onToggleTheme }: BlogNavigationProps) {
   const blogCrumb = showBlogLink ? (
     <a className="blog-backLink" href={withBasePath("/blog/")}>
-      Blog
+      Book
     </a>
   ) : (
     <span className="blog-backLink" aria-current="page">
-      Blog
+      Book
     </span>
   );
 
@@ -312,6 +369,174 @@ function BlogOutline({ headings }: { headings: OutlineHeading[] }) {
   );
 }
 
+type BookEntryCardProps = {
+  entry: BookEntryWithPost;
+};
+
+function BookEntryCard({ entry }: BookEntryCardProps) {
+  return (
+    <article className="blog-bookEntry">
+      <a className="blog-listBody blog-bookEntryLink" href={entryHref(entry)}>
+        <div className="blog-bookEntryMeta">
+          <span title={entry.code}>{formatEntryCode(entry.code)}</span>
+          <span title={entry.status}>{formatStatus(entry.status)}</span>
+          <BookDate label="Updated" value={entry.revisedAt} />
+        </div>
+        <h3>{entry.title}</h3>
+        {entry.summary ? <p>{entry.summary}</p> : null}
+        <p className="blog-centralClaim">{entry.centralClaim}</p>
+      </a>
+    </article>
+  );
+}
+
+function BookHome({
+  activeTag,
+}: {
+  activeTag?: string;
+}) {
+  const readingPath = bookIndex.getReadingPath();
+  const filteredEntries = activeTag
+    ? readingPath.filter((entry) => entry.post.tags.includes(activeTag))
+    : readingPath;
+  const firstEntry = readingPath[0];
+  const recentRevisions = bookIndex.getRecentRevisions(4);
+
+  return (
+    <>
+      <header className="blog-header blog-bookHero">
+        <p className="blog-bookEyebrow">The Unfinished Book</p>
+        <h1>The Unfinished Book</h1>
+        <p>{BLOG_DESCRIPTION}</p>
+        <p className="blog-bookExplanation">{BOOK_EXPLANATION}</p>
+        <div className="blog-bookActions" aria-label="Book actions">
+          {firstEntry ? (
+            <a className="blog-bookAction" href={entryHref(firstEntry)}>
+              Begin reading
+            </a>
+          ) : null}
+          <a className="blog-bookAction" href="#recent-revisions">
+            Recent revisions
+          </a>
+        </div>
+        {activeTag ? (
+          <div className="blog-activeFilter" aria-live="polite">
+            <span>Topic: {formatTagLabel(activeTag)}</span>
+            <a href={withBasePath("/blog/")}>All entries</a>
+          </div>
+        ) : null}
+      </header>
+
+      <section className="blog-bookContents" aria-label="Book chapters">
+        {bookIndex.chapters.map((chapter) => {
+          const entries = filteredEntries.filter((entry) => entry.chapter === chapter.id);
+          if (!entries.length) return null;
+
+          return (
+            <section key={chapter.id} className="blog-bookChapter" aria-labelledby={`chapter-${chapter.id}`}>
+              <div className="blog-bookChapterHeader">
+                <span>{String(chapter.order).padStart(2, "0")}</span>
+                <div>
+                  <h2 id={`chapter-${chapter.id}`}>{chapter.title}</h2>
+                  <p>{chapter.description}</p>
+                </div>
+              </div>
+              <div className="blog-bookEntryList">
+                {entries.map((entry) => (
+                  <BookEntryCard key={entry.id} entry={entry} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </section>
+
+      <section className="blog-revisions" id="recent-revisions" aria-labelledby="recent-revisions-title">
+        <div className="blog-revisionsHeader">
+          <h2 id="recent-revisions-title">Recent revisions</h2>
+          <p>Older entries remain alive as the model changes.</p>
+        </div>
+        <div className="blog-revisionList">
+          {recentRevisions.map((entry) => (
+            <a key={entry.id} href={entryHref(entry)} className="blog-revisionItem">
+              <BookDate value={entry.revisedAt} />
+              <strong>{entry.title}</strong>
+            </a>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
+function BookArticleAside({ entry }: { entry: BookEntryWithPost }) {
+  const chapter = bookIndex.chapters.find((item) => item.id === entry.chapter);
+
+  return (
+    <aside className="blog-bookAside" aria-label="Entry metadata">
+      <div className="blog-bookAsideLabel">This entry</div>
+      <dl className="blog-bookDetails">
+        <div>
+          <dt>Code</dt>
+          <dd title={entry.code}>{formatEntryCode(entry.code)}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd title={entry.status}>{formatStatus(entry.status)}</dd>
+        </div>
+        {chapter ? (
+          <div>
+            <dt>Chapter</dt>
+            <dd>{chapter.title}</dd>
+          </div>
+        ) : null}
+        <div>
+          <dt>First written</dt>
+          <dd>
+            <BookDate value={entry.firstWrittenAt} />
+          </dd>
+        </div>
+        <div>
+          <dt>Last revised</dt>
+          <dd>
+            <BookDate value={entry.revisedAt} />
+          </dd>
+        </div>
+      </dl>
+    </aside>
+  );
+}
+
+function BookReadingNav({
+  previous,
+  next,
+}: {
+  previous?: BookEntryWithPost;
+  next?: BookEntryWithPost;
+}) {
+  if (!previous && !next) return null;
+
+  return (
+    <nav className="blog-readingNav" aria-label="Continue through the book">
+      <h2>Continue through the book</h2>
+      <div className="blog-readingNavLinks">
+        {previous ? (
+          <a href={entryHref(previous)} className="blog-readingNavLink">
+            <span>Previous idea</span>
+            <strong>{previous.title}</strong>
+          </a>
+        ) : null}
+        {next ? (
+          <a href={entryHref(next)} className="blog-readingNavLink">
+            <span>Next idea</span>
+            <strong>{next.title}</strong>
+          </a>
+        ) : null}
+      </div>
+    </nav>
+  );
+}
+
 function useInjectHeadingIds(articleRef: React.RefObject<HTMLElement | null>, headings: OutlineHeading[]) {
   useEffect(() => {
     if (!articleRef.current || !headings.length) return;
@@ -337,25 +562,24 @@ function useInjectHeadingIds(articleRef: React.RefObject<HTMLElement | null>, he
 }
 
 export default function BlogPage({ slug }: BlogPageProps) {
-  const posts = useMemo(() => blogIndex.getAll(), []);
   const knownTags = useMemo(
     () => new Set(blogIndex.listTags().map(({ tag }) => tag)),
     [],
   );
   const activeTag = getActiveTagFromLocation(knownTags);
-  const visiblePosts = useMemo(
-    () => (activeTag ? blogIndex.filterByTag(activeTag) : posts),
-    [activeTag, posts],
-  );
   const post = useMemo(
     () => (slug ? blogIndex.findBySlugOrTitle(slug) : undefined),
+    [slug],
+  );
+  const bookEntry = useMemo(
+    () => (slug ? bookIndex.getWithNavigation(slug) : undefined),
     [slug],
   );
   const entranceClass = useBlogEntranceClass(slug);
   const { isLight, toggle: toggleTheme } = useBlogTheme();
   const pageClassName = `${entranceClass}${isLight ? " is-light" : ""}`;
   const title = "Blog | Milad";
-  const description = post?.summary || BLOG_DESCRIPTION;
+  const description = bookEntry?.summary || post?.summary || BLOG_DESCRIPTION;
 
   const headings = useMemo(
     () => (post ? extractHeadings(post.body) : []),
@@ -389,22 +613,30 @@ export default function BlogPage({ slug }: BlogPageProps) {
     );
   }
 
-  if (post) {
+  if (post && bookEntry) {
     return (
       <main className={pageClassName}>
         <BlogNavigation showBlogLink isLight={isLight} onToggleTheme={toggleTheme} />
         <div className="blog-layout">
           <article className="blog-article" ref={articleRef}>
             <header className="blog-articleHeader">
-              <h1>{post.title}</h1>
-              <div className="blog-meta">
-                {post.date ? (
-                  <span className="blog-metaDate">{post.date}</span>
-                ) : null}
-                <BlogTagList className="blog-metaTags" tags={post.tags} />
-                <BlogReadTime minutes={post.readingMinutes} />
+              <div className="blog-bookEntryMeta is-article">
+                <span title={bookEntry.code}>{formatEntryCode(bookEntry.code)}</span>
+                <span title={bookEntry.status}>{formatStatus(bookEntry.status)}</span>
+                <BookDate label="Updated" value={bookEntry.revisedAt} />
               </div>
-              {post.summary ? <p>{post.summary}</p> : null}
+              <h1>{bookEntry.title}</h1>
+              <div className="blog-meta">
+                <span className="blog-metaDate">
+                  <BookDate label="First written" value={bookEntry.firstWrittenAt} />
+                </span>
+                <BlogTagList className="blog-metaTags" tags={post.tags} />
+              </div>
+              {bookEntry.summary ? <p>{bookEntry.summary}</p> : null}
+              <div className="blog-claimBox">
+                <span>Central claim</span>
+                <p>{bookEntry.centralClaim}</p>
+              </div>
             </header>
             <MarkdownBlock
               segment={{
@@ -413,8 +645,12 @@ export default function BlogPage({ slug }: BlogPageProps) {
                 variant: "blog",
               }}
             />
+            <BookReadingNav previous={bookEntry.previous} next={bookEntry.next} />
           </article>
-          <BlogOutline headings={headings} />
+          <div className="blog-sideRail">
+            <BookArticleAside entry={bookEntry} />
+            <BlogOutline headings={headings} />
+          </div>
         </div>
         <BlogComments postSlug={post.slug} />
       </main>
@@ -424,43 +660,7 @@ export default function BlogPage({ slug }: BlogPageProps) {
   return (
     <main className={pageClassName}>
       <BlogNavigation isLight={isLight} onToggleTheme={toggleTheme} />
-      <header className="blog-header">
-        <h1>Blog</h1>
-        <p>{BLOG_DESCRIPTION}</p>
-        {activeTag ? (
-          <div className="blog-activeFilter" aria-live="polite">
-            <span>Topic: {formatTagLabel(activeTag)}</span>
-            <a href={withBasePath("/blog/")}>All topics</a>
-          </div>
-        ) : null}
-      </header>
-      <section
-        className="blog-list"
-        aria-label={
-          activeTag
-            ? `Blog posts tagged ${formatTagLabel(activeTag)}`
-            : "Blog posts"
-        }
-      >
-        {visiblePosts.map((item) => {
-          return (
-            <article key={item.slug} className="blog-listItem">
-              <div className="blog-listItemContent">
-                <a className="blog-listBody" href={postHref(item)}>
-                  <h2>{item.title}</h2>
-                  {item.summary ? <p>{item.summary}</p> : null}
-                </a>
-                <BlogReadTime minutes={item.readingMinutes} />
-              </div>
-              <BlogTagList
-                activeTag={activeTag}
-                className="blog-listTags"
-                tags={item.tags}
-              />
-            </article>
-          );
-        })}
-      </section>
+      <BookHome activeTag={activeTag} />
     </main>
   );
 }
