@@ -180,6 +180,7 @@ function GhostYear({
   year,
   reduced,
   endX = -90,
+  startX = 90,
 }: {
   progress: MotionValue<number>;
   index: number;
@@ -187,10 +188,16 @@ function GhostYear({
   year: string;
   reduced: boolean;
   endX?: number;
+  startX?: number;
 }) {
   const start = index / count;
+  const mid = (index + 0.5) / count;
   const end = (index + 1) / count;
-  const x = useTransform(progress, [start, end], reduced ? [0, 0] : [90, endX]);
+  const x = useTransform(
+    progress,
+    [start, mid, end],
+    reduced ? [0, 0, 0] : [startX, 0, endX],
+  );
   return (
     <motion.span aria-hidden className="story-ghostYear" style={{ x }}>
       {year}
@@ -607,7 +614,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                 count={sceneCount}
                 year="Now"
                 reduced={reduced}
-                endX={0}
+                endX={90}
               />
               <div className="story-chapter story-outro">
                 <div className="story-outroPrimary">
