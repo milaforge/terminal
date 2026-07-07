@@ -82,6 +82,11 @@ type TypingSequenceOptions = {
    * override the function that computes delay between characters.
    */
   delayFn?: (prev: string, ch: string) => number;
+  /**
+   * when set, rescale the sequence so the final character lands exactly
+   * this many milliseconds after startDelay, regardless of text length.
+   */
+  totalDuration?: number;
 };
 
 type TypingSequenceResult = {
@@ -93,24 +98,38 @@ export function simulateTypingSequence(
   text: string,
   options: TypingSequenceOptions,
 ): TypingSequenceResult {
-  const { onChar, delayFn = humanDelay, multiplier = 1, startDelay = 0 } =
-    options;
+  const {
+    onChar,
+    delayFn = humanDelay,
+    multiplier = 1,
+    startDelay = 0,
+    totalDuration,
+  } = options;
   const timers: number[] = [];
-  let elapsed = startDelay;
 
+  const offsets: number[] = [];
+  let elapsed = 0;
   for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const prev = text.slice(0, i);
-    elapsed += delayFn(prev, ch) * multiplier;
-    const typed = text.slice(0, i + 1);
-    const timer = window.setTimeout(() => {
-      onChar(typed, ch, i);
-    }, Math.round(elapsed));
-    timers.push(timer);
+    elapsed += delayFn(text.slice(0, i), text[i]) * multiplier;
+    offsets.push(elapsed);
   }
+
+  const scale =
+    totalDuration !== undefined && elapsed > 0 ? totalDuration / elapsed : 1;
+
+  offsets.forEach((offset, i) => {
+    const typed = text.slice(0, i + 1);
+    const timer = window.setTimeout(
+      () => {
+        onChar(typed, text[i], i);
+      },
+      Math.round(startDelay + offset * scale),
+    );
+    timers.push(timer);
+  });
 
   return {
     timers,
-    duration: elapsed,
+    duration: startDelay + elapsed * scale,
   };
 }

@@ -30,6 +30,9 @@ import {
 } from "@utils";
 import { useTelemetry } from "@hooks/useTelemetry";
 
+/** simulated command typing always lasts this long, regardless of length */
+const COMMAND_TYPING_DURATION_MS = 1000;
+
 const isLineSegment = (value: unknown): value is LineSegment =>
   typeof value === "object" &&
   value !== null &&
@@ -844,6 +847,7 @@ export function useTerminalController(props: TerminalProps): ControllerReturn {
       let typingFinished = false;
       const { tick } = getTypeSfx();
       const typing = simulateTypingSequence(normalized, {
+        totalDuration: COMMAND_TYPING_DURATION_MS,
         onChar: (typed, ch) => {
           if (typingFinished) return;
           setState((prev) => ({ ...prev, input: typed }));
