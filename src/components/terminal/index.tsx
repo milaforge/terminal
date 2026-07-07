@@ -13,13 +13,8 @@ import {
 } from "@stores/uiStore";
 import { terminalLineHasScrollableSegments } from "@components/TerminalLine";
 import { SearchModal } from "./SearchModal";
-import TerminalCommandDock from "./TerminalCommandDock";
 import { TerminalToolbar } from "./Toolbar";
 import { searchStore } from "@stores/searchStore";
-
-const MENU_WIDTH = 260;
-const MENU_HEIGHT = 200;
-const CLAMP_MARGIN = 6;
 
 export default function Terminal(props: TerminalProps) {
   const fontController = useTerminalFonts();
@@ -51,11 +46,6 @@ export default function Terminal(props: TerminalProps) {
     ...props,
     appearanceController,
   });
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-  const [terminalDockOpen, setTerminalDockOpen] = useState(false);
   const { notification, showNotification, dismiss } = useNotificationOverlay();
   useAppVersionRefresh(showNotification);
   const fontLoading = useUiStore(
@@ -85,34 +75,6 @@ export default function Terminal(props: TerminalProps) {
     },
     [scrollRef],
   );
-  const clampX = useCallback(
-    (rawX: number) => {
-      const rect = wrapRef.current?.getBoundingClientRect();
-      if (!rect) return rawX;
-      const min = rect.left + CLAMP_MARGIN;
-      const max = rect.right - MENU_WIDTH - CLAMP_MARGIN;
-      return Math.min(Math.max(rawX, min), Math.max(max, min));
-    },
-    [wrapRef],
-  );
-  const clampY = useCallback(
-    (rawY: number) => {
-      const rect = wrapRef.current?.getBoundingClientRect();
-      if (!rect) return rawY;
-      const min = rect.top + CLAMP_MARGIN;
-      const max = rect.bottom - MENU_HEIGHT - CLAMP_MARGIN;
-      return Math.min(Math.max(rawY, min), Math.max(max, min));
-    },
-    [wrapRef],
-  );
-  const contextMenuPosition = useMemo(() => {
-    if (!contextMenu) return null;
-    return {
-      left: clampX(contextMenu.x),
-      top: clampY(contextMenu.y),
-    };
-  }, [contextMenu, clampX, clampY]);
-
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       const target = event.target as Element | null;
@@ -131,72 +93,6 @@ export default function Terminal(props: TerminalProps) {
     },
     [focusInput]
   );
-
-  const contextMenuItems = useMemo(
-    () => [
-      {
-        id: "terminal",
-        label: "Terminal",
-        meta: "Run commands without the intro",
-        action: () => setTerminalDockOpen(true),
-      },
-      {
-        id: "human",
-        label: "Hire me",
-        meta: "Get accountable execution ownership",
-        action: () => executeCommand("contact"),
-      },
-    ],
-    [executeCommand]
-  );
-
-  const handleContextMenu = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      const target = event.target as Element | null;
-      if (
-        target &&
-        target.closest(
-          "input, textarea, button, .chat-window, .terminal-session-window, .t-searchModal",
-        )
-      ) {
-        return;
-      }
-      event.preventDefault();
-      focusInput();
-      setContextMenu({
-        x: event.clientX,
-        y: event.clientY,
-      });
-    },
-    [focusInput]
-  );
-
-  const closeContextMenu = useCallback(() => {
-    setContextMenu(null);
-  }, []);
-
-  useEffect(() => {
-    const handleClick = (ev: Event) => {
-      const target = ev.target as Element | null;
-      if (target?.closest(".t-contextMenu")) return; // keep menu open when interacting with it
-      closeContextMenu();
-    };
-    const handleKey = (ev: KeyboardEvent) => {
-      if (ev.key === "Escape") {
-        closeContextMenu();
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("scroll", handleClick, true);
-    document.addEventListener("contextmenu", handleClick, true);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("scroll", handleClick, true);
-      document.removeEventListener("contextmenu", handleClick, true);
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [closeContextMenu]);
 
   const openSearch = useCallback(() => {
     searchStore.open();
@@ -465,7 +361,6 @@ export default function Terminal(props: TerminalProps) {
       className={"t-root" + (ready ? " is-ready" : "")}
       style={rootStyle}
       onMouseDown={handleMouseDown}
-      onContextMenu={handleContextMenu}
       role="application"
       aria-label="Terminal portfolio"
     >
@@ -584,49 +479,12 @@ export default function Terminal(props: TerminalProps) {
             ))}
           </div>
         ) : null}
-        {contextMenu ? (
-          <div
-            className="t-contextMenu"
-            style={
-              contextMenuPosition
-                ? { top: contextMenuPosition.top, left: contextMenuPosition.left }
-                : { top: contextMenu.y, left: contextMenu.x }
-            }
-            role="menu"
-            aria-label="Terminal commands"
-          >
-            {contextMenuItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="t-contextMenuItem t-pressable"
-                onClick={() => {
-                  item.action();
-                  closeContextMenu();
-                }}
-              >
-                <span>{item.label}</span>
-                <small>{item.meta}</small>
-              </button>
-            ))}
-            <div className="t-contextMenuDivider" />
-          </div>
-        ) : null}
       </div>
       <TerminalToolbar
         onOpenSearch={openSearch}
         showAskAi={props.showAskAi}
       />
       <SearchModal executeCommand={executeCommand} />
-      {terminalDockOpen ? (
-        <TerminalCommandDock
-          open
-          onClose={() => setTerminalDockOpen(false)}
-          onBookCall={props.onBookCall}
-          contact={props.contact}
-          appearanceController={appearanceController}
-        />
-      ) : null}
     </div>
   );
 }
