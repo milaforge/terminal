@@ -293,8 +293,8 @@
 .story-avatarLauncher.is-docked {
   --story-avatar-translate-y: 0;
   --story-avatar-scale: 0.82;
-  top: 134px;
-  left: 55px;
+  top: 170px;
+  left: 45px;
 }
 
 .story-avatarLauncher.is-docked .story-avatar,
