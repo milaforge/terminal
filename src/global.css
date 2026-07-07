@@ -1305,6 +1305,7 @@
 
   .intro-start-line .intro-clientProof {
     display: block;
+    position: relative;
     margin: 22px 0 0 -88px;
     width: calc(100% + 88px);
     text-align: center;
@@ -1331,10 +1332,6 @@
     --intro-client-border: color-mix(in srgb, var(--border) 72%, var(--accent) 28%);
     --intro-client-bg: color-mix(in srgb, var(--surface) 78%, transparent);
     --intro-client-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    --intro-tooltip-x: 12px;
-    --intro-tooltip-y: 12px;
-    --intro-tooltip-width: min(320px, calc(100vw - 24px));
-    --intro-tooltip-arrow-x: 50%;
     position: relative;
     isolation: isolate;
     display: flex;
@@ -1409,86 +1406,6 @@
     transform: translateY(-1px);
   }
 
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltip {
-    position: fixed;
-    top: var(--intro-tooltip-y);
-    left: var(--intro-tooltip-x);
-    right: auto;
-    z-index: 8;
-    display: grid;
-    gap: 8px;
-    width: var(--intro-tooltip-width);
-    padding: 12px;
-    border: 1px solid color-mix(in srgb, var(--accent) 46%, var(--border) 54%);
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--surface) 94%, #000 6%);
-    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.46);
-    color: var(--text);
-    font-size: 12.5px;
-    line-height: 1.38;
-    text-align: left;
-    white-space: normal;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(6px);
-    transition:
-      opacity 140ms ease,
-      visibility 140ms ease,
-      transform 140ms ease;
-  }
-
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltip::before {
-    content: "";
-    position: absolute;
-    top: -6px;
-    left: var(--intro-tooltip-arrow-x);
-    width: 10px;
-    height: 10px;
-    border-left: 1px solid color-mix(in srgb, var(--accent) 46%, var(--border) 54%);
-    border-top: 1px solid color-mix(in srgb, var(--accent) 46%, var(--border) 54%);
-    background: color-mix(in srgb, var(--surface) 94%, #000 6%);
-    transform: translateX(-50%) rotate(45deg);
-  }
-
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientItem:hover .intro-clientTooltip,
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientItem:focus-visible .intro-clientTooltip {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltipTitle,
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltipRow {
-    display: block;
-  }
-
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltipTitle {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--text);
-  }
-
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltipRow {
-    color: color-mix(in srgb, var(--text) 88%, var(--muted) 12%);
-  }
-
-  :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltipRow strong {
-    display: block;
-    margin-bottom: 2px;
-    color: var(--accent);
-    font-size: 11px;
-    letter-spacing: 0.18px;
-    text-transform: uppercase;
-  }
-
-  @media (hover: none),
-  (pointer: coarse) {
-    :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientTooltip {
-      display: none;
-    }
-  }
-
   @media (max-width: 640px) {
     :is(.intro-start-line, .t-work, .story-clientProof) .intro-clientGrid {
       width: min(360px, calc(100vw - 24px));
@@ -1504,28 +1421,30 @@
   }
 
   .intro-clientModal {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-context, 101);
-    display: grid;
-    place-items: center;
-    padding: 18px;
-    background: rgba(0, 0, 0, 0.66);
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    z-index: 8;
+    display: block;
+    width: min(440px, calc(100vw - 24px));
+    padding: 0;
+    background: transparent;
     color: var(--text);
     font-family: var(--terminal-font, theme("fontFamily.mono"));
-    backdrop-filter: blur(8px);
+    text-align: left;
+    transform: translateX(-50%);
   }
 
   .intro-clientModalPanel {
     position: relative;
     display: grid;
-    gap: 12px;
-    width: min(440px, 100%);
-    padding: 22px;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
     border: 1px solid color-mix(in srgb, var(--accent) 52%, var(--border) 48%);
+    border-radius: 8px;
     background: color-mix(in srgb, var(--surface) 94%, #000 6%);
-    box-shadow: 0 26px 70px rgba(0, 0, 0, 0.56);
-    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.46);
   }
 
   .intro-clientModalClose {
@@ -1551,10 +1470,10 @@
   .intro-clientModalLogo {
     display: block;
     width: auto;
-    max-width: 112px;
-    max-height: 52px;
+    max-width: 92px;
+    max-height: 34px;
     object-fit: contain;
-    margin: 4px 40px 0 0;
+    margin: 0 0 2px;
     filter: brightness(1.08);
   }
 
@@ -1564,7 +1483,7 @@
   }
 
   .intro-clientModalTitle {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 800;
     line-height: 1.3;
   }
@@ -1575,8 +1494,8 @@
 
   .intro-clientModalRow {
     color: color-mix(in srgb, var(--text) 88%, var(--muted) 12%);
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12.5px;
+    line-height: 1.38;
   }
 
   .intro-clientModalRow strong {
@@ -3179,6 +3098,7 @@
 
   .t-work .intro-clientProof {
     display: block;
+    position: relative;
     width: min(520px, 100%);
     margin: 6px auto 2px;
     text-align: center;
