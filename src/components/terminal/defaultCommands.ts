@@ -44,6 +44,7 @@ import {
 import { searchStore } from "@stores/searchStore";
 import { CLIENT_PROOF_ITEMS, CLIENT_PROOF_TITLE } from "@data/clientProof";
 import { SELECTED_CASES } from "@data/selectedCases";
+import { findService, SERVICES, SERVICES_INTRO } from "@data/services";
 
 export const DEFAULT_SUGGESTED_COMMANDS: CommandButton[] = [
   {
@@ -1187,8 +1188,6 @@ export function registerDefaultCommands({
           const entry = findWorkEntry(target);
           if (!entry) return [`no selected case found for "${target}"`];
           return [
-            entry.title,
-            `Clients: ${selectedCasesClientNames}`,
             [
               {
                 type: "work",
@@ -1204,6 +1203,54 @@ export function registerDefaultCommands({
         ];
       },
       { desc: "selected work", subcommands: ["list", "read"] },
+    )
+    .register(
+      "services",
+      ({ args }) => {
+        const target = args.join(" ").trim().toLowerCase();
+
+        if (!target || target === "list") {
+          return [
+            [
+              {
+                type: "services",
+                intro: SERVICES_INTRO,
+                services: SERVICES,
+              },
+            ],
+          ];
+        }
+
+        const match = findService(target);
+        if (!match) {
+          return [
+            `no service found for "${target}"`,
+            "",
+            "available:",
+            ...SERVICES.map((service) => `  ${service.id}`),
+          ];
+        }
+
+        return [
+          [
+            {
+              type: "services",
+              services: SERVICES,
+              initialServiceId: match.id,
+            },
+          ],
+        ];
+      },
+      {
+        desc: "what I can do for you",
+        subcommands: SERVICES.map((service) => service.id),
+        subcommandSuggestions: ({ prefix, parts }) => {
+          const token = (parts[1] || prefix || "").toLowerCase();
+          const ids = SERVICES.map((service) => service.id);
+          if (!token) return ids;
+          return ids.filter((id) => id.startsWith(token));
+        },
+      },
     )
     .register(
       "activity",
@@ -1540,6 +1587,10 @@ export function registerDefaultCommands({
           selected_cases: [
             "selected_cases [list] — show selected case studies",
             "selected_cases read <slug|title> — open a selected case",
+          ],
+          services: [
+            "services — browse the types of engagements I take on",
+            "services <id> — jump straight to one service",
           ],
           open: ["open <file> — open in new tab"],
           download: ["download <file> — trigger browser download"],

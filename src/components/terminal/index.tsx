@@ -11,6 +11,7 @@ import {
   useUiStore,
   useShallow,
 } from "@stores/uiStore";
+import { terminalLineHasScrollableSegments } from "@components/TerminalLine";
 import { SearchModal } from "./SearchModal";
 import TerminalCommandDock from "./TerminalCommandDock";
 import { TerminalToolbar } from "./Toolbar";
@@ -496,7 +497,8 @@ export default function Terminal(props: TerminalProps) {
               ? `intro-start-line${introStartVisible ? " is-visible" : ""}${introClassSuffix}`
               : undefined;
 
-            if (hiddenLines.has(index)) return null;
+            const isFoldedOutput = hiddenLines.has(index);
+            const hasScrollableSegment = terminalLineHasScrollableSegments(line);
 
             const commandMeta = commandLookup.get(index);
             const isCommandLine = Boolean(commandMeta);
@@ -505,7 +507,11 @@ export default function Terminal(props: TerminalProps) {
               isCommandLine && latestCommandIndex !== null && index < latestCommandIndex;
 
             return (
-              <span key={`line-${index}`}>
+              <span
+                key={`line-${index}`}
+                className={`t-outputLine${hasScrollableSegment ? " has-scrollable-segment" : ""}${isFoldedOutput ? " is-folded" : ""}`}
+                aria-hidden={isFoldedOutput || undefined}
+              >
                 <TerminalLineRow
                   line={line}
                   lineIndex={index}

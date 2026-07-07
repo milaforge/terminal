@@ -184,6 +184,30 @@ export type MarkdownSegment = {
   date?: string;
 };
 
+export type ServiceExample = {
+  id: string;
+  name: string;
+  idea?: string;
+  approach?: string;
+  outcome?: string;
+  command?: string;
+};
+
+export type ServiceItem = {
+  id: string;
+  title: string;
+  hook: string;
+  fits: string[];
+  examples: ServiceExample[];
+};
+
+export type ServicesSegment = {
+  type: "services";
+  intro?: string;
+  services: ServiceItem[];
+  initialServiceId?: string;
+};
+
 export type SearchHit = {
   id: string;
   source: "blog" | "resume" | "work";
@@ -216,7 +240,8 @@ export type LineSegment =
   | ClientProofSegment
   | ActivityTreeSegment
   | AvatarSegment
-  | SearchHitsSegment;
+  | SearchHitsSegment
+  | ServicesSegment;
 export type TerminalLine = LineSegment[];
 export type TerminalLineInput = string | TerminalLine;
 

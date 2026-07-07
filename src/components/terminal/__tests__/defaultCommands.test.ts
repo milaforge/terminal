@@ -315,9 +315,107 @@ describe("default commands", () => {
       model,
       registry,
     });
-    expect(JSON.stringify(readOut)).toContain(
+    const readLines = Array.isArray(readOut) ? readOut : [readOut];
+    expect(readLines).toHaveLength(1);
+    expect(readLines).not.toContain(
       "Skilled People Were Buried in Repetitive Work",
     );
+    expect(readLines).not.toContain("Clients: VENT Finance, Saman Bank");
+
+    const readWorkLine = readLines.find(
+      (line): line is TerminalLine => Array.isArray(line),
+    );
+    const readWorkSegment = readWorkLine?.find(
+      (segment): segment is Extract<TerminalLine[number], { type: "work" }> =>
+        segment.type === "work",
+    );
+    expect(readWorkSegment?.items).toHaveLength(1);
+    expect(readWorkSegment?.items[0]?.title).toBe(
+      "Skilled People Were Buried in Repetitive Work",
+    );
+  });
+
+  it("lists services and preselects one by id", async () => {
+    const { registry, model } = buildRegistry();
+    const servicesHandler = registry.get("services")?.handler;
+    expect(servicesHandler).toBeTruthy();
+
+    const listOut = await servicesHandler?.({
+      args: [],
+      raw: "services",
+      model,
+      registry,
+    });
+    const listLines = normalizeOutput(listOut);
+    const servicesSegment = findSegment<{
+      type: "services";
+      services: Array<{ id: string; title: string; fits: string[]; examples: unknown[] }>;
+      initialServiceId?: string;
+    }>(listLines, "services");
+    expect(servicesSegment).toBeTruthy();
+    expect(servicesSegment?.services.map((s) => s.id)).toContain(
+      "start-a-new-project",
+    );
+    expect(
+      servicesSegment?.services.every(
+        (s) => s.title && s.fits.length && s.examples.length,
+      ),
+    ).toBe(true);
+
+    const focusedOut = await servicesHandler?.({
+      args: ["start-a-new-project"],
+      raw: "services start-a-new-project",
+      model,
+      registry,
+    });
+    const focusedSegment = findSegment<{
+      type: "services";
+      initialServiceId?: string;
+    }>(normalizeOutput(focusedOut), "services");
+    expect(focusedSegment?.initialServiceId).toBe("start-a-new-project");
+
+    const missingOut = await servicesHandler?.({
+      args: ["nonsense-service"],
+      raw: "services nonsense-service",
+      model,
+      registry,
+    });
+    expect(normalizeOutput(missingOut).join("\n")).toContain("no service found");
+  });
+
+  it("routes service example commands to existing selected cases", async () => {
+    const { registry, model } = buildRegistry();
+    const servicesHandler = registry.get("services")?.handler;
+    const selectedCasesHandler = registry.get("selected_cases")?.handler;
+
+    const listOut = await servicesHandler?.({
+      args: [],
+      raw: "services",
+      model,
+      registry,
+    });
+    const servicesSegment = findSegment<{
+      type: "services";
+      services: Array<{ examples: Array<{ command?: string }> }>;
+    }>(normalizeOutput(listOut), "services");
+
+    const commands =
+      servicesSegment?.services
+        .flatMap((service) => service.examples)
+        .map((example) => example.command)
+        .filter((command): command is string => Boolean(command)) ?? [];
+    expect(commands.length).toBeGreaterThan(0);
+
+    for (const command of commands) {
+      const args = command.split(/\s+/).slice(1);
+      const out = await selectedCasesHandler?.({
+        args,
+        raw: command,
+        model,
+        registry,
+      });
+      expect(JSON.stringify(out)).not.toContain("no selected case found");
+    }
   });
 
   it("uses only blog as the markdown command", async () => {

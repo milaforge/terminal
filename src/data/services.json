@@ -1,0 +1,113 @@
+{
+  "intro": "Pick the situation that sounds like yours.",
+  "services": [
+    {
+      "id": "start-a-new-project",
+      "title": "Start a new project",
+      "hook": "Turn an idea into something real people can evaluate.",
+      "fits": [
+        "You have an idea and want to test market fit.",
+        "You want a working demo to share with selected users.",
+        "You need something credible to present to investors."
+      ],
+      "examples": [
+        {
+          "id": "blockbyblock",
+          "name": "BlockByBlock",
+          "idea": "An early-stage product that needed investor proof before committing to a larger build.",
+          "approach": "Cut scope to the one flow investors had to see, built a realistic full-stack demo on GCP, and kept MVP shortcuts separated from foundations meant to survive.",
+          "outcome": "Investor-ready demo in 10 days, ~$10k of premature build avoided, architecture sized for a ~4,000-person waitlist."
+        },
+        {
+          "id": "communitypulse",
+          "name": "CommunityPulse",
+          "idea": "A tool to surface how a community actually feels about decisions before they ship.",
+          "approach": "Started from the smallest loop that produces a real signal — collect, aggregate, show — and validated with a selected group before widening scope.",
+          "outcome": "A working prototype used to test the concept with early users."
+        },
+        {
+          "id": "bugdasht",
+          "name": "Bugdasht",
+          "idea": "A bug-bounty platform connecting companies with security researchers.",
+          "approach": "Led the build from initiation to market readiness with a security-first architecture, cryptographic data protection, and external researchers stress-testing the platform.",
+          "outcome": "MVP live in under 8 months; a critical business-flow security flaw was found and fixed before it could cost money."
+        },
+        {
+          "id": "dtip",
+          "name": "DTip",
+          "idea": "Transparent, non-custodial donations that work across blockchains.",
+          "approach": "Shipped an MVP integrating smart contracts with a web frontend, designed the donation UX for non-technical donors, and documented it for contributors.",
+          "outcome": "Live open-source dApp with real-time on-chain visibility of every donation."
+        },
+        {
+          "id": "dcpay",
+          "name": "DCPay",
+          "idea": "A trustless payment gateway operated by autonomous AI agents.",
+          "approach": "Built the smallest end-to-end agent workflow (Python, OLAS) that could prove the trustless payment concept.",
+          "outcome": "Working demo demonstrating the concept without a trusted middleman."
+        }
+      ]
+    },
+    {
+      "id": "get-ready-for-real-users",
+      "title": "Get ready for real users",
+      "hook": "Your prototype works — make it safe to launch and operate.",
+      "fits": [
+        "The demo works, but real users are about to arrive.",
+        "Failures are silent and releases feel like a gamble.",
+        "You need security, monitoring, and a sane deploy path."
+      ],
+      "examples": [
+        {
+          "id": "prototype-launch",
+          "name": "The prototype wasn't ready for real users",
+          "command": "selected_cases read the-prototype-wasn-t-ready-for-real-users"
+        },
+        {
+          "id": "protect-funds",
+          "name": "A bad release could put customer funds at risk",
+          "command": "selected_cases read a-bad-release-could-put-customer-funds-at-risk"
+        }
+      ]
+    },
+    {
+      "id": "scale-without-scaling-cost",
+      "title": "Scale without scaling cost",
+      "hook": "Handle growth without buying more servers by default.",
+      "fits": [
+        "Traffic is growing and reliability is dropping.",
+        "Infrastructure spend is eating the runway.",
+        "Adding hardware stopped fixing the problem."
+      ],
+      "examples": [
+        {
+          "id": "growth-breaking",
+          "name": "Growth was breaking the product",
+          "command": "selected_cases read growth-was-breaking-the-product"
+        },
+        {
+          "id": "cloud-spend",
+          "name": "Cloud spend was eating the runway",
+          "command": "selected_cases read cloud-spend-was-eating-the-runway"
+        }
+      ]
+    },
+    {
+      "id": "automate-repetitive-work",
+      "title": "Automate repetitive work",
+      "hook": "Give skilled people their time back — without hiding failures.",
+      "fits": [
+        "Experts spend hours a day on manual, repeatable checks.",
+        "Manual repetition is causing inconsistency and errors.",
+        "You want automation that stays auditable and stoppable."
+      ],
+      "examples": [
+        {
+          "id": "secops-automation",
+          "name": "Skilled people were buried in repetitive work",
+          "command": "selected_cases read skilled-people-were-buried-in-repetitive-work"
+        }
+      ]
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import type {
   MarkdownSegment,
   OperatingModelSegment,
   SearchHitsSegment as SearchHitsSegmentType,
+  ServicesSegment,
   WorkSegment,
 } from "@types";
 import { MarkdownBlock } from "@components/MarkdownBlock";
@@ -22,6 +23,7 @@ import { CopyButton } from "./segments/CopyButton";
 import { FaqAccordion, LogAccordion } from "./segments/Accordions";
 import { OperatingModel } from "./segments/OperatingModel";
 import { SearchHits } from "./segments/SearchHits";
+import { Services } from "./segments/Services";
 import { SparkleCommandButton } from "./segments/SparkleCommandButton";
 import { WorkGrid } from "./segments/WorkGrid";
 
@@ -126,6 +128,15 @@ export function renderSegment(
         <ActivityTree
           key={key}
           segment={segment as ActivityTreeSegment}
+          executeCommand={executeCommand}
+        />
+      );
+    }
+    case "services": {
+      return (
+        <Services
+          key={key}
+          segment={segment as ServicesSegment}
           executeCommand={executeCommand}
         />
       );

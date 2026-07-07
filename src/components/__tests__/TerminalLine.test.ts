@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getTerminalLineClassName,
   getTerminalLineCommandLabel,
+  terminalLineHasScrollableSegments,
   terminalLineHasCommandSegments,
 } from "../TerminalLine";
 import type { TerminalLine } from "@types";
@@ -15,6 +16,25 @@ describe("TerminalLineRow helpers", () => {
 
     expect(terminalLineHasCommandSegments(line)).toBe(true);
     expect(terminalLineHasCommandSegments([{ type: "text", text: "plain" }])).toBe(
+      false,
+    );
+  });
+
+  it("marks selected work output as scrollable", () => {
+    const line: TerminalLine = [
+      {
+        type: "work",
+        items: [
+          {
+            title: "Case",
+            description: "A long case study list.",
+          },
+        ],
+      },
+    ];
+
+    expect(terminalLineHasScrollableSegments(line)).toBe(true);
+    expect(terminalLineHasScrollableSegments([{ type: "text", text: "plain" }])).toBe(
       false,
     );
   });

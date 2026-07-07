@@ -38,6 +38,10 @@ const SELECTED_WORK_COMMAND: CommandButton = {
   command: "selected_cases",
   typing: "simulate",
 };
+const SERVICES_COMMAND: CommandButton = {
+  command: "services",
+  typing: "simulate",
+};
 const TELEGRAM_URL = "https://t.me/milaforge";
 const GITHUB_URL = "https://github.com/milaforge";
 
@@ -506,6 +510,14 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
             onClick={() => openTerminal(SELECTED_WORK_COMMAND)}
           >
             Works
+          </button>
+          <button
+            type="button"
+            className="story-brandSecondary"
+            title="See the services I provide"
+            onClick={() => openTerminal(SERVICES_COMMAND)}
+          >
+            Services
           </button>
           <a
             className="story-brandSecondary"

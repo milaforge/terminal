@@ -299,6 +299,33 @@
     opacity: 1;
   }
 
+  .t-outputLine {
+    display: block;
+    max-height: 40rem;
+    opacity: 1;
+    overflow: hidden;
+    transform: translateY(0);
+    transition:
+      max-height 100ms ease,
+      opacity 100ms ease,
+      transform 100ms ease;
+  }
+
+  .t-outputLine.has-scrollable-segment {
+    max-height: min(40rem, calc(100dvh - 104px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  .t-outputLine.is-folded {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-2px);
+  }
+
   .t-link {
     color: var(--accent);
     text-decoration: none;
@@ -3433,6 +3460,238 @@
     }
   }
 
+  .t-services {
+    margin: 8px 0 12px;
+    padding: 12px 14px;
+    border: 1px solid color-mix(in srgb, var(--border) 82%, var(--accent) 18%);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--surface) 96%, var(--accent) 4%);
+    max-width: 640px;
+  }
+
+  .t-servicesIntro {
+    margin-bottom: 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.25px;
+    color: color-mix(in srgb, var(--muted) 72%, var(--text) 28%);
+    font-weight: 600;
+  }
+
+  .t-servicesList {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .t-servicesItem {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "title arrow"
+      "hook arrow";
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 2px;
+    padding: 9px 11px;
+    border: 1px solid color-mix(in srgb, var(--border) 70%, var(--accent) 30%);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--surface) 90%, var(--accent) 10%);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease,
+      color 120ms ease;
+  }
+
+  .t-servicesItem:hover,
+  .t-servicesItem:focus-visible {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--surface) 78%, var(--accent) 22%);
+    outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent);
+    outline-offset: 2px;
+  }
+
+  .t-servicesItemTitle {
+    grid-area: title;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .t-servicesItemHook {
+    grid-area: hook;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+
+  .t-servicesArrow {
+    grid-area: arrow;
+    color: color-mix(in srgb, var(--text) 60%, var(--accent) 40%);
+    transition: transform 120ms ease;
+  }
+
+  .t-servicesItem:hover .t-servicesArrow,
+  .t-servicesItem:focus-visible .t-servicesArrow {
+    transform: translateX(3px);
+    color: var(--accent);
+  }
+
+  .t-servicesBack {
+    border: 0;
+    background: transparent;
+    padding: 0 0 10px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .t-servicesBack:hover,
+  .t-servicesBack:focus-visible {
+    color: var(--accent);
+  }
+
+  .t-servicesTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .t-servicesHook {
+    margin-top: 3px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .t-servicesFits {
+    margin: 10px 0 0;
+    padding: 0 0 0 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+  }
+
+  .t-servicesExamplesToggle {
+    margin-top: 12px;
+    padding: 6px 11px;
+    border: 1px solid color-mix(in srgb, var(--border) 52%, var(--accent) 48%);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--surface) 84%, var(--accent) 16%);
+    color: color-mix(in srgb, var(--text) 78%, var(--accent) 22%);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease,
+      color 120ms ease;
+  }
+
+  .t-servicesExamplesToggle:hover,
+  .t-servicesExamplesToggle:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--surface) 72%, var(--accent) 28%);
+    outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent);
+    outline-offset: 2px;
+  }
+
+  .t-servicesExamples {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .t-servicesExampleName {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    min-height: 32px;
+    padding: 5px 9px;
+    border: 1px solid color-mix(in srgb, var(--border) 70%, var(--accent) 30%);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--surface) 90%, var(--accent) 10%);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 1.35;
+    cursor: pointer;
+    transition:
+      border-color 120ms ease,
+      background 120ms ease,
+      color 120ms ease;
+  }
+
+  .t-servicesExampleName:hover,
+  .t-servicesExampleName:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--surface) 78%, var(--accent) 22%);
+    outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent);
+    outline-offset: 2px;
+  }
+
+  .t-servicesChevron {
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .t-servicesRun {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: color-mix(in srgb, var(--accent) 78%, var(--text) 22%);
+  }
+
+  .t-servicesExampleBody {
+    margin: 6px 0 4px;
+    padding: 8px 11px 9px;
+    border-left: 2px solid color-mix(in srgb, var(--border) 55%, var(--accent) 45%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .t-servicesExampleRow dt {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.25px;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--muted) 72%, var(--text) 28%);
+  }
+
+  .t-servicesExampleRow dd {
+    margin: 2px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+  }
+
+  @media (max-width: 640px) {
+    .t-services {
+      padding: 10px;
+    }
+  }
+
   .t-workGrid {
     display: flex;
     flex-wrap: wrap;
@@ -4608,6 +4867,7 @@
   :root:not(.motion-allow) .t-avatarPhoto,
   :root:not(.motion-allow) .t-contextMenu,
   :root:not(.motion-allow) .t-suggestItem,
+  :root:not(.motion-allow) .t-outputLine,
   :root:not(.motion-allow) .t-output,
   :root:not(.motion-allow) .t-wrap {
     transition-duration: 0.01ms !important;
@@ -4644,6 +4904,7 @@
 :root.motion-reduce .t-avatarPhoto,
 :root.motion-reduce .t-contextMenu,
 :root.motion-reduce .t-suggestItem,
+:root.motion-reduce .t-outputLine,
 :root.motion-reduce .t-output,
 :root.motion-reduce .t-wrap {
   transition-duration: 0.01ms !important;

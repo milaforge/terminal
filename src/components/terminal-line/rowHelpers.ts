@@ -4,6 +4,10 @@ export function terminalLineHasCommandSegments(line: TerminalLine): boolean {
   return line.some((segment) => segment.type === "command");
 }
 
+export function terminalLineHasScrollableSegments(line: TerminalLine): boolean {
+  return line.some((segment) => segment.type === "work");
+}
+
 export function getTerminalLineCommandLabel({
   commandText,
   line,

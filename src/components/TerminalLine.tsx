@@ -4,12 +4,14 @@ import { renderSegment } from "./terminal-line/renderSegment";
 import {
   getTerminalLineClassName,
   getTerminalLineCommandLabel,
+  terminalLineHasScrollableSegments,
   terminalLineHasCommandSegments,
 } from "./terminal-line/rowHelpers";
 
 export {
   getTerminalLineClassName,
   getTerminalLineCommandLabel,
+  terminalLineHasScrollableSegments,
   terminalLineHasCommandSegments,
 } from "./terminal-line/rowHelpers";
 
