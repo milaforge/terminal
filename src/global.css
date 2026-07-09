@@ -3382,20 +3382,31 @@
 
   .t-services {
     margin: 8px 0 12px;
-    padding: 12px 14px;
+    padding: 12px 14px 10px;
     border: 1px solid color-mix(in srgb, var(--border) 82%, var(--accent) 18%);
+    border-left: 3px solid color-mix(in srgb, var(--accent) 62%, var(--border) 38%);
     border-radius: 10px;
     background: color-mix(in srgb, var(--surface) 96%, var(--accent) 4%);
     max-width: 640px;
   }
 
-  .t-servicesIntro {
+  .t-servicesPrompt {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
     margin-bottom: 10px;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.25px;
-    color: color-mix(in srgb, var(--muted) 72%, var(--text) 28%);
-    font-weight: 600;
+  }
+
+  .t-servicesPromptMark {
+    flex: none;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .t-servicesPromptText {
+    font-size: 13px;
+    color: color-mix(in srgb, var(--text) 80%, var(--muted) 20%);
   }
 
   .t-servicesList {
@@ -3404,38 +3415,92 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+  }
+
+  .t-servicesList > li {
+    animation: t-servicesRowIn 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  @keyframes t-servicesRowIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .t-servicesList > li + li {
+    border-top: 1px dashed color-mix(in srgb, var(--border) 62%, transparent);
   }
 
   .t-servicesItem {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 12px auto 1fr;
     grid-template-areas:
-      "title arrow"
-      "hook arrow";
-    align-items: center;
+      "caret index title"
+      "caret index hook";
+    align-items: baseline;
     column-gap: 10px;
     row-gap: 2px;
-    padding: 9px 11px;
-    border: 1px solid color-mix(in srgb, var(--border) 70%, var(--accent) 30%);
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--surface) 90%, var(--accent) 10%);
+    padding: 10px 8px 11px 4px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
     cursor: pointer;
     text-align: left;
     font-family: inherit;
-    transition:
-      border-color 120ms ease,
-      background 120ms ease,
-      color 120ms ease;
+    transition: background 120ms ease;
   }
 
   .t-servicesItem:hover,
   .t-servicesItem:focus-visible {
-    border-color: var(--accent);
-    background: color-mix(in srgb, var(--surface) 78%, var(--accent) 22%);
+    background: color-mix(in srgb, var(--surface) 82%, var(--accent) 18%);
+    outline: none;
+  }
+
+  .t-servicesItem:focus-visible {
     outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent);
-    outline-offset: 2px;
+    outline-offset: -2px;
+  }
+
+  .t-servicesCaret {
+    grid-area: caret;
+    align-self: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-5px);
+    transition:
+      opacity 130ms ease,
+      transform 130ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .t-servicesItem:hover .t-servicesCaret,
+  .t-servicesItem:focus-visible .t-servicesCaret {
+    opacity: 1;
+    transform: none;
+  }
+
+  .t-servicesIndex {
+    grid-area: index;
+    align-self: center;
+    font-size: 15px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+    color: color-mix(in srgb, var(--accent) 55%, var(--muted) 45%);
+    transition: color 130ms ease;
+  }
+
+  .t-servicesItem:hover .t-servicesIndex,
+  .t-servicesItem:focus-visible .t-servicesIndex {
+    color: var(--accent);
   }
 
   .t-servicesItemTitle {
@@ -3443,6 +3508,12 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
+    transition: color 130ms ease;
+  }
+
+  .t-servicesItem:hover .t-servicesItemTitle,
+  .t-servicesItem:focus-visible .t-servicesItemTitle {
+    color: color-mix(in srgb, var(--accent) 72%, var(--text) 28%);
   }
 
   .t-servicesItemHook {
@@ -3452,16 +3523,12 @@
     color: var(--muted);
   }
 
-  .t-servicesArrow {
-    grid-area: arrow;
-    color: color-mix(in srgb, var(--text) 60%, var(--accent) 40%);
-    transition: transform 120ms ease;
-  }
-
-  .t-servicesItem:hover .t-servicesArrow,
-  .t-servicesItem:focus-visible .t-servicesArrow {
-    transform: translateX(3px);
-    color: var(--accent);
+  @media (hover: none) {
+    .t-servicesCaret {
+      opacity: 1;
+      transform: none;
+      color: color-mix(in srgb, var(--accent) 55%, var(--muted) 45%);
+    }
   }
 
   .t-servicesBack {
@@ -3479,6 +3546,22 @@
     color: var(--accent);
   }
 
+  .t-servicesDetail {
+    animation: t-servicesRowIn 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .t-servicesTitleRow {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .t-servicesTitleRow .t-servicesIndex {
+    font-size: 22px;
+    line-height: 1;
+    color: color-mix(in srgb, var(--accent) 45%, var(--muted) 55%);
+  }
+
   .t-servicesTitle {
     font-size: 15px;
     font-weight: 700;
@@ -3491,15 +3574,74 @@
     color: var(--muted);
   }
 
+  .t-servicesFitsLabel {
+    margin-top: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: color-mix(in srgb, var(--accent) 62%, var(--muted) 38%);
+  }
+
   .t-servicesFits {
-    margin: 10px 0 0;
-    padding: 0 0 0 18px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
     display: flex;
     flex-direction: column;
     gap: 4px;
     font-size: 13px;
     line-height: 1.5;
     color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+  }
+
+  .t-servicesFits li {
+    display: flex;
+    gap: 9px;
+  }
+
+  .t-servicesCheck {
+    flex: none;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .t-servicesPager {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed color-mix(in srgb, var(--border) 62%, transparent);
+  }
+
+  .t-servicesPagerLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 48%;
+    padding: 4px 2px;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: left;
+    cursor: pointer;
+    transition: color 120ms ease;
+  }
+
+  .t-servicesPagerLink.is-next {
+    text-align: right;
+  }
+
+  .t-servicesPagerLink:hover,
+  .t-servicesPagerLink:focus-visible {
+    color: var(--accent);
+  }
+
+  .t-servicesPagerTitle {
+    line-height: 1.35;
   }
 
   .t-servicesExamplesToggle {
@@ -3534,19 +3676,24 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .t-servicesExample {
+    animation: t-servicesRowIn 200ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .t-servicesExampleName {
     display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    align-items: baseline;
+    gap: 9px;
     max-width: 100%;
+    width: 100%;
     min-height: 32px;
-    padding: 5px 9px;
-    border: 1px solid color-mix(in srgb, var(--border) 70%, var(--accent) 30%);
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--surface) 90%, var(--accent) 10%);
+    padding: 6px 9px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
     color: var(--text);
     font-family: inherit;
     font-size: 13px;
@@ -3555,40 +3702,52 @@
     line-height: 1.35;
     cursor: pointer;
     transition:
-      border-color 120ms ease,
       background 120ms ease,
       color 120ms ease;
   }
 
   .t-servicesExampleName:hover,
   .t-servicesExampleName:focus-visible {
-    color: var(--accent);
-    border-color: var(--accent);
-    background: color-mix(in srgb, var(--surface) 78%, var(--accent) 22%);
-    outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent);
-    outline-offset: 2px;
+    color: color-mix(in srgb, var(--accent) 72%, var(--text) 28%);
+    background: color-mix(in srgb, var(--surface) 82%, var(--accent) 18%);
+    outline: none;
   }
 
-  .t-servicesChevron {
-    color: var(--muted);
-    font-size: 11px;
+  .t-servicesExampleName:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 58%, transparent);
+    outline-offset: -2px;
+  }
+
+  .t-servicesExamplePrefix {
+    flex: none;
+    font-weight: 700;
+    color: color-mix(in srgb, var(--accent) 68%, var(--muted) 32%);
   }
 
   .t-servicesRun {
     margin-left: auto;
+    padding-left: 8px;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.6px;
     color: color-mix(in srgb, var(--accent) 78%, var(--text) 22%);
+    opacity: 0.65;
+    transition: opacity 120ms ease;
+  }
+
+  .t-servicesExampleName:hover .t-servicesRun,
+  .t-servicesExampleName:focus-visible .t-servicesRun {
+    opacity: 1;
   }
 
   .t-servicesExampleBody {
-    margin: 6px 0 4px;
-    padding: 8px 11px 9px;
+    margin: 2px 0 6px 13px;
+    padding: 6px 11px 8px;
     border-left: 2px solid color-mix(in srgb, var(--border) 55%, var(--accent) 45%);
     display: flex;
     flex-direction: column;
     gap: 8px;
+    animation: t-servicesRowIn 200ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .t-servicesExampleRow dt {
@@ -3608,7 +3767,26 @@
 
   @media (max-width: 640px) {
     .t-services {
-      padding: 10px;
+      padding: 10px 10px 8px;
+    }
+
+    .t-servicesItem {
+      grid-template-columns: 10px auto 1fr;
+      column-gap: 8px;
+      padding: 11px 6px 12px 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .t-servicesList > li,
+    .t-servicesDetail,
+    .t-servicesExample,
+    .t-servicesExampleBody {
+      animation: none;
+    }
+
+    .t-servicesCaret {
+      transition: none;
     }
   }
 

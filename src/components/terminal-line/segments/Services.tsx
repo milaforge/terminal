@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { ServiceItem, ServicesSegment } from "@types";
 import type { ExecuteCommand } from "../types";
 
 /**
- * Progressive disclosure, one layer at a time:
- *   1. service list (title + hook)
- *   2. one service (when it fits) + optional "see examples"
- *   3. examples; detail examples expand inline, case examples run a command
+ * TUI-style selector, one layer at a time:
+ *   1. service list — numbered rows with a ❯ caret, arrow-key navigable
+ *   2. one service — ✓ checklist of fits + prev/next pager
+ *   3. examples — detail examples expand inline, case examples run a command
  */
 export function Services({
   segment,
@@ -22,9 +22,10 @@ export function Services({
   const [showExamples, setShowExamples] = useState(false);
   const [openExampleId, setOpenExampleId] = useState<string | null>(null);
 
-  const active = serviceId
-    ? services.find((service) => service.id === serviceId)
-    : undefined;
+  const activeIndex = serviceId
+    ? services.findIndex((service) => service.id === serviceId)
+    : -1;
+  const active = activeIndex >= 0 ? services[activeIndex] : undefined;
 
   const openService = (id: string) => {
     setServiceId(id);
@@ -42,26 +43,14 @@ export function Services({
     return (
       <div className="t-services">
         {segment.intro ? (
-          <div className="t-servicesIntro">{segment.intro}</div>
+          <div className="t-servicesPrompt">
+            <span className="t-servicesPromptMark" aria-hidden="true">
+              ?
+            </span>
+            <span className="t-servicesPromptText">{segment.intro}</span>
+          </div>
         ) : null}
-        <ul className="t-servicesList">
-          {services.map((service) => (
-            <li key={service.id}>
-              <button
-                type="button"
-                className="t-servicesItem"
-                onClick={() => openService(service.id)}
-                aria-label={`Open ${service.title}`}
-              >
-                <span className="t-servicesItemTitle">{service.title}</span>
-                <span className="t-servicesItemHook">{service.hook}</span>
-                <span className="t-servicesArrow" aria-hidden="true">
-                  →
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <ServicePicker services={services} onPick={openService} />
       </div>
     );
   }
@@ -74,16 +63,31 @@ export function Services({
         onClick={backToList}
         aria-label="Back to all services"
       >
-        ← services
+        <span aria-hidden="true">←</span> ~/services
       </button>
 
-      <div className="t-servicesDetail">
-        <div className="t-servicesTitle">{active.title}</div>
-        <div className="t-servicesHook">{active.hook}</div>
+      <div className="t-servicesDetail" key={active.id}>
+        <div className="t-servicesTitleRow">
+          <span className="t-servicesIndex" aria-hidden="true">
+            {String(activeIndex + 1).padStart(2, "0")}
+          </span>
+          <div>
+            <div className="t-servicesTitle">{active.title}</div>
+            <div className="t-servicesHook">{active.hook}</div>
+          </div>
+        </div>
 
+        <div className="t-servicesFitsLabel" aria-hidden="true">
+          this fits if
+        </div>
         <ul className="t-servicesFits" aria-label="When this fits">
           {active.fits.map((fit) => (
-            <li key={fit}>{fit}</li>
+            <li key={fit}>
+              <span className="t-servicesCheck" aria-hidden="true">
+                ✓
+              </span>
+              {fit}
+            </li>
           ))}
         </ul>
 
@@ -93,7 +97,7 @@ export function Services({
             className="t-servicesExamplesToggle"
             onClick={() => setShowExamples(true)}
           >
-            See examples →
+            See examples <span aria-hidden="true">→</span>
           </button>
         ) : null}
 
@@ -107,8 +111,130 @@ export function Services({
             executeCommand={executeCommand}
           />
         ) : null}
+
+        <ServicePager
+          services={services}
+          activeIndex={activeIndex}
+          onPick={openService}
+        />
       </div>
     </div>
+  );
+}
+
+function ServicePicker({
+  services,
+  onPick,
+}: {
+  services: ServiceItem[];
+  onPick: (id: string) => void;
+}) {
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [focusIndex, setFocusIndex] = useState(0);
+
+  const moveFocus = useCallback((index: number) => {
+    setFocusIndex(index);
+    itemRefs.current[index]?.focus();
+  }, []);
+
+  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
+    const last = services.length - 1;
+    let next: number | null = null;
+
+    if (event.key === "ArrowDown" || event.key === "j") {
+      next = index >= last ? 0 : index + 1;
+    } else if (event.key === "ArrowUp" || event.key === "k") {
+      next = index <= 0 ? last : index - 1;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = last;
+    } else if (/^[1-9]$/.test(event.key)) {
+      const target = Number(event.key) - 1;
+      if (target <= last) {
+        event.preventDefault();
+        onPick(services[target].id);
+      }
+      return;
+    }
+
+    if (next !== null) {
+      event.preventDefault();
+      moveFocus(next);
+    }
+  };
+
+  return (
+    <ul className="t-servicesList">
+      {services.map((service, index) => (
+        <li key={service.id} style={{ "--i": index } as React.CSSProperties}>
+          <button
+            type="button"
+            ref={(node) => {
+              itemRefs.current[index] = node;
+            }}
+            className="t-servicesItem"
+            tabIndex={index === focusIndex ? 0 : -1}
+            onClick={() => onPick(service.id)}
+            onFocus={() => setFocusIndex(index)}
+            onKeyDown={(event) => handleKeyDown(event, index)}
+            aria-label={`Open ${service.title}`}
+          >
+            <span className="t-servicesCaret" aria-hidden="true">
+              ❯
+            </span>
+            <span className="t-servicesIndex" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span className="t-servicesItemTitle">{service.title}</span>
+            <span className="t-servicesItemHook">{service.hook}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ServicePager({
+  services,
+  activeIndex,
+  onPick,
+}: {
+  services: ServiceItem[];
+  activeIndex: number;
+  onPick: (id: string) => void;
+}) {
+  const prev = activeIndex > 0 ? services[activeIndex - 1] : null;
+  const next =
+    activeIndex < services.length - 1 ? services[activeIndex + 1] : null;
+
+  return (
+    <nav className="t-servicesPager" aria-label="More services">
+      {prev ? (
+        <button
+          type="button"
+          className="t-servicesPagerLink"
+          onClick={() => onPick(prev.id)}
+        >
+          <span aria-hidden="true">←</span>
+          <span className="t-servicesPagerTitle">{prev.title}</span>
+        </button>
+      ) : (
+        <span />
+      )}
+      {next ? (
+        <button
+          type="button"
+          className="t-servicesPagerLink is-next"
+          onClick={() => onPick(next.id)}
+        >
+          <span className="t-servicesPagerTitle">{next.title}</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      ) : (
+        <span />
+      )}
+    </nav>
   );
 }
 
@@ -132,10 +258,13 @@ function ServiceExamples({
             {example.command ? (
               <button
                 type="button"
-                className="t-servicesExampleName"
+                className="t-servicesExampleName is-run"
                 onClick={() => executeCommand(example.command!)}
                 aria-label={`Open case study: ${example.name}`}
               >
+                <span className="t-servicesExamplePrefix" aria-hidden="true">
+                  $
+                </span>
                 {example.name}
                 <span className="t-servicesRun" aria-hidden="true">
                   RUN
@@ -148,10 +277,10 @@ function ServiceExamples({
                 onClick={() => onToggleExample(example.id)}
                 aria-expanded={isOpen}
               >
-                {example.name}
-                <span className="t-servicesChevron" aria-hidden="true">
-                  {isOpen ? "▾" : "▸"}
+                <span className="t-servicesExamplePrefix" aria-hidden="true">
+                  {isOpen ? "−" : "+"}
                 </span>
+                {example.name}
               </button>
             )}
 

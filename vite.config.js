@@ -5,6 +5,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: "/terminal/",
+  server: {
+    host: "127.0.0.1",
+  },
   resolve: {
     alias: {
       "@components": path.resolve(__dirname, "src/components"),
