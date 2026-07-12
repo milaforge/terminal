@@ -1193,6 +1193,7 @@ export function registerDefaultCommands({
                 type: "work",
                 items: [entry],
                 clientProof: selectedCasesClientProof,
+                initialOpenIndex: 0,
               },
             ],
           ];

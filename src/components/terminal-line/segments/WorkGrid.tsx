@@ -1,4 +1,5 @@
 import { type ButtonHTMLAttributes, type ReactNode, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { SampleWork, WorkSegment } from "@types";
 import { MarkdownBlock } from "@components/MarkdownBlock";
 import { ClientProofStrip } from "@components/ClientProofStrip";
@@ -42,11 +43,25 @@ export function buildWorkSpark(points: number[]) {
   };
 }
 
-export function WorkGrid({ segment }: { segment: WorkSegment }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+export function getInitialWorkModalIndex(segment: WorkSegment): number | null {
   const items = segment.items || [];
+  return typeof segment.initialOpenIndex === "number" &&
+    segment.initialOpenIndex >= 0 &&
+    segment.initialOpenIndex < items.length
+    ? segment.initialOpenIndex
+    : null;
+}
+
+export function WorkGrid({ segment }: { segment: WorkSegment }) {
+  const items = segment.items || [];
+  const initialOpenIndex = getInitialWorkModalIndex(segment);
+  const [openIndex, setOpenIndex] = useState<number | null>(initialOpenIndex);
 
   const openItem = openIndex !== null ? items[openIndex] : null;
+
+  useEffect(() => {
+    setOpenIndex(initialOpenIndex);
+  }, [initialOpenIndex]);
 
   useEffect(() => {
     if (openIndex === null) return;
@@ -142,7 +157,7 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
         })}
       </div>
 
-      {openItem ? (
+      {openItem ? createPortal(
         <div
           className="t-workModalBackdrop"
           role="dialog"
@@ -182,7 +197,8 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </div>
   );

@@ -333,6 +333,7 @@ describe("default commands", () => {
     expect(readWorkSegment?.items[0]?.title).toBe(
       "Skilled People Were Buried in Repetitive Work",
     );
+    expect(readWorkSegment?.initialOpenIndex).toBe(0);
   });
 
   it("lists services and preselects one by id", async () => {

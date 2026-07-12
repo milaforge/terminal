@@ -4173,7 +4173,7 @@
     align-items: center;
     justify-content: center;
     padding: 14px;
-    z-index: var(--z-work, 40);
+    z-index: var(--z-work-modal, 1000);
   }
 
   .t-workModal {

@@ -118,6 +118,7 @@ export type WorkSegment = {
   type: "work";
   items: SampleWork[];
   clientProof?: ClientProofSegment;
+  initialOpenIndex?: number;
 };
 
 export type ClientProofItem = {
