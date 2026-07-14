@@ -1,5 +1,6 @@
 export type AppRoute =
   | { name: "home" }
+  | { name: "team" }
   | { name: "book"; slug?: string; legacy?: boolean };
 
 type LocationLike = {
@@ -49,6 +50,10 @@ function appRoutePathname(route: AppRoute, base: string) {
     );
   }
 
+  if (route.name === "team") {
+    return withBasePath("/team/", base);
+  }
+
   return withBasePath("/", base);
 }
 
@@ -78,6 +83,10 @@ export function parseAppRoute(
       slug: safeDecodePathPart(parts[1]),
       legacy: parts[0] === "blog",
     };
+  }
+
+  if (parts[0] === "team") {
+    return { name: "team" };
   }
 
   return { name: "home" };
@@ -114,7 +123,13 @@ export function getClientRoutePath(
   const cleanBase = cleanBasePath(base);
   const isHomeRoute =
     target.pathname === withBasePath("/", base) || target.pathname === cleanBase;
-  if (route.name !== "book" && !isHomeRoute) return null;
+  if (
+    route.name !== "book" &&
+    route.name !== "team" &&
+    !isHomeRoute
+  ) {
+    return null;
+  }
 
   return `${appRoutePathname(route, base)}${target.search}${target.hash}`;
 }
@@ -167,6 +182,10 @@ export function getClientRoutePathForClick(
       targetUrl.pathname === withBasePath("/", base) ||
       targetUrl.pathname === cleanBase;
     if (route.name === "book" || isHomeRoute) {
+      return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
+    }
+
+    if (route.name === "team") {
       return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
     }
   }

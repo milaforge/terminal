@@ -15,6 +15,13 @@ export type StoryChapter = {
 };
 
 export const STORY_TAGLINE = "Bring me the idea—or the software you no longer trust.";
+export const STORY_ERA = "TECHNICAL CO-FOUNDER";
+export const STORY_INTRO =
+  "You keep control. I take responsibility for what gets built, how it ships, and whether it stays dependable as you grow.";
+export const STORY_SCROLL_HINT = "Why I can make that promise";
+export const STORY_CTA_LABEL = "Schedule a free conversation";
+export const STORY_CTA_EYEBROW =
+  "NO FEE · NO COMMITMENT · LEAVE WITH A CLEARER NEXT TECHNICAL STEP.";
 export const STORY_START = "Technical uncertainty";
 export const STORY_END = "Founder control";
 

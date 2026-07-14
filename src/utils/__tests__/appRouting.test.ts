@@ -8,13 +8,18 @@ import {
 
 const base = "/terminal/";
 const current = {
-  origin: "https://milaforge.dev",
+  origin: "https://example.test",
   pathname: "/terminal/book/",
   search: "",
   hash: "",
 };
 
 describe("app routing", () => {
+  it("parses root-hosted story and team routes", () => {
+    expect(parseAppRoute("/", "/")).toEqual({ name: "home" });
+    expect(parseAppRoute("/team", "/")).toEqual({ name: "team" });
+  });
+
   it("parses book routes under the configured base path", () => {
     expect(parseAppRoute("/terminal/book/automation-risk/", base)).toEqual({
       name: "book",
@@ -40,30 +45,71 @@ describe("app routing", () => {
   it("allows same-origin app routes to be handled by React", () => {
     expect(
       getClientRoutePath(
-        "https://milaforge.dev/terminal/book/automation-risk/",
+        "https://example.test/terminal/book/automation-risk/",
         current,
         base,
       ),
     ).toBe("/terminal/book/automation-risk/");
   });
 
+  it("allows root-hosted team links to be handled by React", () => {
+    const rootCurrent = {
+      origin: "https://example.test",
+      pathname: "/",
+      search: "",
+      hash: "",
+    };
+
+    expect(getClientRoutePath("https://example.test/team", rootCurrent, "/")).toBe(
+      "/team/",
+    );
+  });
+
+  it("leaves unknown root-hosted paths to document navigation", () => {
+    expect(
+      getClientRoutePath(
+        "https://example.test/not-a-route",
+        {
+          origin: "https://example.test",
+          pathname: "/",
+          search: "",
+          hash: "",
+        },
+        "/",
+      ),
+    ).toBeNull();
+    expect(
+      getClientRoutePath(
+        "https://example.test/terminal",
+        {
+          origin: "https://example.test",
+          pathname: "/",
+          search: "",
+          hash: "",
+        },
+        "/",
+      ),
+    ).toBeNull();
+  });
+
+
   it("normalizes the book index to the prerendered slash route", () => {
     expect(
-      getClientRoutePath("https://milaforge.dev/terminal/book", current, base),
+      getClientRoutePath("https://example.test/terminal/book", current, base),
     ).toBe("/terminal/book/");
   });
 
   it("canonicalizes legacy blog links to book links", () => {
     expect(
       getClientRoutePath(
-        "https://milaforge.dev/terminal/blog",
+        "https://example.test/terminal/blog",
         current,
         base,
       ),
     ).toBe("/terminal/book/");
     expect(
       getClientRoutePath(
-        "https://milaforge.dev/terminal/blog/automation-risk/",
+        "https://example.test/terminal/blog/automation-risk/",
         current,
         base,
       ),
@@ -73,7 +119,7 @@ describe("app routing", () => {
   it("keeps book topic filters in client-handled routes", () => {
     expect(
       getClientRoutePath(
-        "https://milaforge.dev/terminal/book/?tag=security",
+        "https://example.test/terminal/book/?tag=security",
         current,
         base,
       ),
@@ -97,7 +143,7 @@ describe("app routing", () => {
     expect(
       getClientRoutePathForClick(
         { button: 0 },
-        "https://milaforge.dev/terminal/book/",
+        "https://example.test/terminal/book/",
         "",
         false,
         current,
@@ -110,7 +156,7 @@ describe("app routing", () => {
     expect(
       getClientRoutePathForClick(
         { button: 0, metaKey: true },
-        "https://milaforge.dev/terminal/book/",
+        "https://example.test/terminal/book/",
         "",
         false,
         current,
@@ -120,7 +166,7 @@ describe("app routing", () => {
     expect(
       getClientRoutePathForClick(
         { button: 0 },
-        "https://milaforge.dev/terminal/book/",
+        "https://example.test/terminal/book/",
         "_blank",
         false,
         current,
@@ -130,7 +176,7 @@ describe("app routing", () => {
     expect(
       getClientRoutePathForClick(
         { button: 0 },
-        "https://milaforge.dev/terminal/book/",
+        "https://example.test/terminal/book/",
         "",
         true,
         current,
@@ -143,11 +189,11 @@ describe("app routing", () => {
     expect(
       getClientRoutePathForClick(
         { button: 0 },
-        "https://milaforge.dev/terminal/book/automation-risk/#failure-mode",
+        "https://example.test/terminal/book/automation-risk/#failure-mode",
         "",
         false,
         {
-          origin: "https://milaforge.dev",
+          origin: "https://example.test",
           pathname: "/terminal/book/automation-risk/",
           search: "",
           hash: "",

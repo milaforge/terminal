@@ -11,6 +11,11 @@ import {
 } from "motion/react";
 import {
   STORY_CHAPTERS,
+  STORY_CTA_EYEBROW,
+  STORY_CTA_LABEL,
+  STORY_ERA,
+  STORY_INTRO,
+  STORY_SCROLL_HINT,
   STORY_START,
   STORY_END,
   STORY_TAGLINE,
@@ -48,6 +53,16 @@ const GITHUB_URL = "https://github.com/milaforge";
 type StoryPageProps = {
   onBookCall: () => void;
   contact?: ContactInfo;
+  audience?: "founders" | "hiring";
+  chapters?: StoryChapter[];
+  ctaEyebrow?: string;
+  ctaLabel?: string;
+  era?: string;
+  intro?: string;
+  scrollHint?: string;
+  tagline?: string;
+  timelineStart?: string;
+  timelineEnd?: string;
 };
 
 type SceneEdge = "first" | "last" | "middle";
@@ -243,14 +258,26 @@ function ChapterScene({
   );
 }
 
-export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
+export default function StoryPage({
+  onBookCall,
+  contact,
+  audience = "founders",
+  chapters = STORY_CHAPTERS,
+  ctaEyebrow = STORY_CTA_EYEBROW,
+  ctaLabel = STORY_CTA_LABEL,
+  era = STORY_ERA,
+  intro = STORY_INTRO,
+  scrollHint = STORY_SCROLL_HINT,
+  tagline = STORY_TAGLINE,
+  timelineStart = STORY_START,
+  timelineEnd = STORY_END,
+}: StoryPageProps) {
   const unread = useChatStore((state) => state.unread);
   const trackRef = useRef<HTMLDivElement>(null);
   const activeSceneRef = useRef(0);
   const wheelLockRef = useRef<number | null>(null);
   const reduced = useReducedMotion() ?? false;
   const [activeScene, setActiveScene] = useState(0);
-  const [avatarDocked, setAvatarDocked] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -264,7 +291,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   useTerminalColors();
 
   // intro + chapters + outro
-  const displayChapters = useMemo(() => [...STORY_CHAPTERS], []);
+  const displayChapters = useMemo(() => [...chapters], [chapters]);
   const sceneCount = displayChapters.length + 2;
 
   const { scrollYProgress } = useScroll({
@@ -285,7 +312,6 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
     );
     activeSceneRef.current = next;
     setActiveScene(next);
-    setAvatarDocked(v > 0.035);
   });
 
   // ambient glow drifts through each chapter's color as time passes
@@ -529,12 +555,31 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
             Book
           </a>
         </div>
+        <nav
+          className={`audience-nav is-${audience}`}
+          aria-label="Choose audience"
+        >
+          <span className="audience-nav__prefix">For</span>
+          <a
+            href={BASE}
+            aria-current={audience === "founders" ? "page" : undefined}
+          >
+            Founders
+          </a>
+          <span className="audience-nav__separator" aria-hidden="true">
+            /
+          </span>
+          <a
+            href={`${BASE}team/`}
+            aria-current={audience === "hiring" ? "page" : undefined}
+          >
+            Hiring teams
+          </a>
+        </nav>
       </header>
       <button
         type="button"
-        className={`story-avatarButton story-avatarLauncher${
-          avatarDocked ? " is-docked" : ""
-        }`}
+        className="story-avatarButton story-avatarLauncher"
         aria-label="Open chatbot"
         onClick={openChat}
       >
@@ -580,22 +625,16 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
             className="is-intro"
           >
             <div className="story-chapter story-intro">
-              <div className="story-avatarSpacer" aria-hidden="true" />
-              <p className="story-era">TECHNICAL CO-FOUNDER</p>
-              <h1 className="story-hook">{STORY_TAGLINE}</h1>
-              <p className="story-sub">
-                You keep control. I take responsibility for what gets built, how
-                it ships, and whether it stays dependable as you grow.
-              </p>
+              <p className="story-era">{era}</p>
+              <h1 className="story-hook">{tagline}</h1>
+              <p className="story-sub">{intro}</p>
               <motion.p
                 className="story-scrollHint"
                 style={{ opacity: hintOpacity }}
               >
-                <span className="story-key">↓</span> Why I can make that promise{" "}
                 {/* <span className="story-key">↑</span> rewind */}
-                <span aria-hidden className="story-hintArrow">
-                  ▾
-                </span>
+                <span className="story-key story-hintArrow">↓</span>{" "}
+                {scrollHint}{" "}
               </motion.p>
             </div>
           </Scene>
@@ -635,13 +674,10 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                     className="t-commandLink t-pressable is-secondary"
                     onClick={onBookCall}
                   >
-                    Schedule a free conversation
+                    {ctaLabel}
                   </button>
                 </div>
-                <p className="story-outroEyebrow">
-                  NO FEE · NO COMMITMENT · LEAVE WITH A CLEARER NEXT TECHNICAL
-                  STEP.
-                </p>
+                <p className="story-outroEyebrow">{ctaEyebrow}</p>
               </div>
             </div>
           </Scene>
@@ -665,21 +701,18 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                   aria-label="Book a call"
                   title="Book a call"
                 >
-                  <CalendarCheck
-                    size={17}
-                    strokeWidth={1.8}
-                    aria-hidden="true"
-                  />
+                  Meet
                 </button>
-
+                .
                 <a
                   className="story-bottomContactLink"
                   href={emailHref}
                   aria-label="Email Milad"
                   title="Send an email"
                 >
-                  <Mail size={17} strokeWidth={1.6} aria-hidden="true" />
+                  Email
                 </a>
+                .
                 <a
                   className="story-bottomContactLink"
                   href={TELEGRAM_URL}
@@ -688,8 +721,9 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                   aria-label="Message Milad on Telegram"
                   title="Reach out on Telegram"
                 >
-                  <Send size={17} strokeWidth={1.6} aria-hidden="true" />
+                  Telegram
                 </a>
+                .
                 <a
                   className="story-bottomContactLink"
                   href={GITHUB_URL}
@@ -698,7 +732,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                   aria-label="GitHub"
                   title="Check out Github"
                 >
-                  <Github size={16} strokeWidth={2} aria-hidden="true" />
+                  Github
                 </a>
               </motion.nav>
               <motion.div
@@ -706,7 +740,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                 aria-hidden
                 style={{ opacity: timelineOpacity, x: "-50%", y: timelineY }}
               >
-                <span className="story-timelineYear">{STORY_START}</span>
+                <span className="story-timelineYear">{timelineStart}</span>
                 <div className="story-timelineBar">
                   <motion.div
                     className="story-timelineFill"
@@ -717,7 +751,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                   className="story-timelineYear story-timelineYearEnd"
                   style={{ color: timelineEndColor, scale: timelineEndScale }}
                 >
-                  {STORY_END}
+                  {timelineEnd}
                 </motion.span>
               </motion.div>
             </>

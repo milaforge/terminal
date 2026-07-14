@@ -265,12 +265,12 @@
 
 .story-avatarLauncher {
   --story-avatar-translate-x: -50%;
-  --story-avatar-translate-y: -50%;
-  --story-avatar-scale: 1;
+  --story-avatar-translate-y: 0;
+  --story-avatar-scale: 0.82;
   --story-avatar-hover-scale: 1;
   position: fixed;
-  top: calc(47dvh - 168px);
-  left: 50%;
+  top: 170px;
+  left: 45px;
   z-index: 31;
   margin: 0;
   translate: var(--story-avatar-translate-x) var(--story-avatar-translate-y);
@@ -282,7 +282,7 @@
     left 520ms cubic-bezier(0.22, 1, 0.36, 1),
     scale var(--story-sidebar-hover-transition),
     box-shadow 520ms ease;
-  will-change: top, left, scale;
+  will-change: scale;
 }
 
 .story-avatarLauncher:hover,
@@ -290,27 +290,20 @@
   --story-avatar-hover-scale: 1.025;
 }
 
-.story-avatarLauncher.is-docked {
-  --story-avatar-translate-y: 0;
-  --story-avatar-scale: 0.82;
-  top: 170px;
-  left: 45px;
-}
-
-.story-avatarLauncher.is-docked .story-avatar,
-.story-avatarLauncher.is-docked .story-avatarStatus {
+.story-avatarLauncher .story-avatar,
+.story-avatarLauncher .story-avatarStatus {
   animation: story-avatar-breathe 2.8s ease-in-out infinite;
 }
 
-.story-avatarLauncher.is-docked:hover,
-.story-avatarLauncher.is-docked:focus-visible {
+.story-avatarLauncher:hover,
+.story-avatarLauncher:focus-visible {
   --story-avatar-hover-scale: var(--story-sidebar-hover-scale);
 }
 
-.story-avatarLauncher.is-docked:hover .story-avatar,
-.story-avatarLauncher.is-docked:hover .story-avatarStatus,
-.story-avatarLauncher.is-docked:focus-visible .story-avatar,
-.story-avatarLauncher.is-docked:focus-visible .story-avatarStatus {
+.story-avatarLauncher:hover .story-avatar,
+.story-avatarLauncher:hover .story-avatarStatus,
+.story-avatarLauncher:focus-visible .story-avatar,
+.story-avatarLauncher:focus-visible .story-avatarStatus {
   animation-play-state: paused;
 }
 
@@ -322,13 +315,6 @@
   50% {
     transform: scale(1.08);
   }
-}
-
-.story-avatarSpacer {
-  width: 84px;
-  height: 104px;
-  margin-bottom: 10px;
-  pointer-events: none;
 }
 
 .story-avatarButton:focus-visible {
@@ -511,11 +497,11 @@
 }
 
 .story-hintArrow {
-  display: block;
   margin-top: 10px;
   font-size: 18px;
   color: var(--accent);
   animation: story-hint-bounce 1.6s ease-in-out infinite;
+  border: transparent;
 }
 
 @keyframes story-hint-bounce {
@@ -707,16 +693,11 @@
   appearance: none;
   display: inline-grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
   padding: 0;
   color: color-mix(in srgb, var(--text) 70%, var(--muted) 30%);
-  font: inherit;
+  font: 0.8em;
   text-decoration: none;
-  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg-layer, var(--bg)) 76%, transparent);
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--text) 8%, transparent);
+  border: none;
   cursor: pointer;
   transition: color 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
@@ -896,10 +877,134 @@
   --press-radius: 10px;
 }
 
-@media (max-width: 720px) {
-  .story-topbar {
-    padding: 12px 14px;
+.audience-nav {
+  --audience-founder-width: 72px;
+  --audience-separator-width: 7px;
+  --audience-team-width: 112px;
+  --audience-gap: 10px;
+  --audience-underline-x: calc(
+    24px + var(--audience-gap) + var(--audience-founder-width) +
+      var(--audience-gap) + var(--audience-separator-width) +
+      var(--audience-gap)
+  );
+  --audience-underline-width: var(--audience-team-width);
+  position: fixed;
+  z-index: 50;
+  top: 14px;
+  right: 20px;
+
+  display: grid;
+  grid-template-columns:
+    24px
+    var(--audience-founder-width)
+    var(--audience-separator-width)
+    var(--audience-team-width);
+  align-items: center;
+  gap: var(--audience-gap);
+  white-space: nowrap;
+  pointer-events: auto;
+
+  font-family: var(--terminal-font);
+  font-size: 10px;
+  font-weight: 720;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.audience-nav.is-founders {
+  --audience-underline-x: calc(24px + var(--audience-gap));
+  --audience-underline-width: var(--audience-founder-width);
+}
+
+.audience-nav::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: var(--audience-underline-width);
+  height: 1px;
+  background: var(--accent, #2563ff);
+  transform: translateX(var(--audience-underline-x));
+  transition:
+    transform 180ms ease,
+    width 180ms ease,
+    opacity 180ms ease;
+}
+
+.audience-nav__prefix,
+.audience-nav__separator {
+  color: color-mix(in srgb, var(--text) 34%, var(--muted) 66%);
+}
+
+.audience-nav a {
+  position: relative;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: color-mix(in srgb, var(--text) 46%, var(--muted) 54%);
+  text-decoration: none;
+
+  transition:
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.audience-nav a:hover,
+.audience-nav a:focus-visible {
+  color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+}
+
+.audience-nav a[aria-current="page"] {
+  color: var(--text);
+}
+
+.audience-nav a:focus-visible {
+  outline: 1px solid var(--accent, #2563ff);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .audience-nav {
+    --audience-prefix-width: 0px;
+    --audience-founder-width: 60px;
+    --audience-team-width: 98px;
+    --audience-gap: 7px;
+    grid-template-columns:
+      var(--audience-founder-width)
+      var(--audience-separator-width)
+      var(--audience-team-width);
+    top: 12px;
+    right: 14px;
+    font-size: 9px;
   }
+
+  .audience-nav.is-founders {
+    --audience-underline-x: 0px;
+  }
+
+  .audience-nav.is-hiring {
+    --audience-underline-x: calc(
+      var(--audience-founder-width) + var(--audience-gap) +
+        var(--audience-separator-width) + var(--audience-gap)
+    );
+  }
+
+  .audience-nav__prefix {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audience-nav::after,
+  .audience-nav a {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
 
   .story-outroNav {
     gap: 10px;
@@ -918,18 +1023,57 @@
     padding: 56px 18px 110px;
   }
 
+  .story-scene.is-intro {
+    place-items: start center;
+    padding-top: 258px;
+  }
+
   .story-avatarLauncher {
-    top: calc(50dvh - 190px);
+    top: 164px;
+    left: 20px;
+    width: var(--story-brand-cell);
+    height: 30px;
+    border-radius: 0;
+    translate: 0 0;
+    scale: 1;
+    color: color-mix(in srgb, var(--text) 58%, var(--muted) 42%);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.18px;
+    line-height: 1;
   }
 
-  .story-avatarLauncher.is-docked {
-    top: 512px;
-    left: 48px;
+  .story-avatarLauncher::before {
+    content: "Chatbot";
   }
 
-  .story-avatarSpacer {
-    height: 118px;
-    margin-bottom: 14px;
+  .story-avatarLauncher:hover,
+  .story-avatarLauncher:focus-visible {
+    color: var(--text);
+    transform: translateY(var(--story-sidebar-hover-y))
+      scale(var(--story-sidebar-hover-scale));
+  }
+
+  .story-avatarLauncher .story-avatar {
+    display: none;
+  }
+
+  .story-avatarLauncher .story-avatarStatus {
+    right: -12px;
+    bottom: 8px;
+    width: 8px;
+    height: 8px;
+    border: 0;
+    box-shadow: 0 0 0 1px color-mix(in srgb, #047c3f 34%, transparent);
+  }
+
+  .story-avatarLauncher .story-avatarStatus::after {
+    inset: -5px;
+  }
+
+  .story-avatarUnread {
+    top: -10px;
+    right: -28px;
   }
 
   .story-outro {
