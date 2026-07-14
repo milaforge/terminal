@@ -338,14 +338,6 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   );
 
   useEffect(() => {
-    const previousTitle = document.title;
-    document.title = "Milad — the story";
-    return () => {
-      document.title = previousTitle;
-    };
-  }, []);
-
-  useEffect(() => {
     if (!terminalOpen) return;
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
