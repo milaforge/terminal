@@ -269,7 +269,7 @@
   --story-avatar-scale: 1;
   --story-avatar-hover-scale: 1;
   position: fixed;
-  top: calc(50dvh - 168px);
+  top: calc(47dvh - 168px);
   left: 50%;
   z-index: 31;
   margin: 0;
