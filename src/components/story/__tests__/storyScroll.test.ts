@@ -53,7 +53,7 @@ describe("story scroll snapping", () => {
         trackTop: 100,
         scrollable: 800,
       }),
-    ).toBe(800);
+    ).toBe(900);
   });
 
   it("targets the top of the intro so the avatar returns home", () => {
@@ -65,5 +65,16 @@ describe("story scroll snapping", () => {
         scrollable: 800,
       }),
     ).toBe(100);
+  });
+
+  it("targets the end of the final scene so the outro cannot scroll past center", () => {
+    expect(
+      getStorySceneScrollTarget({
+        index: 3,
+        sceneCount: 4,
+        trackTop: 100,
+        scrollable: 800,
+      }),
+    ).toBe(900);
   });
 });

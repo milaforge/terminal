@@ -11,8 +11,8 @@ import {
 } from "motion/react";
 import {
   STORY_CHAPTERS,
-  STORY_END_YEAR,
-  STORY_START_YEAR,
+  STORY_START,
+  STORY_END,
   STORY_TAGLINE,
   type StoryChapter,
 } from "@data/storyChapters";
@@ -65,6 +65,7 @@ export function getStorySceneScrollTarget({
 }) {
   const boundedIndex = Math.min(sceneCount - 1, Math.max(0, index));
   if (boundedIndex === 0) return trackTop;
+  if (boundedIndex === sceneCount - 1) return trackTop + scrollable;
   return trackTop + ((boundedIndex + 0.5) / sceneCount) * scrollable;
 }
 
@@ -263,7 +264,7 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   useTerminalColors();
 
   // intro + chapters + outro
-  const displayChapters = useMemo(() => [...STORY_CHAPTERS].reverse(), []);
+  const displayChapters = useMemo(() => [...STORY_CHAPTERS], []);
   const sceneCount = displayChapters.length + 2;
 
   const { scrollYProgress } = useScroll({
@@ -302,7 +303,14 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   const glowColor = useTransform(scrub, glowStops, glowColors);
   const glow = useMotionTemplate`radial-gradient(880px circle at 50% 22%, ${glowColor}, transparent 70%)`;
 
+  const finalSceneStart = (sceneCount - 1) / sceneCount;
   const timelineScale = useTransform(scrub, [0, 1], [0, 1]);
+  const timelineEndColor = useTransform(
+    scrub,
+    [finalSceneStart, 1],
+    ["var(--muted)", "var(--accent)"],
+  );
+  const timelineEndScale = useTransform(scrub, [finalSceneStart, 1], [1, 1.08]);
   const introContactsOpacity = useTransform(
     scrollYProgress,
     [0, 0.45 / sceneCount, 0.85 / sceneCount],
@@ -374,19 +382,22 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
     return () => document.removeEventListener("keydown", handleTerminalEscape);
   }, [terminalOpen]);
 
-  const jumpToScene = useCallback((index: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const top = window.scrollY + track.getBoundingClientRect().top;
-    const scrollable = track.offsetHeight - window.innerHeight;
-    const target = getStorySceneScrollTarget({
-      index,
-      sceneCount,
-      trackTop: top,
-      scrollable,
-    });
-    window.scrollTo({ top: target, behavior: reduced ? "auto" : "smooth" });
-  }, [reduced, sceneCount]);
+  const jumpToScene = useCallback(
+    (index: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      const top = window.scrollY + track.getBoundingClientRect().top;
+      const scrollable = track.offsetHeight - window.innerHeight;
+      const target = getStorySceneScrollTarget({
+        index,
+        sceneCount,
+        trackTop: top,
+        scrollable,
+      });
+      window.scrollTo({ top: target, behavior: reduced ? "auto" : "smooth" });
+    },
+    [reduced, sceneCount],
+  );
 
   useEffect(() => {
     const clearWheelLock = () => {
@@ -438,7 +449,6 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
   };
 
   const closeContextMenu = () => setContextMenu(null);
-  const isOutroScene = activeScene === sceneCount - 1;
   const openTerminal = (startupCommand?: CommandButton) => {
     setTerminalStartupCommand(startupCommand ?? null);
     setTerminalOpen(true);
@@ -579,19 +589,17 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
           >
             <div className="story-chapter story-intro">
               <div className="story-avatarSpacer" aria-hidden="true" />
-              <p className="story-era">
-                {STORY_START_YEAR} → {STORY_END_YEAR}
-              </p>
+              <p className="story-era">TECHNICAL CO-FOUNDER</p>
               <h1 className="story-hook">{STORY_TAGLINE}</h1>
               <p className="story-sub">
-                20 years turning ideas and fragile software into dependable
-                products.
+                You keep control. I take responsibility for what gets built, how
+                it ships, and whether it stays dependable as you grow.
               </p>
               <motion.p
                 className="story-scrollHint"
                 style={{ opacity: hintOpacity }}
               >
-                <span className="story-key">↓</span> Read my story{" "}
+                <span className="story-key">↓</span> Why I can make that promise{" "}
                 {/* <span className="story-key">↑</span> rewind */}
                 <span aria-hidden className="story-hintArrow">
                   ▾
@@ -624,9 +632,9 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                 progress={scrub}
                 index={sceneCount - 1}
                 count={sceneCount}
-                year="Now"
+                year="NEXT"
                 reduced={reduced}
-                endX={90}
+                endX={0}
               />
               <div className="story-chapter story-outro">
                 <div className="story-outroPrimary">
@@ -635,26 +643,18 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                     className="t-commandLink t-pressable is-secondary"
                     onClick={onBookCall}
                   >
-                    Discuss your project
+                    Schedule a free conversation
                   </button>
                 </div>
                 <p className="story-outroEyebrow">
-                  I go where the work takes me.
+                  NO FEE · NO COMMITMENT · LEAVE WITH A CLEARER NEXT TECHNICAL
+                  STEP.
                 </p>
               </div>
             </div>
           </Scene>
 
-          {isOutroScene ? (
-            <div className="story-nextTimeline" aria-hidden>
-              <span className="story-nextTimelineYear">{STORY_START_YEAR}</span>
-              <span className="story-nextTimelineLine" />
-              <span className="story-nextTimelineYear">{STORY_END_YEAR}</span>
-              <span className="story-nextTimelineShortLine" />
-              <span className="story-nextTimelineDot" />
-              <span className="story-nextTimelineLabel">NEXT</span>
-            </div>
-          ) : (
+          {
             <>
               <motion.nav
                 className="story-bottomContacts"
@@ -714,17 +714,22 @@ export default function StoryPage({ onBookCall, contact }: StoryPageProps) {
                 aria-hidden
                 style={{ opacity: timelineOpacity, x: "-50%", y: timelineY }}
               >
-                <span className="story-timelineYear">{STORY_END_YEAR}</span>
+                <span className="story-timelineYear">{STORY_START}</span>
                 <div className="story-timelineBar">
                   <motion.div
                     className="story-timelineFill"
                     style={{ scaleX: timelineScale }}
                   />
                 </div>
-                <span className="story-timelineYear">{STORY_START_YEAR}</span>
+                <motion.span
+                  className="story-timelineYear story-timelineYearEnd"
+                  style={{ color: timelineEndColor, scale: timelineEndScale }}
+                >
+                  {STORY_END}
+                </motion.span>
               </motion.div>
             </>
-          )}
+          }
         </div>
       </div>
       {contextMenu ? (
