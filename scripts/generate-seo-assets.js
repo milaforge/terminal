@@ -4,8 +4,8 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const DIST_DIR = path.join(ROOT, "dist");
-const BASE_PATH = process.env.BASE_PATH || "/terminal/";
-const DEFAULT_HOST = "https://milaforge.github.io";
+const BASE_PATH = process.env.BASE_PATH || "/";
+const DEFAULT_SITE_URL = "http://localhost:4173/";
 
 function normalizeBasePath(value) {
   if (!value || value === "/") return "/";
@@ -15,6 +15,7 @@ function normalizeBasePath(value) {
 function inferSiteUrl() {
   if (process.env.SITE_URL) return process.env.SITE_URL;
   if (process.env.VITE_SITE_URL) return process.env.VITE_SITE_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
 
   const repository = process.env.GITHUB_REPOSITORY;
   if (repository && repository.includes("/")) {
@@ -22,7 +23,7 @@ function inferSiteUrl() {
     return `https://${owner}.github.io/${repo}/`;
   }
 
-  return `${DEFAULT_HOST}${normalizeBasePath(BASE_PATH)}`;
+  return `${DEFAULT_SITE_URL}${normalizeBasePath(BASE_PATH)}`;
 }
 
 function normalizeSiteUrl(value) {

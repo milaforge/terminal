@@ -20,10 +20,10 @@ A single-page, terminal-style personal site built with React + Vite. Fork it, dr
 - To point to your own ntfy topic, set `VITE_NTFY_TOPIC_URL`; to disable outbound telemetry entirely, set `VITE_DISABLE_TELEMETRY=true` in your environment.
 - ntfy.sh is a third-party service; avoid sending secrets or sensitive personal data. Messages are transmitted as JSON over HTTPS by default.
 
-## Deploy to GitHub Pages (recommended)
+## Deploy to Vercel
 
-Current workflow at `.github/workflows/deploy-pages.yml` automatically deploys to github pages, you just need to enable it if it's not:
-1. In GitHub: Settings → Pages → Source = “GitHub Actions”. Pages will publish to `https://<username>.github.io/terminal/`.
+Use Vercel's Vite defaults:
+1. Deploy the Vite build output (`dist/`) to Vercel. The app is configured for root hosting, with `/` serving the story page and `/team` serving the team story page.
 
 ## Useful scripts
 
