@@ -15,7 +15,7 @@ export type SelectedCase = SampleWork & {
 export const SELECTED_CASES: SelectedCase[] = [
   {
     index: 1,
-    title: "Building Too Much Before Proving the Product",
+    title: "From Product Idea to Investor Demo in 10 Days",
     metric: {
       prefix: "",
       value: 10,
@@ -67,7 +67,7 @@ A working demo was delivered in 10 days and used for investor and early product 
 
   {
     index: 2,
-    title: "The Prototype Wasn't Ready for Real Users",
+    title: "Preparing an AI Product for Its First Real Users",
     metric: {
       prefix: "",
       value: 40,
@@ -124,7 +124,7 @@ Before-and-after Google Lighthouse measurements indicated roughly 40% lower resp
 
   {
     index: 3,
-    title: "Growth Was Breaking the Product",
+    title: "Scaling a Realtime Gaming Platform Without Higher Hosting Costs",
     metric: {
       prefix: "",
       value: 10,
@@ -177,7 +177,7 @@ Backend throughput increased by roughly 10×, supporting thousands of concurrent
 
   {
     index: 4,
-    title: "Cloud Spend Was Eating the Runway",
+    title: "Reducing AWS Costs by 60% Without Slowing the Product",
     metric: {
       prefix: "",
       value: 60,
@@ -228,7 +228,7 @@ AWS billing showed an approximately 60% reduction in monthly infrastructure spen
 
   {
     index: 5,
-    title: "A Bad Release Could Put Customer Funds at Risk",
+    title: "Protecting $4M in Live Digital Assets",
     metric: {
       prefix: "$",
       value: 4,
@@ -284,7 +284,7 @@ The platform operated for roughly three years with approximately $4M in safeguar
 
   {
     index: 6,
-    title: "Skilled People Were Buried in Repetitive Work",
+    title: "Automating Three Hours of Daily Security Operations",
     metric: {
       prefix: "",
       value: 3,
