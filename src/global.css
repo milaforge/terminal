@@ -3809,7 +3809,7 @@
     max-width: 362px;
     min-height: 250px;
     padding: 0;
-    border-radius: 14px;
+    border-radius: 8px;
     border: 1px solid #e2e8f4;
     background: #fff;
     box-shadow: 0 1px 2px rgba(22, 40, 80, 0.05), 0 2px 10px rgba(22, 40, 80, 0.045);
@@ -3952,6 +3952,15 @@
     min-width: 0;
   }
 
+  .t-workCardEyebrow {
+    color: #526691;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
   .t-workNumber {
     flex: none;
     color: #c3cddf;
@@ -4033,10 +4042,10 @@
 
   .t-proofPain {
     color: #17233f;
-    font-size: 15.5px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: 0;
-    line-height: 1.32;
+    line-height: 1.18;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -4191,9 +4200,9 @@
   }
 
   .t-workModalCase {
-    width: min(1120px, calc(100vw - 2rem));
+    width: min(980px, calc(100vw - 2rem));
     max-height: calc(100dvh - 2rem);
-    padding: clamp(1.5rem, 4vw, 4.5rem);
+    padding: clamp(1.25rem, 3vw, 3rem);
     background: linear-gradient(180deg,
         color-mix(in srgb, var(--surface) 94%, var(--text) 6%),
         color-mix(in srgb, var(--surface) 90%, var(--bg) 10%));
@@ -4230,7 +4239,7 @@
     --case-accent: color-mix(in srgb, var(--accent) 56%, var(--text) 44%);
     display: flex;
     flex-direction: column;
-    gap: clamp(2.5rem, 5vw, 4.75rem);
+    gap: clamp(1.5rem, 3vw, 2.75rem);
     margin-top: 0;
     color: var(--text);
     font-family: var(--case-font-body);
@@ -4239,9 +4248,10 @@
   .t-caseStudyHero {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(170px, 260px);
-    gap: clamp(2rem, 5vw, 4.5rem);
+    gap: clamp(1.5rem, 4vw, 3rem);
     align-items: end;
-    padding-block: clamp(0.25rem, 1vw, 0.75rem) clamp(2.5rem, 5vw, 4.75rem);
+    min-height: min(58vh, 520px);
+    padding-block: clamp(0.25rem, 1vw, 0.75rem) clamp(1.5rem, 4vw, 3rem);
     border-bottom: 1px solid var(--case-rule);
   }
 
@@ -4251,19 +4261,19 @@
 
   .t-caseStudyHero h2 {
     margin: 0.32em 0 0.24em;
-    max-width: 12ch;
+    max-width: 13ch;
     color: var(--text);
     font-family: var(--case-font-display);
-    font-size: clamp(3rem, 6vw, 5.75rem);
+    font-size: clamp(3.5rem, 5vw, 4rem);
     font-weight: 650;
-    letter-spacing: -0.04em;
-    line-height: 0.94;
+    letter-spacing: 0;
+    line-height: 1;
     text-wrap: balance;
   }
 
   .t-caseStudyHero p {
     margin: 0;
-    max-width: 58ch;
+    max-width: 60ch;
     color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
     font-family: var(--case-font-body);
     font-size: clamp(1.125rem, 1.7vw, 1.35rem);
@@ -4329,13 +4339,13 @@
     color: var(--text);
     font-size: clamp(44px, 8vw, 78px);
     font-weight: 700;
-    letter-spacing: -0.035em;
+    letter-spacing: 0;
     line-height: 0.92;
     font-family: var(--case-font-display);
   }
 
   .t-caseStudyMetricLabel {
-    max-width: 18ch;
+    max-width: none;
     color: var(--case-muted);
     font-family: var(--terminal-font);
     font-size: 0.72rem;
@@ -4343,10 +4353,13 @@
     letter-spacing: 0.08em;
     line-height: 1.3;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .t-caseStudyFlow {
-    max-width: 760px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
   }
 
   .t-caseStudyEyebrow,
@@ -4361,42 +4374,32 @@
   }
 
   .t-caseStudyPanel {
-    padding-block: clamp(3rem, 6vw, 5.5rem);
-    border-top: 1px solid var(--case-rule);
-  }
-
-  .t-caseStudyPanel:first-child {
+    padding-block: 0;
     border-top: 0;
-    padding-top: 0;
-  }
-
-  .t-caseStudyPanelResult {
-    border-top-color: color-mix(in srgb, var(--text) 34%, var(--case-rule) 66%);
-    padding-bottom: 0;
   }
 
   .t-caseStudyPanel h3 {
-    margin: 0.55rem 0 1rem;
+    margin: 0 0 0.8rem;
     max-width: 22ch;
     color: var(--text);
     font-family: var(--case-font-display);
-    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
     font-weight: 620;
     line-height: 1.08;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
     text-wrap: balance;
   }
 
   .t-caseStudyPanelResult h3 {
-    font-size: clamp(2.1rem, 4vw, 3.4rem);
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
   }
 
   .t-caseStudyPanel p {
     margin: 0;
-    max-width: 64ch;
+    max-width: 60ch;
     color: color-mix(in srgb, var(--text) 74%, var(--muted) 26%);
     font-family: var(--case-font-body);
-    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    font-size: 16px;
     line-height: 1.65;
   }
 
@@ -4425,37 +4428,39 @@
 
   .t-caseStudyOutcomes {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    margin-top: clamp(2rem, 4vw, 3rem);
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-top: 0;
+    list-style: none;
+    padding: 0;
   }
 
   .t-caseStudyOutcome {
-    display: grid;
-    gap: 0.45rem;
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
     min-width: 0;
-  }
-
-  .t-caseStudyOutcome strong {
-    color: var(--text);
-    font-family: var(--case-font-display);
-    font-size: clamp(1.15rem, 2vw, 1.55rem);
-    font-weight: 650;
-    line-height: 1.12;
-    letter-spacing: -0.015em;
-  }
-
-  .t-caseStudyOutcome span {
     color: var(--case-muted);
     font-size: 0.92rem;
     line-height: 1.45;
+    letter-spacing: 0;
+  }
+
+  .t-caseStudyOutcome::before {
+    content: "";
+    flex: 0 0 0.42rem;
+    width: 0.42rem;
+    height: 0.42rem;
+    margin-top: 0.53em;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--case-accent) 76%, var(--text) 24%);
   }
 
   .t-caseStudyFooter {
     display: grid;
     gap: clamp(1.25rem, 3vw, 2rem);
-    border-top: 1px solid var(--case-rule);
-    padding-top: clamp(1.25rem, 3vw, 2rem);
+    border-top: 0;
+    padding-top: 0;
   }
 
   .t-caseStudyCapabilities {
@@ -4488,6 +4493,7 @@
   .t-caseStudyNotes p,
   .t-caseStudyNotes ul {
     margin: 8px 0 0;
+    max-width: 60ch;
   }
 
   .t-caseStudyNotes ul {
@@ -4576,7 +4582,7 @@
     }
 
     .t-caseStudyFlow {
-      max-width: none;
+      grid-template-columns: 1fr;
     }
 
     .t-caseStudyPanel h3,
@@ -4600,6 +4606,13 @@
     .t-caseStudyNav button,
     .t-caseStudyNav button:last-child {
       text-align: left;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .t-caseStudyMetricLabel {
+      max-width: 18ch;
+      white-space: normal;
     }
   }
 

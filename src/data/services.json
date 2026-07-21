@@ -60,12 +60,12 @@
       "examples": [
         {
           "id": "prototype-launch",
-          "name": "Preparing an AI Product for Real Users",
+          "name": "AI Beta Hardened Before Real Users",
           "command": "selected_cases read preparing-an-ai-product-for-real-users"
         },
         {
           "id": "protect-funds",
-          "name": "Protecting $4M in Live Digital Assets",
+          "name": "$4M in Live Assets Protected",
           "command": "selected_cases read protecting-4m-in-live-digital-assets"
         }
       ]
@@ -82,12 +82,12 @@
       "examples": [
         {
           "id": "growth-breaking",
-          "name": "Scaling a Realtime Platform Without Higher Hosting Costs",
+          "name": "Realtime Throughput Increased 10x",
           "command": "selected_cases read scaling-a-realtime-platform-without-higher-hosting-costs"
         },
         {
           "id": "cloud-spend",
-          "name": "Reducing AWS Costs by 60% Without Slowing the Product",
+          "name": "AWS Spend Reduced by 60%",
           "command": "selected_cases read reducing-aws-costs-by-60-without-slowing-the-product"
         }
       ]
@@ -104,7 +104,7 @@
       "examples": [
         {
           "id": "secops-automation",
-          "name": "Automating Three Hours of Daily Security Operations",
+          "name": "Three SecOps Hours Reclaimed Daily",
           "command": "selected_cases read automating-three-hours-of-daily-security-operations"
         }
       ]

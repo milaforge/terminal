@@ -4,7 +4,6 @@ import type { SampleWork, WorkSegment } from "@types";
 import { MarkdownBlock } from "@components/MarkdownBlock";
 import { ClientProofStrip } from "@components/ClientProofStrip";
 import {
-  type CaseStudySection,
   getSelectedCaseMetric,
   isSelectedCase,
 } from "@data/selectedCases";
@@ -15,7 +14,7 @@ const isPresentString = (value: string | undefined): value is string =>
 
 
 export function getWorkCardSummary(item: SampleWork): string {
-  if (isSelectedCase(item)) return item.summary;
+  if (isSelectedCase(item)) return item.oneLiner;
 
   const lead = item.description
     .split(/\r?\n/)
@@ -60,6 +59,22 @@ export function getInitialWorkModalIndex(segment: WorkSegment): number | null {
     segment.initialOpenIndex < items.length
     ? segment.initialOpenIndex
     : null;
+}
+
+export type ScrollableModal = {
+  scrollTop: number;
+  scrollTo?: (options: ScrollToOptions) => void;
+};
+
+export function resetWorkModalScroll(modal: ScrollableModal | null) {
+  if (!modal) return;
+
+  if (typeof modal.scrollTo === "function") {
+    modal.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    return;
+  }
+
+  modal.scrollTop = 0;
 }
 
 export function WorkGrid({ segment }: { segment: WorkSegment }) {
@@ -120,7 +135,10 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
 
   const getSpark = buildWorkSpark;
 
-
+  const navigateCase = (index: number) => {
+    setOpenIndex(index);
+    window.requestAnimationFrame(() => resetWorkModalScroll(modalRef.current));
+  };
 
   return (
     <div className="t-work">
@@ -170,6 +188,11 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
               <div className="t-proofMain">
                 <div className="t-workTitleRow">
                   <span className="t-workNumber">{String(idx + 1).padStart(2, "0")}</span>
+                  {isSelectedCase(item) ? (
+                    <span className="t-workCardEyebrow">{item.eyebrow}</span>
+                  ) : null}
+                </div>
+                <div className="t-workTitleRow">
                   <div className="t-proofPain">{item.title}</div>
                 </div>
                 <div className="t-proofOutcome">{getCardSummary(item)}</div>
@@ -245,7 +268,7 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
               items={items}
               openIndex={openIndex}
               itemSlug={openItemSlug}
-              setOpenIndex={setOpenIndex}
+              navigateCase={navigateCase}
             />
           </div>
         </div>,
@@ -260,13 +283,13 @@ function CaseStudyModalBody({
   items,
   openIndex,
   itemSlug,
-  setOpenIndex,
+  navigateCase,
 }: {
   item: SampleWork;
   items: SampleWork[];
   openIndex: number | null;
   itemSlug: string;
-  setOpenIndex: (index: number | null) => void;
+  navigateCase: (index: number) => void;
 }) {
   if (!isSelectedCase(item)) {
     return (
@@ -292,16 +315,16 @@ function CaseStudyModalBody({
     <div className="t-caseStudy">
       <header className="t-caseStudyHero">
         <div className="t-caseStudyHeroMain">
-          <div className="t-caseStudyEyebrow">Case study · {item.industry}</div>
+          <div className="t-caseStudyEyebrow">{item.eyebrow}</div>
           <h2 id={`case-study-title-${itemSlug}`}>{item.title}</h2>
-          <p id={`case-study-summary-${itemSlug}`}>{item.summary}</p>
+          <p id={`case-study-summary-${itemSlug}`}>{item.oneLiner}</p>
           {item.role ? (
             <div className="t-caseStudyRole">
               <span>My role</span>
               <strong>{item.role}</strong>
             </div>
           ) : null}
-          <InlineMeta items={[item.company, item.industry].filter(isPresentString)} />
+          <InlineMeta items={[item.company, item.role].filter(isPresentString)} />
         </div>
         <aside className="t-caseStudyMetric" aria-label="Primary result">
           <div className="t-caseStudyMetricValue">{metricDisplay}</div>
@@ -310,51 +333,39 @@ function CaseStudyModalBody({
       </header>
 
       <div className="t-caseStudyFlow">
-        <ContextSection title={item.context.title} body={item.context.body} eyebrow="Context" />
-        <EditorialSection section={item.challenge} />
-        <EditorialSection section={item.solution} />
-        <section className="t-caseStudyPanel t-caseStudyPanelResult">
-          <div className="t-caseStudyEyebrow">{item.results.eyebrow}</div>
-          <h3>{item.results.title}</h3>
-          {item.results.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-          <div className="t-caseStudyOutcomes" aria-label="Structured outcomes">
-            {item.results.highlights.map((highlight) => (
-              <div key={highlight} className="t-caseStudyOutcome">
-                {splitOutcome(highlight).map((part, index) =>
-                  index === 0 ? <strong key={part}>{part}</strong> : <span key={part}>{part}</span>,
-                )}
-              </div>
+        <CaseStudyStatement title="Problem" body={item.problem} />
+        <CaseStudyStatement title="Decision" body={item.decision} />
+        <section className="t-caseStudyPanel">
+          <h3>Proof</h3>
+          <ul className="t-caseStudyOutcomes" aria-label="Structured outcomes">
+            {item.proof.map((highlight) => (
+              <li key={highlight} className="t-caseStudyOutcome">
+                {highlight}
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       </div>
 
       <footer className="t-caseStudyFooter">
-        {item.services?.length || item.technologies?.length ? (
+        {item.technologies?.length ? (
           <div className="t-caseStudyCapabilities">
-            <InlineMeta title="Services" items={item.services ?? []} />
             <InlineMeta title="Technologies" items={item.technologies ?? []} />
           </div>
         ) : null}
 
-        {item.engineeringNotes ? (
+        {item.engineeringNote ? (
           <details className="t-caseStudyNotes">
-            <summary>Engineering notes</summary>
-            {item.engineeringNotes.hardestConstraint ? (
-              <p>{item.engineeringNotes.hardestConstraint}</p>
-            ) : null}
-            <NoteList title="Invariants" items={item.engineeringNotes.invariants} />
-            <NoteList title="Implementation" items={item.engineeringNotes.implementation} />
-            <NoteList title="Verification" items={item.engineeringNotes.verification} />
+            <summary>View technical decisions +</summary>
+            <p><strong>Constraint:</strong> {item.engineeringNote.constraint}</p>
+            <p><strong>Invariant:</strong> {item.engineeringNote.invariant}</p>
           </details>
         ) : null}
 
         <nav className="t-caseStudyNav" aria-label="Case navigation">
           <button
             type="button"
-            onClick={() => previousIndex !== null && setOpenIndex(previousIndex)}
+            onClick={() => previousIndex !== null && navigateCase(previousIndex)}
             disabled={previousIndex === null}
           >
             <span>Previous</span>
@@ -362,7 +373,7 @@ function CaseStudyModalBody({
           </button>
           <button
             type="button"
-            onClick={() => nextIndex !== null && setOpenIndex(nextIndex)}
+            onClick={() => nextIndex !== null && navigateCase(nextIndex)}
             disabled={nextIndex === null}
           >
             <span>Next</span>
@@ -374,46 +385,11 @@ function CaseStudyModalBody({
   );
 }
 
-function splitOutcome(outcome: string): [string, string] {
-  const [lead, ...rest] = outcome.split(/,\s+|;|\s+while\s+|\s+with\s+/i);
-  return rest.length ? [lead, rest.join(" ")] : [outcome, ""];
-}
-
-function ContextSection({
-  eyebrow,
-  title,
-  body,
-}: {
-  eyebrow: string;
-  title: string;
-  body: string[];
-}) {
+function CaseStudyStatement({ title, body }: { title: string; body: string }) {
   return (
     <section className="t-caseStudyPanel">
-      <div className="t-caseStudyEyebrow">{eyebrow}</div>
       <h3>{title}</h3>
-      {body.map((paragraph) => (
-        <p key={paragraph}>{paragraph}</p>
-      ))}
-    </section>
-  );
-}
-
-function EditorialSection({ section }: { section: CaseStudySection }) {
-  return (
-    <section className="t-caseStudyPanel">
-      <div className="t-caseStudyEyebrow">{section.eyebrow}</div>
-      <h3>{section.title}</h3>
-      {section.body.map((paragraph) => (
-        <p key={paragraph}>{paragraph}</p>
-      ))}
-      {section.highlights?.length ? (
-        <ul className="t-caseStudyHighlights">
-          {section.highlights.map((highlight) => (
-            <li key={highlight}>{highlight}</li>
-          ))}
-        </ul>
-      ) : null}
+      <p>{body}</p>
     </section>
   );
 }
@@ -426,21 +402,6 @@ function InlineMeta({ title, items }: { title?: string; items: string[] }) {
       {title ? <span>{title}</span> : null}
       <p>{items.join(" · ")}</p>
     </div>
-  );
-}
-
-function NoteList({ title, items }: { title: string; items?: string[] }) {
-  if (!items?.length) return null;
-
-  return (
-    <>
-      <h4>{title}</h4>
-      <ul>
-        {items.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    </>
   );
 }
 

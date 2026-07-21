@@ -302,7 +302,7 @@ describe("default commands", () => {
         segment.type === "work",
     );
     expect(workSegment?.items.map((item) => item.title)).toContain(
-      "Protecting $4M in Live Digital Assets",
+      "$4M in Live Assets Protected",
     );
     expect(workSegment?.clientProof?.title).toBe("Trusted by leaders ");
     expect(workSegment?.clientProof?.items.map((item) => item.name)).toEqual(
@@ -331,7 +331,7 @@ describe("default commands", () => {
     );
     expect(readWorkSegment?.items).toHaveLength(1);
     expect(readWorkSegment?.items[0]?.title).toBe(
-      "Automating Three Hours of Daily Security Operations",
+      "Three SecOps Hours Reclaimed Daily",
     );
     expect(readWorkSegment?.initialOpenIndex).toBe(0);
   });

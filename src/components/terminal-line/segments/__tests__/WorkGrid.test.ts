@@ -3,6 +3,7 @@ import {
   buildWorkSpark,
   getInitialWorkModalIndex,
   getWorkCardSummary,
+  resetWorkModalScroll,
 } from "../WorkGrid";
 import type { SelectedCase } from "@data/selectedCases";
 
@@ -20,17 +21,12 @@ describe("WorkGrid helpers", () => {
     const selectedCase: SelectedCase = {
       title: "Case",
       description: "Fallback body.",
-      summary: "Structured editorial summary.",
+      eyebrow: "Reliability",
+      oneLiner: "Structured editorial summary.",
       metric: { prefix: "", value: 1, suffix: "", label: "result" },
-      context: { title: "Context", body: ["Client context."] },
-      challenge: { eyebrow: "Challenge", title: "Challenge", body: ["Business challenge."] },
-      solution: { eyebrow: "Intervention", title: "Solution", body: ["Intervention."] },
-      results: {
-        eyebrow: "Result",
-        title: "Result",
-        body: ["Result body."],
-        highlights: ["Measurable result."],
-      },
+      problem: "Problem statement.",
+      decision: "Decision statement.",
+      proof: ["Measurable result."],
       tags: ["reliability"],
     };
 
@@ -74,5 +70,26 @@ describe("WorkGrid helpers", () => {
     expect(getInitialWorkModalIndex({ ...segment, initialOpenIndex: 1 })).toBeNull();
     expect(getInitialWorkModalIndex({ ...segment, initialOpenIndex: -1 })).toBeNull();
     expect(getInitialWorkModalIndex({ ...segment, initialOpenIndex: undefined })).toBeNull();
+  });
+
+  it("resets modal scroll with scrollTo when available", () => {
+    const calls: ScrollToOptions[] = [];
+    const modal = {
+      scrollTop: 240,
+      scrollTo: (options: ScrollToOptions) => calls.push(options),
+    };
+
+    resetWorkModalScroll(modal);
+
+    expect(calls).toEqual([{ top: 0, left: 0, behavior: "auto" }]);
+    expect(modal.scrollTop).toBe(240);
+  });
+
+  it("resets modal scrollTop when scrollTo is unavailable", () => {
+    const modal = { scrollTop: 240 };
+
+    resetWorkModalScroll(modal);
+
+    expect(modal.scrollTop).toBe(0);
   });
 });
