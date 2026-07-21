@@ -5,12 +5,13 @@ export const SHARE_QUERY_KEY = "run";
 
 type AllowedCommand = {
   command: string;
-  subcommand: string;
+  subcommand?: string;
   maxArgLength: number;
 };
 
 const ALLOWED: AllowedCommand[] = [
   { command: "blog", subcommand: "read", maxArgLength: 50 },
+  { command: "selected_cases", maxArgLength: 0 },
 ];
 
 function normalizeTokens(value: string): string[] {
@@ -22,14 +23,17 @@ function normalizeTokens(value: string): string[] {
 }
 
 function allowlistCommand(tokens: string[]): string | null {
-  if (tokens.length !== 3) return null;
+  if (tokens.length !== 1 && tokens.length !== 3) return null;
   const [cmd, sub, arg] = tokens;
   const match = ALLOWED.find(
     (item) =>
       item.command.toLowerCase() === cmd.toLowerCase() &&
-      item.subcommand.toLowerCase() === sub.toLowerCase(),
+      (item.subcommand
+        ? item.subcommand.toLowerCase() === sub?.toLowerCase()
+        : tokens.length === 1),
   );
   if (!match) return null;
+  if (!match.subcommand) return match.command;
   if (!arg || arg.length > match.maxArgLength) return null;
   return `${match.command} ${match.subcommand} ${arg}`;
 }

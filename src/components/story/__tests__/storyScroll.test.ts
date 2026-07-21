@@ -1,10 +1,30 @@
 import { describe, expect, it } from "vitest";
 import {
+  getStoryStartupCommandFromLocation,
   getNextStorySceneIndex,
   getStorySceneScrollTarget,
 } from "../index";
 
 describe("story scroll snapping", () => {
+  it("maps a shared selected work URL to the Works startup command", () => {
+    expect(
+      getStoryStartupCommandFromLocation({
+        search: "?run=selected_cases",
+      } as Location),
+    ).toEqual({
+      command: "selected_cases",
+      typing: "simulate",
+    });
+  });
+
+  it("ignores unsupported shared commands on the story surface", () => {
+    expect(
+      getStoryStartupCommandFromLocation({
+        search: "?run=logs%2520read%25202025-01-21-tab",
+      } as Location),
+    ).toBeNull();
+  });
+
   it("moves one scene in the wheel direction", () => {
     expect(
       getNextStorySceneIndex({ activeScene: 2, deltaY: 100, sceneCount: 5 }),

@@ -28,6 +28,7 @@ import { openChat, useChatStore } from "@stores/chatStore";
 import type { CommandButton, ContactInfo } from "@types";
 import { CalendarCheck, Github, Mail, Send } from "lucide-react";
 import type { CSSProperties, MouseEvent, ReactNode } from "react";
+import { parseShareCommandsFromLocation } from "@utils";
 import "./story.css";
 
 const BASE = import.meta.env.BASE_URL;
@@ -66,6 +67,16 @@ type StoryPageProps = {
 };
 
 type SceneEdge = "first" | "last" | "middle";
+
+export function getStoryStartupCommandFromLocation(
+  loc: Pick<Location, "search">,
+): CommandButton | null {
+  const commands = parseShareCommandsFromLocation(loc as Location);
+  if (commands.includes(SELECTED_WORK_COMMAND.command)) {
+    return SELECTED_WORK_COMMAND;
+  }
+  return null;
+}
 
 export function getStorySceneScrollTarget({
   index,
@@ -476,6 +487,20 @@ export default function StoryPage({
     setTerminalStartupCommand(null);
   };
   const emailHref = `mailto:${contact?.email ?? "milaforge@proton.me"}?subject=System%20reliability%20context`;
+
+  useEffect(() => {
+    const startupCommand = getStoryStartupCommandFromLocation(window.location);
+    if (!startupCommand) return;
+
+    openTerminal(startupCommand);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("run");
+      window.history.replaceState({}, "", url.toString());
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     if (!contextMenu) return;
