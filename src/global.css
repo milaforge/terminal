@@ -4190,6 +4190,17 @@
     overflow: auto;
   }
 
+  .t-workModalCase {
+    width: min(1120px, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    padding: clamp(1.5rem, 4vw, 4.5rem);
+    background: linear-gradient(180deg,
+        color-mix(in srgb, var(--surface) 94%, var(--text) 6%),
+        color-mix(in srgb, var(--surface) 90%, var(--bg) 10%));
+    border-color: color-mix(in srgb, var(--border) 78%, var(--text) 22%);
+    border-radius: 10px;
+  }
+
   @media (max-width: 768px) {
     .t-workModal {
       padding-bottom: 140px;
@@ -4209,6 +4220,387 @@
     border-radius: 12px;
     padding: 0.95em;
     background: color-mix(in srgb, var(--surface) 94%, var(--accent) 6%);
+  }
+
+  .t-caseStudy {
+    --case-font-body: "DM Sans", theme("fontFamily.sans");
+    --case-font-display: "Space Grotesk", "DM Sans", theme("fontFamily.sans");
+    --case-muted: color-mix(in srgb, var(--text) 64%, var(--muted) 36%);
+    --case-rule: color-mix(in srgb, var(--border) 62%, transparent);
+    --case-accent: color-mix(in srgb, var(--accent) 56%, var(--text) 44%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 5vw, 4.75rem);
+    margin-top: 0;
+    color: var(--text);
+    font-family: var(--case-font-body);
+  }
+
+  .t-caseStudyHero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 260px);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: end;
+    padding-block: clamp(0.25rem, 1vw, 0.75rem) clamp(2.5rem, 5vw, 4.75rem);
+    border-bottom: 1px solid var(--case-rule);
+  }
+
+  .t-caseStudyHeroMain {
+    min-width: 0;
+  }
+
+  .t-caseStudyHero h2 {
+    margin: 0.32em 0 0.24em;
+    max-width: 12ch;
+    color: var(--text);
+    font-family: var(--case-font-display);
+    font-size: clamp(3rem, 6vw, 5.75rem);
+    font-weight: 650;
+    letter-spacing: -0.04em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .t-caseStudyHero p {
+    margin: 0;
+    max-width: 58ch;
+    color: color-mix(in srgb, var(--text) 78%, var(--muted) 22%);
+    font-family: var(--case-font-body);
+    font-size: clamp(1.125rem, 1.7vw, 1.35rem);
+    line-height: 1.5;
+  }
+
+  .t-caseStudyRole {
+    display: grid;
+    gap: 5px;
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    color: var(--case-muted);
+    font-family: var(--terminal-font);
+    font-size: 0.72rem;
+    line-height: 1.45;
+    text-transform: uppercase;
+  }
+
+  .t-caseStudyRole span,
+  .t-caseStudyInlineMeta span {
+    color: var(--case-accent);
+    font-family: var(--terminal-font);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .t-caseStudyRole strong {
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    font-family: var(--case-font-body);
+  }
+
+  .t-caseStudyInlineMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 10px;
+    align-items: baseline;
+    margin-top: 1rem;
+    min-width: 0;
+  }
+
+  .t-caseStudyInlineMeta p {
+    margin: 0;
+    color: var(--case-muted);
+    font-family: var(--case-font-body);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .t-caseStudyMetric {
+    display: grid;
+    gap: 0.65rem;
+    justify-items: end;
+    padding-bottom: clamp(0.5rem, 2vw, 1.5rem);
+    text-align: right;
+  }
+
+  .t-caseStudyMetricValue {
+    color: var(--text);
+    font-size: clamp(44px, 8vw, 78px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    font-family: var(--case-font-display);
+  }
+
+  .t-caseStudyMetricLabel {
+    max-width: 18ch;
+    color: var(--case-muted);
+    font-family: var(--terminal-font);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .t-caseStudyFlow {
+    max-width: 760px;
+  }
+
+  .t-caseStudyEyebrow,
+  .t-caseStudyChipTitle {
+    color: var(--case-accent);
+    font-family: var(--terminal-font);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .t-caseStudyPanel {
+    padding-block: clamp(3rem, 6vw, 5.5rem);
+    border-top: 1px solid var(--case-rule);
+  }
+
+  .t-caseStudyPanel:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .t-caseStudyPanelResult {
+    border-top-color: color-mix(in srgb, var(--text) 34%, var(--case-rule) 66%);
+    padding-bottom: 0;
+  }
+
+  .t-caseStudyPanel h3 {
+    margin: 0.55rem 0 1rem;
+    max-width: 22ch;
+    color: var(--text);
+    font-family: var(--case-font-display);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 620;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .t-caseStudyPanelResult h3 {
+    font-size: clamp(2.1rem, 4vw, 3.4rem);
+  }
+
+  .t-caseStudyPanel p {
+    margin: 0;
+    max-width: 64ch;
+    color: color-mix(in srgb, var(--text) 74%, var(--muted) 26%);
+    font-family: var(--case-font-body);
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    line-height: 1.65;
+  }
+
+  .t-caseStudyPanel p + p {
+    margin-top: 12px;
+  }
+
+  .t-caseStudyHighlights {
+    display: grid;
+    gap: 8px;
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+  }
+
+  .t-caseStudyHighlights li {
+    color: color-mix(in srgb, var(--text) 88%, var(--accent) 12%);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .t-caseStudyHighlights li::before {
+    content: "-> ";
+    color: color-mix(in srgb, var(--accent) 78%, var(--text) 22%);
+  }
+
+  .t-caseStudyOutcomes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .t-caseStudyOutcome {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+  }
+
+  .t-caseStudyOutcome strong {
+    color: var(--text);
+    font-family: var(--case-font-display);
+    font-size: clamp(1.15rem, 2vw, 1.55rem);
+    font-weight: 650;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+
+  .t-caseStudyOutcome span {
+    color: var(--case-muted);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .t-caseStudyFooter {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    border-top: 1px solid var(--case-rule);
+    padding-top: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .t-caseStudyCapabilities {
+    display: grid;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .t-caseStudyNotes {
+    color: var(--case-muted);
+    font-family: var(--case-font-body);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .t-caseStudyNotes summary {
+    cursor: pointer;
+    color: var(--text);
+    font-family: var(--case-font-display);
+    font-weight: 650;
+    letter-spacing: 0;
+  }
+
+  .t-caseStudyNotes h4 {
+    margin: 12px 0 4px;
+    color: var(--text);
+    font-size: 12px;
+  }
+
+  .t-caseStudyNotes p,
+  .t-caseStudyNotes ul {
+    margin: 8px 0 0;
+  }
+
+  .t-caseStudyNotes ul {
+    padding-left: 18px;
+  }
+
+  .t-caseStudyNav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 3vw, 2rem);
+    border-top: 1px solid var(--case-rule);
+    padding-top: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .t-caseStudyNav button {
+    min-width: 0;
+    min-height: 54px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--case-font-display);
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    font-weight: 600;
+    line-height: 1.25;
+    padding: 0;
+    text-align: left;
+  }
+
+  .t-caseStudyNav button:last-child {
+    text-align: right;
+  }
+
+  .t-caseStudyNav button span {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--case-muted);
+    font-family: var(--terminal-font);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .t-caseStudyNav button:hover,
+  .t-caseStudyNav button:focus-visible {
+    color: var(--case-accent);
+    outline: 2px solid color-mix(in srgb, var(--case-accent) 38%, transparent);
+    outline-offset: 6px;
+  }
+
+  .t-caseStudyNav button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+  }
+
+  @media (max-width: 720px) {
+    .t-workModal {
+      width: min(100%, 94vw);
+      border-radius: 10px;
+    }
+
+    .t-caseStudyHero {
+      grid-template-columns: 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .t-caseStudyHero h2 {
+      max-width: 11ch;
+      font-size: clamp(2.65rem, 15vw, 4rem);
+      line-height: 1.04;
+    }
+
+    .t-caseStudyHero p {
+      font-size: 16px;
+    }
+
+    .t-caseStudyMetric {
+      justify-items: start;
+      text-align: left;
+    }
+
+    .t-caseStudyMetricValue {
+      font-size: 52px;
+    }
+
+    .t-caseStudyFlow {
+      max-width: none;
+    }
+
+    .t-caseStudyPanel h3,
+    .t-caseStudyPanelResult h3 {
+      font-size: 22px;
+    }
+
+    .t-caseStudyPanel p {
+      font-size: 16px;
+    }
+
+    .t-caseStudyOutcomes {
+      grid-template-columns: 1fr;
+    }
+
+    .t-caseStudyNav {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .t-caseStudyNav button,
+    .t-caseStudyNav button:last-child {
+      text-align: left;
+    }
   }
 
   .t-proofMarkdown .t-markdown {
@@ -4294,6 +4686,16 @@
     margin-bottom: 10px;
   }
 
+  .t-workModalCase .t-workModalHead {
+    justify-content: flex-end;
+    margin: calc(clamp(1.5rem, 4vw, 4.5rem) * -0.65) calc(clamp(1.5rem, 4vw, 4.5rem) * -0.65) 0 0;
+    min-height: 44px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
   .t-workModalEyebrow {
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -4334,13 +4736,20 @@
 
   .t-workModalClose {
     all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    z-index: 1;
     cursor: pointer;
     font-size: 20px;
     color: color-mix(in srgb, var(--text) 80%, var(--accent) 30%);
     line-height: 1;
-    padding: 4px 8px;
+    padding: 0;
     border-radius: 8px;
     transition: background 140ms ease, color 140ms ease;
+    pointer-events: auto;
   }
 
   .t-workModalClose:hover,

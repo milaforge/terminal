@@ -269,15 +269,15 @@ describe("default commands", () => {
     const grepHandler = registry.get("grep")?.handler;
 
     const grepOut = await grepHandler?.({
-      args: ["outsourcing"],
-      raw: "grep outsourcing",
+      args: ["runway"],
+      raw: "grep runway",
       model,
       registry,
     });
     const grepLines = Array.isArray(grepOut) ? grepOut : [grepOut];
     const summary = grepLines.join("\n");
     expect(summary).toContain("search modal open");
-    expect(summary.toLowerCase()).toContain("outsourcing");
+    expect(summary.toLowerCase()).toContain("runway");
   });
 
   it("uses selected_cases as the case study command", async () => {
@@ -302,7 +302,7 @@ describe("default commands", () => {
         segment.type === "work",
     );
     expect(workSegment?.items.map((item) => item.title)).toContain(
-      "A Bad Release Could Put Customer Funds at Risk",
+      "Protecting $4M in Live Digital Assets",
     );
     expect(workSegment?.clientProof?.title).toBe("Trusted by leaders ");
     expect(workSegment?.clientProof?.items.map((item) => item.name)).toEqual(
@@ -331,7 +331,7 @@ describe("default commands", () => {
     );
     expect(readWorkSegment?.items).toHaveLength(1);
     expect(readWorkSegment?.items[0]?.title).toBe(
-      "Skilled People Were Buried in Repetitive Work",
+      "Automating Three Hours of Daily Security Operations",
     );
     expect(readWorkSegment?.initialOpenIndex).toBe(0);
   });

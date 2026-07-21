@@ -60,13 +60,13 @@
       "examples": [
         {
           "id": "prototype-launch",
-          "name": "The prototype wasn't ready for real users",
-          "command": "selected_cases read the-prototype-wasn-t-ready-for-real-users"
+          "name": "Preparing an AI Product for Real Users",
+          "command": "selected_cases read preparing-an-ai-product-for-real-users"
         },
         {
           "id": "protect-funds",
-          "name": "A bad release could put customer funds at risk",
-          "command": "selected_cases read a-bad-release-could-put-customer-funds-at-risk"
+          "name": "Protecting $4M in Live Digital Assets",
+          "command": "selected_cases read protecting-4m-in-live-digital-assets"
         }
       ]
     },
@@ -82,13 +82,13 @@
       "examples": [
         {
           "id": "growth-breaking",
-          "name": "Growth was breaking the product",
-          "command": "selected_cases read growth-was-breaking-the-product"
+          "name": "Scaling a Realtime Platform Without Higher Hosting Costs",
+          "command": "selected_cases read scaling-a-realtime-platform-without-higher-hosting-costs"
         },
         {
           "id": "cloud-spend",
-          "name": "Cloud spend was eating the runway",
-          "command": "selected_cases read cloud-spend-was-eating-the-runway"
+          "name": "Reducing AWS Costs by 60% Without Slowing the Product",
+          "command": "selected_cases read reducing-aws-costs-by-60-without-slowing-the-product"
         }
       ]
     },
@@ -104,8 +104,8 @@
       "examples": [
         {
           "id": "secops-automation",
-          "name": "Skilled people were buried in repetitive work",
-          "command": "selected_cases read skilled-people-were-buried-in-repetitive-work"
+          "name": "Automating Three Hours of Daily Security Operations",
+          "command": "selected_cases read automating-three-hours-of-daily-security-operations"
         }
       ]
     }

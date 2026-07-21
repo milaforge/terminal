@@ -43,7 +43,7 @@ import {
 } from "@data/searchIndex";
 import { searchStore } from "@stores/searchStore";
 import { CLIENT_PROOF_ITEMS, CLIENT_PROOF_TITLE } from "@data/clientProof";
-import { SELECTED_CASES } from "@data/selectedCases";
+import { isSelectedCase, SELECTED_CASES } from "@data/selectedCases";
 import { findService, SERVICES, SERVICES_INTRO } from "@data/services";
 
 export const DEFAULT_SUGGESTED_COMMANDS: CommandButton[] = [
@@ -258,14 +258,14 @@ const ACTIVITY_TREE_NODES: ActivityTreeNode[] = [
         title: "Reliability programs",
         period: "Q1–Q2",
         summary: "Cost control, safer rollout, stronger observability.",
-        command: "selected_cases read cloud-spend-was-eating-the-runway",
+        command: "selected_cases read reducing-aws-costs-by-60-without-slowing-the-product",
       },
       {
         id: "2026-scale",
         title: "Scale under load",
         period: "Q2",
         summary: "Increased concurrency and kept p95 and uptime stable.",
-        command: "selected_cases read growth-was-breaking-the-product",
+        command: "selected_cases read scaling-a-realtime-platform-without-higher-hosting-costs",
       },
     ],
   },
@@ -282,7 +282,7 @@ const ACTIVITY_TREE_NODES: ActivityTreeNode[] = [
         period: "10-day sprints",
         summary: "Shipped investor proof before larger build spend.",
         command:
-          "selected_cases read building-too-much-before-proving-the-product",
+          "selected_cases read from-product-idea-to-investor-demo-in-10-days",
       },
       {
         id: "2025-secops",
@@ -291,7 +291,7 @@ const ACTIVITY_TREE_NODES: ActivityTreeNode[] = [
         summary:
           "Reduced repetitive manual checks, improved analyst throughput.",
         command:
-          "selected_cases read skilled-people-were-buried-in-repetitive-work",
+          "selected_cases read automating-three-hours-of-daily-security-operations",
       },
     ],
   },
@@ -569,9 +569,12 @@ export function registerDefaultCommands({
 
   setSearchWorkItems(orderedCaseStudies);
   const workIndex = new Map<string, SampleWork>();
-  orderedCaseStudies.forEach((item) =>
-    workIndex.set(makeWorkSlug(item.title), item),
-  );
+  orderedCaseStudies.forEach((item) => {
+    workIndex.set(makeWorkSlug(item.title), item);
+    if (isSelectedCase(item)) {
+      item.legacySlugs?.forEach((slug) => workIndex.set(slug, item));
+    }
+  });
 
   const findWorkEntry = (input: string) => {
     const token = input.toLowerCase().trim();

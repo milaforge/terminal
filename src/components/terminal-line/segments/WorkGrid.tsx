@@ -3,10 +3,20 @@ import { createPortal } from "react-dom";
 import type { SampleWork, WorkSegment } from "@types";
 import { MarkdownBlock } from "@components/MarkdownBlock";
 import { ClientProofStrip } from "@components/ClientProofStrip";
-import { getSelectedCaseMetric } from "@data/selectedCases";
+import {
+  type CaseStudySection,
+  getSelectedCaseMetric,
+  isSelectedCase,
+} from "@data/selectedCases";
+import { makeWorkSlug } from "@data/searchIndex";
+
+const isPresentString = (value: string | undefined): value is string =>
+  typeof value === "string" && value.length > 0;
 
 
 export function getWorkCardSummary(item: SampleWork): string {
+  if (isSelectedCase(item)) return item.summary;
+
   const lead = item.description
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -56,8 +66,10 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
   const items = segment.items || [];
   const initialOpenIndex = getInitialWorkModalIndex(segment);
   const [openIndex, setOpenIndex] = useState<number | null>(initialOpenIndex);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   const openItem = openIndex !== null ? items[openIndex] : null;
+  const openItemSlug = openItem ? makeWorkSlug(openItem.title) : "";
 
   useEffect(() => {
     setOpenIndex(initialOpenIndex);
@@ -68,10 +80,40 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpenIndex(null);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const modal = modalRef.current;
+      if (!modal) return;
+
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea, input, select, details summary, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => !element.hasAttribute("disabled") && element.tabIndex !== -1);
+
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [openIndex]);
+
+  useEffect(() => {
+    if (openIndex === null) return;
+    modalRef.current?.querySelector<HTMLButtonElement>(".t-workModalClose")?.focus();
   }, [openIndex]);
 
   const getCardSummary = getWorkCardSummary;
@@ -79,8 +121,6 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
   const getSpark = buildWorkSpark;
 
 
-
-  const modalMarkdown = openItem ? openItem.description.trim() : "";
 
   return (
     <div className="t-work">
@@ -162,24 +202,35 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
           className="t-workModalBackdrop"
           role="dialog"
           aria-modal="true"
-          aria-label={`${openItem.title} details`}
+          aria-labelledby={`case-study-title-${openItemSlug}`}
+          aria-describedby={
+            isSelectedCase(openItem) ? `case-study-summary-${openItemSlug}` : undefined
+          }
           onClick={() => setOpenIndex(null)}
         >
-          <div className="t-workModal" onClick={(e) => e.stopPropagation()}>
+          <div
+            ref={modalRef}
+            className={`t-workModal${isSelectedCase(openItem) ? " t-workModalCase" : ""}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="t-workModalHead">
-              <div>
-                <div className="t-workModalEyebrow">Case study</div>
-                <div className="t-workModalTitle">{openItem.title}</div>
-                {openItem.tags?.length ? (
-                  <div className="t-proofStats" aria-label="Case study tags">
-                    {openItem.tags.map((tag) => (
-                      <span key={tag} className="t-workTag">
-                        {tag}
-                      </span>
-                    ))}
+              {!isSelectedCase(openItem) ? (
+                <div>
+                  <div className="t-workModalEyebrow">Case study</div>
+                  <div className="t-workModalTitle" id={`case-study-title-${openItemSlug}`}>
+                    {openItem.title}
                   </div>
-                ) : null}
-              </div>
+                  {openItem.tags?.length ? (
+                    <div className="t-proofStats" aria-label="Case study tags">
+                      {openItem.tags.map((tag) => (
+                        <span key={tag} className="t-workTag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
               <button
                 type="button"
                 className="t-workModalClose"
@@ -189,18 +240,207 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
                 ×
               </button>
             </div>
-            <div className="t-proofModalBody">
-              <div className="t-proofMarkdown t-proofModalMarkdown">
-                <MarkdownBlock
-                  segment={{ type: "markdown", markdown: modalMarkdown }}
-                />
-              </div>
-            </div>
+            <CaseStudyModalBody
+              item={openItem}
+              items={items}
+              openIndex={openIndex}
+              itemSlug={openItemSlug}
+              setOpenIndex={setOpenIndex}
+            />
           </div>
         </div>,
         document.body,
       ) : null}
     </div>
+  );
+}
+
+function CaseStudyModalBody({
+  item,
+  items,
+  openIndex,
+  itemSlug,
+  setOpenIndex,
+}: {
+  item: SampleWork;
+  items: SampleWork[];
+  openIndex: number | null;
+  itemSlug: string;
+  setOpenIndex: (index: number | null) => void;
+}) {
+  if (!isSelectedCase(item)) {
+    return (
+      <div className="t-proofModalBody">
+        <div className="t-proofMarkdown t-proofModalMarkdown">
+          <MarkdownBlock
+            segment={{ type: "markdown", markdown: item.description.trim() }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const metric = getSelectedCaseMetric(item, Math.max(openIndex ?? 0, 0));
+  const metricDisplay = `${metric.prefix}${metric.value.toLocaleString()}${metric.suffix}`;
+  const previousIndex = openIndex !== null && openIndex > 0 ? openIndex - 1 : null;
+  const nextIndex =
+    openIndex !== null && openIndex < items.length - 1 ? openIndex + 1 : null;
+  const previousItem = previousIndex !== null ? items[previousIndex] : null;
+  const nextItem = nextIndex !== null ? items[nextIndex] : null;
+
+  return (
+    <div className="t-caseStudy">
+      <header className="t-caseStudyHero">
+        <div className="t-caseStudyHeroMain">
+          <div className="t-caseStudyEyebrow">Case study · {item.industry}</div>
+          <h2 id={`case-study-title-${itemSlug}`}>{item.title}</h2>
+          <p id={`case-study-summary-${itemSlug}`}>{item.summary}</p>
+          {item.role ? (
+            <div className="t-caseStudyRole">
+              <span>My role</span>
+              <strong>{item.role}</strong>
+            </div>
+          ) : null}
+          <InlineMeta items={[item.company, item.industry].filter(isPresentString)} />
+        </div>
+        <aside className="t-caseStudyMetric" aria-label="Primary result">
+          <div className="t-caseStudyMetricValue">{metricDisplay}</div>
+          <div className="t-caseStudyMetricLabel">{metric.label}</div>
+        </aside>
+      </header>
+
+      <div className="t-caseStudyFlow">
+        <ContextSection title={item.context.title} body={item.context.body} eyebrow="Context" />
+        <EditorialSection section={item.challenge} />
+        <EditorialSection section={item.solution} />
+        <section className="t-caseStudyPanel t-caseStudyPanelResult">
+          <div className="t-caseStudyEyebrow">{item.results.eyebrow}</div>
+          <h3>{item.results.title}</h3>
+          {item.results.body.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          <div className="t-caseStudyOutcomes" aria-label="Structured outcomes">
+            {item.results.highlights.map((highlight) => (
+              <div key={highlight} className="t-caseStudyOutcome">
+                {splitOutcome(highlight).map((part, index) =>
+                  index === 0 ? <strong key={part}>{part}</strong> : <span key={part}>{part}</span>,
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <footer className="t-caseStudyFooter">
+        {item.services?.length || item.technologies?.length ? (
+          <div className="t-caseStudyCapabilities">
+            <InlineMeta title="Services" items={item.services ?? []} />
+            <InlineMeta title="Technologies" items={item.technologies ?? []} />
+          </div>
+        ) : null}
+
+        {item.engineeringNotes ? (
+          <details className="t-caseStudyNotes">
+            <summary>Engineering notes</summary>
+            {item.engineeringNotes.hardestConstraint ? (
+              <p>{item.engineeringNotes.hardestConstraint}</p>
+            ) : null}
+            <NoteList title="Invariants" items={item.engineeringNotes.invariants} />
+            <NoteList title="Implementation" items={item.engineeringNotes.implementation} />
+            <NoteList title="Verification" items={item.engineeringNotes.verification} />
+          </details>
+        ) : null}
+
+        <nav className="t-caseStudyNav" aria-label="Case navigation">
+          <button
+            type="button"
+            onClick={() => previousIndex !== null && setOpenIndex(previousIndex)}
+            disabled={previousIndex === null}
+          >
+            <span>Previous</span>
+            {previousItem ? `← ${previousItem.title}` : "Previous"}
+          </button>
+          <button
+            type="button"
+            onClick={() => nextIndex !== null && setOpenIndex(nextIndex)}
+            disabled={nextIndex === null}
+          >
+            <span>Next</span>
+            {nextItem ? `${nextItem.title} →` : "Next"}
+          </button>
+        </nav>
+      </footer>
+    </div>
+  );
+}
+
+function splitOutcome(outcome: string): [string, string] {
+  const [lead, ...rest] = outcome.split(/,\s+|;|\s+while\s+|\s+with\s+/i);
+  return rest.length ? [lead, rest.join(" ")] : [outcome, ""];
+}
+
+function ContextSection({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string[];
+}) {
+  return (
+    <section className="t-caseStudyPanel">
+      <div className="t-caseStudyEyebrow">{eyebrow}</div>
+      <h3>{title}</h3>
+      {body.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+    </section>
+  );
+}
+
+function EditorialSection({ section }: { section: CaseStudySection }) {
+  return (
+    <section className="t-caseStudyPanel">
+      <div className="t-caseStudyEyebrow">{section.eyebrow}</div>
+      <h3>{section.title}</h3>
+      {section.body.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      {section.highlights?.length ? (
+        <ul className="t-caseStudyHighlights">
+          {section.highlights.map((highlight) => (
+            <li key={highlight}>{highlight}</li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
+
+function InlineMeta({ title, items }: { title?: string; items: string[] }) {
+  if (!items.length) return null;
+
+  return (
+    <div className="t-caseStudyInlineMeta">
+      {title ? <span>{title}</span> : null}
+      <p>{items.join(" · ")}</p>
+    </div>
+  );
+}
+
+function NoteList({ title, items }: { title: string; items?: string[] }) {
+  if (!items?.length) return null;
+
+  return (
+    <>
+      <h4>{title}</h4>
+      <ul>
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </>
   );
 }
 

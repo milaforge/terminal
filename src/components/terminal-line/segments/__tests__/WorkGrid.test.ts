@@ -4,6 +4,7 @@ import {
   getInitialWorkModalIndex,
   getWorkCardSummary,
 } from "../WorkGrid";
+import type { SelectedCase } from "@data/selectedCases";
 
 describe("WorkGrid helpers", () => {
   it("uses the first non-heading markdown line as the card summary", () => {
@@ -13,6 +14,29 @@ describe("WorkGrid helpers", () => {
         description: "# Heading\n\n**Bounded retry** prevented duplicate work.",
       }),
     ).toBe("Bounded retry prevented duplicate work.");
+  });
+
+  it("uses selected case summaries directly", () => {
+    const selectedCase: SelectedCase = {
+      title: "Case",
+      description: "Fallback body.",
+      summary: "Structured editorial summary.",
+      metric: { prefix: "", value: 1, suffix: "", label: "result" },
+      context: { title: "Context", body: ["Client context."] },
+      challenge: { eyebrow: "Challenge", title: "Challenge", body: ["Business challenge."] },
+      solution: { eyebrow: "Intervention", title: "Solution", body: ["Intervention."] },
+      results: {
+        eyebrow: "Result",
+        title: "Result",
+        body: ["Result body."],
+        highlights: ["Measurable result."],
+      },
+      tags: ["reliability"],
+    };
+
+    expect(
+      getWorkCardSummary(selectedCase),
+    ).toBe("Structured editorial summary.");
   });
 
   it("falls back when no usable summary line exists", () => {

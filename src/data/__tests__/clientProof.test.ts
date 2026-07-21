@@ -11,7 +11,7 @@ describe("client proof intro data", () => {
     expect(CLIENT_PROOF_TITLE).not.toContain("Start here");
     expect(
       CLIENT_PROOF_ITEMS.every((item) =>
-        item.logoPath.startsWith("images/proof/clients/"),
+        item.logoPath.startsWith("/images/proof/clients/"),
       ),
     ).toBe(true);
   });
