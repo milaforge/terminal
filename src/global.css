@@ -6674,6 +6674,16 @@ a.blog-backLink:hover {
   font-weight: 800;
 }
 
+.landing-moreCases {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.landing-moreCases .is-open {
+  transform: rotate(180deg);
+}
+
 .landing-cta {
   display: flex;
   justify-content: space-between;

@@ -3,7 +3,7 @@ import servicesData from "@data/services.json";
 import { makeWorkSlug } from "@data/searchIndex";
 import { WorkCaseModal } from "@components/terminal-line/segments/WorkGrid";
 import { withBasePath } from "@utils/appRouting";
-import { CalendarCheck, Github, Mail, Send, TerminalSquare } from "lucide-react";
+import { CalendarCheck, ChevronDown, Github, Mail, Send, TerminalSquare } from "lucide-react";
 import { MouseEvent, useEffect, useState } from "react";
 
 type LandingPageProps = {
@@ -25,7 +25,12 @@ function setMeta(name: string, content: string) {
 }
 
 export function LandingPage({ email, onBookCall }: LandingPageProps) {
-  const proofCases = SELECTED_CASES.slice(0, 4);
+  const defaultVisibleCaseCount = 4;
+  const [showAllCases, setShowAllCases] = useState(false);
+  const proofCases = showAllCases
+    ? SELECTED_CASES
+    : SELECTED_CASES.slice(0, defaultVisibleCaseCount);
+  const hiddenCaseCount = Math.max(0, SELECTED_CASES.length - defaultVisibleCaseCount);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -134,6 +139,26 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
             );
           })}
         </div>
+        {hiddenCaseCount > 0 ? (
+          <div className="landing-moreCases">
+            <button
+              className="landing-action"
+              type="button"
+              onClick={() => setShowAllCases((value) => !value)}
+              aria-expanded={showAllCases}
+              aria-controls="proof"
+            >
+              <ChevronDown
+                className={showAllCases ? "is-open" : ""}
+                size={17}
+                aria-hidden="true"
+              />
+              {showAllCases
+                ? "Show fewer"
+                : `See ${hiddenCaseCount} more`}
+            </button>
+          </div>
+        ) : null}
       </section>
 
       <section className="landing-cta" id="contact" aria-labelledby="cta-title">
@@ -156,7 +181,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
         </div>
       </section>
       <WorkCaseModal
-        items={proofCases}
+        items={SELECTED_CASES}
         openIndex={openCaseIndex}
         onClose={() => setOpenCaseIndex(null)}
         onNavigate={setOpenCaseIndex}
