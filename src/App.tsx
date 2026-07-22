@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Terminal from "@components/terminal";
 import BookingOverlay from "@components/BookingOverlay";
 import StoryPage from "@components/story";
 import BlogPage from "./pages/BlogPage";
@@ -66,47 +65,16 @@ function useAppLocation() {
 }
 
 export function shouldShowStoryRoute(hash: string) {
-  return hash === "" || hash === "#" || hash.startsWith("#/story");
+  return hash === "" || hash === "#" || hash.startsWith("#/story") || hash.startsWith("#/terminal");
 }
 
 export default function App() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const location = useAppLocation();
   const route = parseAppRoute(location.pathname);
-  const isStory = shouldShowStoryRoute(location.hash);
 
-  useEffect(() => {
-    if (route.name !== "book" || !route.legacy) return;
-
-    const slug = route.slug ? `${encodeURIComponent(route.slug)}/` : "";
-    window.history.replaceState(
-      null,
-      "",
-      `${import.meta.env.BASE_URL}book/${slug}${location.search}${location.hash}`,
-    );
-  }, [location.hash, location.search, route]);
-
-  if (route.name === "book") {
-    return <BlogPage slug={route.slug} />;
-  }
-
-  if (route.name === "terminal") {
-    return (
-      <>
-        <Terminal
-          contact={{
-            email: CONTACT_EMAIL,
-          }}
-          onBookCall={() => setBookingOpen(true)}
-        />
-
-        <BookingOverlay
-          open={bookingOpen}
-          onClose={() => setBookingOpen(false)}
-          email={CONTACT_EMAIL}
-        />
-      </>
-    );
+  if (route.name === "book" || route.name === "blog") {
+    return <BlogPage slug={route.slug} mode={route.name} />;
   }
 
   if (route.name === "team") {
@@ -138,18 +106,13 @@ export default function App() {
     );
   }
 
+  if (route.name === "notFound") {
+    return null;
+  }
+
   return (
     <>
-      {isStory ? (
-        <LandingPage email={CONTACT_EMAIL} onBookCall={() => setBookingOpen(true)} />
-      ) : (
-        <Terminal
-          contact={{
-            email: CONTACT_EMAIL,
-          }}
-          onBookCall={() => setBookingOpen(true)}
-        />
-      )}
+      <LandingPage email={CONTACT_EMAIL} onBookCall={() => setBookingOpen(true)} />
 
       <BookingOverlay
         open={bookingOpen}

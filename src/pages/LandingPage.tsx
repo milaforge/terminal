@@ -1,6 +1,6 @@
 import { SELECTED_CASES } from "@data/selectedCases";
 import servicesData from "@data/services.json";
-import { makeWorkSlug } from "@data/searchIndex";
+import Terminal from "@components/terminal";
 import { WorkCaseModal } from "@components/terminal-line/segments/WorkGrid";
 import { withBasePath } from "@utils/appRouting";
 import { CalendarCheck, ChevronDown, Github, Mail, Send, TerminalSquare } from "lucide-react";
@@ -32,6 +32,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
     : SELECTED_CASES.slice(0, defaultVisibleCaseCount);
   const hiddenCaseCount = Math.max(0, SELECTED_CASES.length - defaultVisibleCaseCount);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
+  const [terminalOpen, setTerminalOpen] = useState(false);
 
   useEffect(() => {
     document.title = "Milad | Product, Reliability, and Automation Engineering";
@@ -41,6 +42,19 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
     );
   }, []);
 
+  useEffect(() => {
+    if (!terminalOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setTerminalOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [terminalOpen]);
+
   return (
     <main className="landing-page">
       <header className="landing-nav" aria-label="Primary">
@@ -48,8 +62,8 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
         <nav className="landing-links" aria-label="Site sections">
           <a href="#services">Services</a>
           <a href="#proof">Proof</a>
-          <a href={withBasePath("/book/")}>Blog</a>
-          <a href={withBasePath("/terminal/")}>Terminal</a>
+          <a href={withBasePath("/blog/")}>Blog</a>
+          <button type="button" onClick={() => setTerminalOpen(true)}>Terminal</button>
         </nav>
       </header>
 
@@ -122,16 +136,13 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
         </div>
         <div className="landing-caseList">
           {proofCases.map((item, index) => {
-            const command = encodeURIComponent(
-              `selected_cases read ${makeWorkSlug(item.title)}`,
-            );
             const openCase = (event: MouseEvent<HTMLAnchorElement>) => {
               event.preventDefault();
               setOpenCaseIndex(index);
             };
 
             return (
-              <a className="landing-case" href={withBasePath(`/terminal/?run=${command}`)} onClick={openCase} key={item.title}>
+              <a className="landing-case" href={withBasePath("/")} onClick={openCase} key={item.title}>
                 <span>{item.eyebrow}</span>
                 <strong>{item.title}</strong>
                 <p>{item.oneLiner}</p>
@@ -172,14 +183,47 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
             <CalendarCheck size={17} aria-hidden="true" />
             Book a call
           </button>
-          <a className="landing-action" href={withBasePath("/book/")}>
+          <a className="landing-action" href={withBasePath("/blog/")}>
             Read the blog
           </a>
-          <a className="landing-iconAction" href={withBasePath("/terminal/")} aria-label="Open terminal" title="Open terminal">
+          <button
+            className="landing-iconAction"
+            type="button"
+            onClick={() => setTerminalOpen(true)}
+            aria-label="Open terminal"
+            title="Open terminal"
+          >
             <TerminalSquare size={18} aria-hidden="true" />
-          </a>
+          </button>
         </div>
       </section>
+      {terminalOpen ? (
+        <div
+          className="story-terminalOverlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Terminal"
+        >
+          <div className="story-terminalPanel">
+            <button
+              type="button"
+              className="story-terminalClose t-pressable"
+              onClick={() => setTerminalOpen(false)}
+              aria-label="Close terminal"
+            >
+              Close
+            </button>
+            <div className="story-terminalBody">
+              <Terminal
+                contact={{ email }}
+                onBookCall={onBookCall}
+                controllerMode="embedded"
+                showAskAi={false}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
       <WorkCaseModal
         items={SELECTED_CASES}
         openIndex={openCaseIndex}

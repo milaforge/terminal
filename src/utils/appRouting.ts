@@ -1,7 +1,8 @@
 export type AppRoute =
   | { name: "home" }
-  | { name: "terminal" }
   | { name: "team" }
+  | { name: "notFound" }
+  | { name: "blog"; slug?: string }
   | { name: "book"; slug?: string; legacy?: boolean };
 
 type LocationLike = {
@@ -44,19 +45,16 @@ function pathInsideBase(pathname: string, base: string) {
 }
 
 function appRoutePathname(route: AppRoute, base: string) {
-  if (route.name === "book") {
+  if (route.name === "book" || route.name === "blog") {
+    const routeName = route.name;
     return withBasePath(
-      route.slug ? `/book/${encodeURIComponent(route.slug)}/` : "/book/",
+      route.slug ? `/${routeName}/${encodeURIComponent(route.slug)}/` : `/${routeName}/`,
       base,
     );
   }
 
   if (route.name === "team") {
     return withBasePath("/team/", base);
-  }
-
-  if (route.name === "terminal") {
-    return withBasePath("/terminal/", base);
   }
 
   return withBasePath("/", base);
@@ -82,11 +80,18 @@ export function parseAppRoute(
       : pathname;
   const parts = path.split("/").filter(Boolean);
 
-  if (parts[0] === "book" || parts[0] === "blog") {
+  if (parts[0] === "book") {
     return {
       name: "book",
       slug: safeDecodePathPart(parts[1]),
-      legacy: parts[0] === "blog",
+      legacy: false,
+    };
+  }
+
+  if (parts[0] === "blog") {
+    return {
+      name: "blog",
+      slug: safeDecodePathPart(parts[1]),
     };
   }
 
@@ -94,11 +99,11 @@ export function parseAppRoute(
     return { name: "team" };
   }
 
-  if (parts[0] === "terminal") {
-    return { name: "terminal" };
+  if (parts.length === 0) {
+    return { name: "home" };
   }
 
-  return { name: "home" };
+  return { name: "notFound" };
 }
 
 export function getClientRoutePath(
@@ -134,8 +139,8 @@ export function getClientRoutePath(
     target.pathname === withBasePath("/", base) || target.pathname === cleanBase;
   if (
     route.name !== "book" &&
+    route.name !== "blog" &&
     route.name !== "team" &&
-    route.name !== "terminal" &&
     !isHomeRoute
   ) {
     return null;
@@ -195,7 +200,7 @@ export function getClientRoutePathForClick(
       return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
     }
 
-    if (route.name === "team" || route.name === "terminal") {
+    if (route.name === "team") {
       return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
     }
   }

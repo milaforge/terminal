@@ -8,6 +8,7 @@ import { BlogComments } from "./BlogComments";
 
 type BlogPageProps = {
   slug?: string;
+  mode?: "blog" | "book";
 };
 
 const BLOG_DESCRIPTION =
@@ -31,19 +32,21 @@ function formatTagLabel(tag: string) {
     .join("");
 }
 
-function tagHref(tag: string, activeTag?: string) {
-  if (normalizeTag(tag) === activeTag) return withBasePath("/book/");
+function tagHref(tag: string, activeTag?: string, mode: "blog" | "book" = "book") {
+  const routeRoot = mode === "blog" ? "/blog/" : "/book/";
+  if (normalizeTag(tag) === activeTag) return withBasePath(routeRoot);
   const params = new URLSearchParams({ [BLOG_TAG_PARAM]: normalizeTag(tag) });
-  return `${withBasePath("/book/")}?${params.toString()}`;
+  return `${withBasePath(routeRoot)}?${params.toString()}`;
 }
 
 type BlogTagListProps = {
   activeTag?: string;
   className: string;
+  mode?: "blog" | "book";
   tags: string[];
 };
 
-function BlogTagList({ activeTag, className, tags }: BlogTagListProps) {
+function BlogTagList({ activeTag, className, mode = "book", tags }: BlogTagListProps) {
   const uniqueTags = Array.from(new Set(tags.map(normalizeTag))).filter(Boolean);
   if (!uniqueTags.length) return null;
 
@@ -62,7 +65,7 @@ function BlogTagList({ activeTag, className, tags }: BlogTagListProps) {
             ) : null}
             <a
               className={`blog-topicTag${isActive ? " is-active" : ""}`}
-              href={tagHref(tag, activeTag)}
+              href={tagHref(tag, activeTag, mode)}
               aria-label={
                 isActive
                   ? `Clear ${label} topic filter`
@@ -98,8 +101,8 @@ function setMeta(name: string, content: string) {
   node.content = content;
 }
 
-function entryHref(entry: Pick<BookEntryWithPost, "slug">) {
-  return withBasePath(`/book/${encodeURIComponent(entry.slug)}/`);
+function entryHref(entry: Pick<BookEntryWithPost, "slug">, mode: "blog" | "book" = "book") {
+  return withBasePath(`/${mode}/${encodeURIComponent(entry.slug)}/`);
 }
 
 function formatBookDate(value: string) {
@@ -197,19 +200,22 @@ function useBlogTheme() {
 }
 
 type BlogNavigationProps = {
+  mode?: "blog" | "book";
   showBlogLink?: boolean;
   isLight: boolean;
   onToggleTheme: () => void;
 };
 
-function BlogNavigation({ showBlogLink = false, isLight, onToggleTheme }: BlogNavigationProps) {
+function BlogNavigation({ mode = "book", showBlogLink = false, isLight, onToggleTheme }: BlogNavigationProps) {
+  const label = mode === "blog" ? "Blog" : "Book";
+  const href = mode === "blog" ? "/blog/" : "/book/";
   const blogCrumb = showBlogLink ? (
-    <a className="blog-backLink" href={withBasePath("/book/")}>
-      Book
+    <a className="blog-backLink" href={withBasePath(href)}>
+      {label}
     </a>
   ) : (
     <span className="blog-backLink" aria-current="page">
-      Book
+      {label}
     </span>
   );
 
@@ -388,6 +394,63 @@ function BookEntryCard({ entry }: BookEntryCardProps) {
   );
 }
 
+function formatBlogDate(value?: string) {
+  if (!value) return "Undated";
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(parsed);
+}
+
+function BlogHome({
+  activeTag,
+}: {
+  activeTag?: string;
+}) {
+  const posts = activeTag
+    ? blogIndex.filterByTag(activeTag)
+    : blogIndex.getAll();
+
+  return (
+    <>
+      <header className="blog-header">
+        <h1>Blog</h1>
+        <p>{BLOG_DESCRIPTION}</p>
+        {activeTag ? (
+          <div className="blog-activeFilter" aria-live="polite">
+            <span>Topic: {formatTagLabel(activeTag)}</span>
+            <a href={withBasePath("/blog/")}>All posts</a>
+          </div>
+        ) : null}
+      </header>
+
+      <section className="blog-list" aria-label="Blog posts">
+        {posts.map((post) => (
+          <article className="blog-listItem" key={post.slug}>
+            <div className="blog-listItemContent">
+              <a className="blog-listBody" href={entryHref(post, "blog")}>
+                <h2>{post.title}</h2>
+                {post.summary ? <p>{post.summary}</p> : null}
+                <BlogTagList
+                  activeTag={activeTag}
+                  className="blog-listTags"
+                  mode="blog"
+                  tags={post.tags}
+                />
+              </a>
+              <span className="blog-metaDate">{formatBlogDate(post.date)}</span>
+            </div>
+          </article>
+        ))}
+      </section>
+    </>
+  );
+}
+
 function BookHome({
   activeTag,
 }: {
@@ -557,7 +620,7 @@ function useInjectHeadingIds(articleRef: React.RefObject<HTMLElement | null>, he
   }, [articleRef, headings]);
 }
 
-export default function BlogPage({ slug }: BlogPageProps) {
+export default function BlogPage({ slug, mode = "book" }: BlogPageProps) {
   const knownTags = useMemo(
     () => new Set(blogIndex.listTags().map(({ tag }) => tag)),
     [],
@@ -574,7 +637,7 @@ export default function BlogPage({ slug }: BlogPageProps) {
   const entranceClass = useBlogEntranceClass(slug);
   const { isLight, toggle: toggleTheme } = useBlogTheme();
   const pageClassName = `${entranceClass}${isLight ? " is-light" : ""}`;
-  const title = "The Unfinished Book | Milad";
+  const title = mode === "blog" ? "Blog | Milad" : "The Unfinished Book | Milad";
   const description = bookEntry?.summary || post?.summary || BLOG_DESCRIPTION;
 
   const headings = useMemo(
@@ -594,13 +657,16 @@ export default function BlogPage({ slug }: BlogPageProps) {
   if (slug && !post) {
     return (
       <main className={pageClassName}>
-        <BlogNavigation showBlogLink isLight={isLight} onToggleTheme={toggleTheme} />
+        <BlogNavigation mode={mode} showBlogLink isLight={isLight} onToggleTheme={toggleTheme} />
         <header className="blog-header">
           <h1>Post not found</h1>
           <p>
             The requested note is not available.{" "}
-            <a className="blog-inlineLink" href={withBasePath("/book/")}>
-              Back to book
+            <a
+              className="blog-inlineLink"
+              href={withBasePath(mode === "blog" ? "/blog/" : "/book/")}
+            >
+              Back to {mode}
             </a>
             .
           </p>
@@ -612,7 +678,7 @@ export default function BlogPage({ slug }: BlogPageProps) {
   if (post && bookEntry) {
     return (
       <main className={pageClassName}>
-        <BlogNavigation showBlogLink isLight={isLight} onToggleTheme={toggleTheme} />
+        <BlogNavigation mode={mode} showBlogLink isLight={isLight} onToggleTheme={toggleTheme} />
         <div className="blog-layout">
           <article className="blog-article" ref={articleRef}>
             <header className="blog-articleHeader">
@@ -626,7 +692,7 @@ export default function BlogPage({ slug }: BlogPageProps) {
                 <span className="blog-metaDate">
                   <BookDate label="First written" value={bookEntry.firstWrittenAt} />
                 </span>
-                <BlogTagList className="blog-metaTags" tags={post.tags} />
+                <BlogTagList className="blog-metaTags" mode={mode} tags={post.tags} />
               </div>
               {bookEntry.summary ? <p>{bookEntry.summary}</p> : null}
               <div className="blog-claimBox">
@@ -641,10 +707,12 @@ export default function BlogPage({ slug }: BlogPageProps) {
                 variant: "blog",
               }}
             />
-            <BookReadingNav previous={bookEntry.previous} next={bookEntry.next} />
+            {mode === "book" ? (
+              <BookReadingNav previous={bookEntry.previous} next={bookEntry.next} />
+            ) : null}
           </article>
           <div className="blog-sideRail">
-            <BookArticleAside entry={bookEntry} />
+            {mode === "book" ? <BookArticleAside entry={bookEntry} /> : null}
             <BlogOutline headings={headings} />
           </div>
         </div>
@@ -655,8 +723,12 @@ export default function BlogPage({ slug }: BlogPageProps) {
 
   return (
     <main className={pageClassName}>
-      <BlogNavigation isLight={isLight} onToggleTheme={toggleTheme} />
-      <BookHome activeTag={activeTag} />
+      <BlogNavigation mode={mode} isLight={isLight} onToggleTheme={toggleTheme} />
+      {mode === "blog" ? (
+        <BlogHome activeTag={activeTag} />
+      ) : (
+        <BookHome activeTag={activeTag} />
+      )}
     </main>
   );
 }

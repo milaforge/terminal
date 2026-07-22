@@ -18,7 +18,7 @@ describe("app routing", () => {
   it("parses root-hosted story and team routes", () => {
     expect(parseAppRoute("/", "/")).toEqual({ name: "home" });
     expect(parseAppRoute("/team", "/")).toEqual({ name: "team" });
-    expect(parseAppRoute("/terminal", "/")).toEqual({ name: "terminal" });
+    expect(parseAppRoute("/terminal", "/")).toEqual({ name: "notFound" });
   });
 
   it("parses book routes under the configured base path", () => {
@@ -29,11 +29,10 @@ describe("app routing", () => {
     });
   });
 
-  it("accepts legacy blog routes while marking them for canonicalization", () => {
+  it("parses blog routes as the blog surface", () => {
     expect(parseAppRoute("/terminal/blog/automation-risk/", base)).toEqual({
-      name: "book",
+      name: "blog",
       slug: "automation-risk",
-      legacy: true,
     });
   });
 
@@ -66,7 +65,7 @@ describe("app routing", () => {
     );
   });
 
-  it("allows root-hosted terminal links to be handled by React", () => {
+  it("leaves the removed root-hosted terminal path to document navigation", () => {
     const rootCurrent = {
       origin: "https://example.test",
       pathname: "/",
@@ -74,9 +73,7 @@ describe("app routing", () => {
       hash: "",
     };
 
-    expect(getClientRoutePath("https://example.test/terminal", rootCurrent, "/")).toBe(
-      "/terminal/",
-    );
+    expect(getClientRoutePath("https://example.test/terminal", rootCurrent, "/")).toBeNull();
   });
 
   it("leaves unknown root-hosted paths to document navigation", () => {
@@ -113,21 +110,21 @@ describe("app routing", () => {
     ).toBe("/terminal/book/");
   });
 
-  it("canonicalizes legacy blog links to book links", () => {
+  it("keeps blog links on the blog surface", () => {
     expect(
       getClientRoutePath(
         "https://example.test/terminal/blog",
         current,
         base,
       ),
-    ).toBe("/terminal/book/");
+    ).toBe("/terminal/blog/");
     expect(
       getClientRoutePath(
         "https://example.test/terminal/blog/automation-risk/",
         current,
         base,
       ),
-    ).toBe("/terminal/book/automation-risk/");
+    ).toBe("/terminal/blog/automation-risk/");
   });
 
   it("keeps book topic filters in client-handled routes", () => {

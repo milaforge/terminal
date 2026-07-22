@@ -6466,9 +6466,18 @@ a.blog-backLink:hover {
 
 .landing-brand,
 .landing-links a,
+.landing-links button,
 .landing-case {
   color: inherit;
   text-decoration: none;
+}
+
+.landing-links button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
 }
 
 .landing-brand {
@@ -6485,6 +6494,8 @@ a.blog-backLink:hover {
 
 .landing-links a:hover,
 .landing-links a:focus-visible,
+.landing-links button:hover,
+.landing-links button:focus-visible,
 .landing-case:hover strong,
 .landing-case:focus-visible strong {
   color: #0f766e;
@@ -6575,6 +6586,8 @@ a.blog-backLink:hover {
 
 .landing-iconAction {
   width: 42px;
+  padding: 0;
+  cursor: pointer;
 }
 
 .landing-action:hover,
