@@ -18,6 +18,7 @@ describe("app routing", () => {
   it("parses root-hosted story and team routes", () => {
     expect(parseAppRoute("/", "/")).toEqual({ name: "home" });
     expect(parseAppRoute("/team", "/")).toEqual({ name: "team" });
+    expect(parseAppRoute("/terminal", "/")).toEqual({ name: "terminal" });
   });
 
   it("parses book routes under the configured base path", () => {
@@ -65,6 +66,19 @@ describe("app routing", () => {
     );
   });
 
+  it("allows root-hosted terminal links to be handled by React", () => {
+    const rootCurrent = {
+      origin: "https://example.test",
+      pathname: "/",
+      search: "",
+      hash: "",
+    };
+
+    expect(getClientRoutePath("https://example.test/terminal", rootCurrent, "/")).toBe(
+      "/terminal/",
+    );
+  });
+
   it("leaves unknown root-hosted paths to document navigation", () => {
     expect(
       getClientRoutePath(
@@ -80,7 +94,7 @@ describe("app routing", () => {
     ).toBeNull();
     expect(
       getClientRoutePath(
-        "https://example.test/terminal",
+        "https://example.test/not-a-route-again",
         {
           origin: "https://example.test",
           pathname: "/",

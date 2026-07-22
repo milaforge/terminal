@@ -3,6 +3,7 @@ import Terminal from "@components/terminal";
 import BookingOverlay from "@components/BookingOverlay";
 import StoryPage from "@components/story";
 import BlogPage from "./pages/BlogPage";
+import { LandingPage } from "./pages/LandingPage";
 import {
   TEAM_CHAPTERS,
   TEAM_STORY_CTA_EYEBROW,
@@ -89,6 +90,25 @@ export default function App() {
     return <BlogPage slug={route.slug} />;
   }
 
+  if (route.name === "terminal") {
+    return (
+      <>
+        <Terminal
+          contact={{
+            email: CONTACT_EMAIL,
+          }}
+          onBookCall={() => setBookingOpen(true)}
+        />
+
+        <BookingOverlay
+          open={bookingOpen}
+          onClose={() => setBookingOpen(false)}
+          email={CONTACT_EMAIL}
+        />
+      </>
+    );
+  }
+
   if (route.name === "team") {
     return (
       <>
@@ -121,13 +141,7 @@ export default function App() {
   return (
     <>
       {isStory ? (
-        <StoryPage
-          audience="founders"
-          onBookCall={() => setBookingOpen(true)}
-          contact={{
-            email: CONTACT_EMAIL,
-          }}
-        />
+        <LandingPage email={CONTACT_EMAIL} onBookCall={() => setBookingOpen(true)} />
       ) : (
         <Terminal
           contact={{

@@ -23,6 +23,11 @@ const BOOK_DESCRIPTION =
   "Notes toward building systems—and a life—that remain trustworthy under uncertainty.";
 const BOOK_EXPLANATION =
   "This is not a chronological blog. It is a book in progress: arguments being refined, principles being tested, and observations connected over time.";
+const LANDING_TITLE = "Milad | Product, Reliability, and Automation Engineering";
+const LANDING_DESCRIPTION =
+  "Product engineering, launch readiness, reliability, performance, cloud cost, security, and automation services for founders and software teams.";
+const TERMINAL_DESCRIPTION =
+  "Interactive terminal portfolio for Milad's selected work, services, writing, and contact paths.";
 
 hljs.registerLanguage("bash", bash);
 hljs.registerLanguage("javascript", javascript);
@@ -201,6 +206,21 @@ function withBase(relativePath) {
   return `${base}${relativePath}`;
 }
 
+function inferSiteUrl() {
+  if (process.env.SITE_URL) return process.env.SITE_URL;
+  if (process.env.VITE_SITE_URL) return process.env.VITE_SITE_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:4173/";
+}
+
+function absoluteUrl(pathname) {
+  const siteUrl = new URL(inferSiteUrl());
+  siteUrl.hash = "";
+  siteUrl.search = "";
+  siteUrl.pathname = `${siteUrl.pathname.replace(/\/+$/g, "")}${withBase(pathname)}`;
+  return siteUrl.toString();
+}
+
 function normalizeTag(tag) {
   return String(tag || "").trim().toLowerCase();
 }
@@ -308,10 +328,28 @@ async function loadBookContent(posts) {
   return { chapters, readingPath, recentRevisions };
 }
 
-function applySeo(template, { title, description }) {
+function applySeo(template, { title, description, path: routePath = "/", type = "website", noindex = false }) {
   const safeTitle = escapeHtml(title);
   const safeDescription = escapeHtml(description);
+  const canonical = absoluteUrl(routePath);
+  const robots = noindex ? "noindex" : "index,follow";
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": type === "article" ? "Article" : "WebPage",
+    headline: title,
+    description,
+    url: canonical,
+    author: {
+      "@type": "Person",
+      name: "Milad",
+      url: absoluteUrl("/"),
+    },
+  };
   let html = template.replace(/<title>[\s\S]*?<\/title>/, `<title>${safeTitle}</title>`);
+  html = html
+    .replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>\n?/g, "")
+    .replace(/<meta\s+(?:name|property)="(?:robots|og:title|og:description|og:type|og:url|twitter:card|twitter:title|twitter:description)"\s+content="[^"]*"\s*\/?>\n?/g, "")
+    .replace(/<script\s+type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>\n?/g, "");
 
   if (/<meta\s+name="description"/.test(html)) {
     html = html.replace(
@@ -324,6 +362,21 @@ function applySeo(template, { title, description }) {
       `<meta name="referrer" content="no-referrer" />\n    <meta name="description" content="${safeDescription}" />`,
     );
   }
+
+  const seoTags = [
+    `<meta name="robots" content="${robots}" />`,
+    `<link rel="canonical" href="${escapeHtml(canonical)}" />`,
+    `<meta property="og:title" content="${safeTitle}" />`,
+    `<meta property="og:description" content="${safeDescription}" />`,
+    `<meta property="og:type" content="${escapeHtml(type)}" />`,
+    `<meta property="og:url" content="${escapeHtml(canonical)}" />`,
+    '<meta name="twitter:card" content="summary" />',
+    `<meta name="twitter:title" content="${safeTitle}" />`,
+    `<meta name="twitter:description" content="${safeDescription}" />`,
+    `<script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>`,
+  ].join("\n    ");
+
+  html = html.replace("</head>", `    ${seoTags}\n  </head>`);
 
   return html;
 }
@@ -380,6 +433,80 @@ function renderBlogNavigation({ showBlogLink = false } = {}) {
         ${blogLink}
       </nav>
     </header>`.trim();
+}
+
+function renderLandingPage() {
+  return `
+    <main class="landing-page">
+      <header class="landing-nav" aria-label="Primary">
+        <a class="landing-brand" href="${escapeHtml(withBase("/"))}">Milad</a>
+        <nav class="landing-links" aria-label="Site sections">
+          <a href="#services">Services</a>
+          <a href="#proof">Proof</a>
+          <a href="${escapeHtml(withBase("/book/"))}">Blog</a>
+          <a href="${escapeHtml(withBase("/terminal/"))}">Terminal</a>
+        </nav>
+      </header>
+      <section class="landing-hero" aria-labelledby="landing-title">
+        <div class="landing-heroCopy">
+          <p class="landing-eyebrow">For founders and software teams</p>
+          <h1 id="landing-title">I build and harden software before real users expose the weak parts.</h1>
+          <p>Full-stack product engineering, launch readiness, reliability, performance, cloud cost control, security-sensitive workflows, and practical automation.</p>
+          <div class="landing-actions" aria-label="Primary actions">
+            <a class="landing-action is-primary" href="${escapeHtml(withBase("/#contact"))}">Book a call</a>
+            <a class="landing-action" href="mailto:milaforge@proton.me">Email</a>
+          </div>
+        </div>
+        <aside class="landing-proofPanel" aria-label="Selected outcomes">
+          <div><span>10 days</span><p>Investor demo shipped for an early-stage founder</p></div>
+          <div><span>10x</span><p>Realtime throughput increase without proportional hosting cost</p></div>
+          <div><span>60%</span><p>AWS spend reduction while protecting performance</p></div>
+        </aside>
+      </section>
+      <section class="landing-section" id="services" aria-labelledby="services-title">
+        <div class="landing-sectionIntro">
+          <p class="landing-eyebrow">Services</p>
+          <h2 id="services-title">Pick the situation that sounds like yours.</h2>
+        </div>
+        <div class="landing-serviceGrid">
+          <article class="landing-service"><h3>Start a new project</h3><p>Turn an idea into something real people can evaluate.</p><ul><li>Working demos</li><li>MVP scope</li><li>Investor proof</li></ul></article>
+          <article class="landing-service"><h3>Get ready for real users</h3><p>Your prototype works. Make it safe to launch and operate.</p><ul><li>Validation</li><li>Monitoring</li><li>Deploy paths</li></ul></article>
+          <article class="landing-service"><h3>Scale without scaling cost</h3><p>Handle growth without buying more servers by default.</p><ul><li>Performance</li><li>Cloud cost</li><li>Reliability</li></ul></article>
+          <article class="landing-service"><h3>Automate repetitive work</h3><p>Give skilled people their time back without hiding failures.</p><ul><li>Auditable automation</li><li>Human review points</li><li>Operational controls</li></ul></article>
+        </div>
+      </section>
+      <section class="landing-section" id="proof" aria-labelledby="proof-title">
+        <div class="landing-sectionIntro">
+          <p class="landing-eyebrow">Evidence</p>
+          <h2 id="proof-title">Concrete work you can inspect.</h2>
+        </div>
+      </section>
+    </main>`.trim();
+}
+
+function renderTerminalShell() {
+  return `
+    <main class="terminal" aria-label="Interactive terminal portfolio">
+      <h1>Milad terminal portfolio</h1>
+      <p>${escapeHtml(TERMINAL_DESCRIPTION)}</p>
+    </main>`.trim();
+}
+
+function renderTeamShell() {
+  return `
+    <main class="landing-page">
+      <section class="landing-hero" aria-labelledby="team-title">
+        <div class="landing-heroCopy">
+          <p class="landing-eyebrow">For hiring teams</p>
+          <h1 id="team-title">Engineering judgment, reliability mindset, and selected work.</h1>
+          <p>A hiring-focused view of Milad's work across product engineering, reliability, security-sensitive systems, and automation.</p>
+          <div class="landing-actions" aria-label="Team actions">
+            <a class="landing-action is-primary" href="${escapeHtml(withBase("/terminal/"))}">Inspect terminal</a>
+            <a class="landing-action" href="${escapeHtml(withBase("/book/"))}">Read the blog</a>
+          </div>
+        </div>
+      </section>
+    </main>`.trim();
 }
 
 function renderBlogComments() {
@@ -565,11 +692,43 @@ async function main() {
   const posts = await loadPosts();
   const book = await loadBookContent(posts);
   await writeHtml(
+    "",
+    template,
+    {
+      title: LANDING_TITLE,
+      description: LANDING_DESCRIPTION,
+      path: "/",
+    },
+    renderLandingPage(),
+  );
+  await writeHtml(
+    "terminal",
+    template,
+    {
+      title: "Terminal Portfolio | Milad",
+      description: TERMINAL_DESCRIPTION,
+      path: "/terminal/",
+    },
+    renderTerminalShell(),
+  );
+  await writeHtml(
+    "team",
+    template,
+    {
+      title: "Milad | Engineering Judgment for Hiring Teams",
+      description:
+        "A hiring-focused view of Milad's engineering judgment, reliability mindset, selected work, and ways to evaluate fit.",
+      path: "/team/",
+    },
+    renderTeamShell(),
+  );
+  await writeHtml(
     BOOK_ROUTE,
     template,
     {
       title: "The Unfinished Book | Milad",
       description: BOOK_DESCRIPTION,
+      path: "/book/",
     },
     renderBlogIndex(book),
   );
@@ -584,6 +743,8 @@ async function main() {
         description:
           entry.summary ||
           `Unfinished book entry: ${entry.title}.`,
+        path: `/book/${encodeURIComponent(entry.slug)}/`,
+        type: "article",
       },
       await renderPost(entry, book),
     );

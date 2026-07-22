@@ -1,5 +1,6 @@
 export type AppRoute =
   | { name: "home" }
+  | { name: "terminal" }
   | { name: "team" }
   | { name: "book"; slug?: string; legacy?: boolean };
 
@@ -54,6 +55,10 @@ function appRoutePathname(route: AppRoute, base: string) {
     return withBasePath("/team/", base);
   }
 
+  if (route.name === "terminal") {
+    return withBasePath("/terminal/", base);
+  }
+
   return withBasePath("/", base);
 }
 
@@ -87,6 +92,10 @@ export function parseAppRoute(
 
   if (parts[0] === "team") {
     return { name: "team" };
+  }
+
+  if (parts[0] === "terminal") {
+    return { name: "terminal" };
   }
 
   return { name: "home" };
@@ -126,6 +135,7 @@ export function getClientRoutePath(
   if (
     route.name !== "book" &&
     route.name !== "team" &&
+    route.name !== "terminal" &&
     !isHomeRoute
   ) {
     return null;
@@ -185,7 +195,7 @@ export function getClientRoutePathForClick(
       return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
     }
 
-    if (route.name === "team") {
+    if (route.name === "team" || route.name === "terminal") {
       return `${appRoutePathname(route, base)}${targetUrl.search}${targetUrl.hash}`;
     }
   }

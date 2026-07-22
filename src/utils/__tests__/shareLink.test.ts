@@ -20,6 +20,27 @@ describe("share links", () => {
     expect(link).toBe("https://example.test/?run=selected_cases");
   });
 
+  it("accepts selected case read commands for direct case modal links", () => {
+    const commands = parseShareCommandsFromLocation(
+      locationWithSearch("?run=selected_cases%2520read%2520investor-demo-shipped-in-10-days"),
+    );
+
+    expect(commands).toEqual([
+      "selected_cases read investor-demo-shipped-in-10-days",
+    ]);
+  });
+
+  it("builds direct selected case read links", () => {
+    const link = buildShareLink(
+      "selected_cases read investor-demo-shipped-in-10-days",
+      "https://example.test/terminal/",
+    );
+
+    expect(link).toBe(
+      "https://example.test/terminal/?run=selected_cases%2520read%2520investor-demo-shipped-in-10-days",
+    );
+  });
+
   it("accepts double-encoded consolidated blog read commands", () => {
     const commands = parseShareCommandsFromLocation(
       locationWithSearch("?run=blog%2520read%25202025-01-21-tab"),

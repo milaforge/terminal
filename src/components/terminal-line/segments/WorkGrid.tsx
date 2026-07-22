@@ -81,64 +81,14 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
   const items = segment.items || [];
   const initialOpenIndex = getInitialWorkModalIndex(segment);
   const [openIndex, setOpenIndex] = useState<number | null>(initialOpenIndex);
-  const modalRef = useRef<HTMLDivElement | null>(null);
-
-  const openItem = openIndex !== null ? items[openIndex] : null;
-  const openItemSlug = openItem ? makeWorkSlug(openItem.title) : "";
 
   useEffect(() => {
     setOpenIndex(initialOpenIndex);
   }, [initialOpenIndex]);
 
-  useEffect(() => {
-    if (openIndex === null) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setOpenIndex(null);
-        return;
-      }
-
-      if (event.key !== "Tab") return;
-
-      const modal = modalRef.current;
-      if (!modal) return;
-
-      const focusable = Array.from(
-        modal.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), textarea, input, select, details summary, [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((element) => !element.hasAttribute("disabled") && element.tabIndex !== -1);
-
-      if (!focusable.length) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [openIndex]);
-
-  useEffect(() => {
-    if (openIndex === null) return;
-    modalRef.current?.querySelector<HTMLButtonElement>(".t-workModalClose")?.focus();
-  }, [openIndex]);
-
   const getCardSummary = getWorkCardSummary;
 
   const getSpark = buildWorkSpark;
-
-  const navigateCase = (index: number) => {
-    setOpenIndex(index);
-    window.requestAnimationFrame(() => resetWorkModalScroll(modalRef.current));
-  };
 
   return (
     <div className="t-work">
@@ -220,61 +170,132 @@ export function WorkGrid({ segment }: { segment: WorkSegment }) {
         })}
       </div>
 
-      {openItem ? createPortal(
-        <div
-          className="t-workModalBackdrop"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={`case-study-title-${openItemSlug}`}
-          aria-describedby={
-            isSelectedCase(openItem) ? `case-study-summary-${openItemSlug}` : undefined
-          }
-          onClick={() => setOpenIndex(null)}
-        >
-          <div
-            ref={modalRef}
-            className={`t-workModal${isSelectedCase(openItem) ? " t-workModalCase" : ""}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="t-workModalHead">
-              {!isSelectedCase(openItem) ? (
-                <div>
-                  <div className="t-workModalEyebrow">Case study</div>
-                  <div className="t-workModalTitle" id={`case-study-title-${openItemSlug}`}>
-                    {openItem.title}
-                  </div>
-                  {openItem.tags?.length ? (
-                    <div className="t-proofStats" aria-label="Case study tags">
-                      {openItem.tags.map((tag) => (
-                        <span key={tag} className="t-workTag">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
+      <WorkCaseModal
+        items={items}
+        openIndex={openIndex}
+        onClose={() => setOpenIndex(null)}
+        onNavigate={setOpenIndex}
+      />
+    </div>
+  );
+}
+
+export function WorkCaseModal({
+  items,
+  openIndex,
+  onClose,
+  onNavigate,
+}: {
+  items: SampleWork[];
+  openIndex: number | null;
+  onClose: () => void;
+  onNavigate: (index: number) => void;
+}) {
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const openItem = openIndex !== null ? items[openIndex] : null;
+  const openItemSlug = openItem ? makeWorkSlug(openItem.title) : "";
+
+  useEffect(() => {
+    if (openIndex === null) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const modal = modalRef.current;
+      if (!modal) return;
+
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea, input, select, details summary, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => !element.hasAttribute("disabled") && element.tabIndex !== -1);
+
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose, openIndex]);
+
+  useEffect(() => {
+    if (openIndex === null) return;
+    modalRef.current?.querySelector<HTMLButtonElement>(".t-workModalClose")?.focus();
+  }, [openIndex]);
+
+  const navigateCase = (index: number) => {
+    onNavigate(index);
+    window.requestAnimationFrame(() => resetWorkModalScroll(modalRef.current));
+  };
+
+  if (!openItem) return null;
+
+  return createPortal(
+    <div
+      className="t-workModalBackdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`case-study-title-${openItemSlug}`}
+      aria-describedby={
+        isSelectedCase(openItem) ? `case-study-summary-${openItemSlug}` : undefined
+      }
+      onClick={onClose}
+    >
+      <div
+        ref={modalRef}
+        className={`t-workModal${isSelectedCase(openItem) ? " t-workModalCase" : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="t-workModalHead">
+          {!isSelectedCase(openItem) ? (
+            <div>
+              <div className="t-workModalEyebrow">Case study</div>
+              <div className="t-workModalTitle" id={`case-study-title-${openItemSlug}`}>
+                {openItem.title}
+              </div>
+              {openItem.tags?.length ? (
+                <div className="t-proofStats" aria-label="Case study tags">
+                  {openItem.tags.map((tag) => (
+                    <span key={tag} className="t-workTag">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               ) : null}
-              <button
-                type="button"
-                className="t-workModalClose"
-                onClick={() => setOpenIndex(null)}
-                aria-label="Close case study"
-              >
-                ×
-              </button>
             </div>
-            <CaseStudyModalBody
-              item={openItem}
-              items={items}
-              openIndex={openIndex}
-              itemSlug={openItemSlug}
-              navigateCase={navigateCase}
-            />
-          </div>
-        </div>,
-        document.body,
-      ) : null}
-    </div>
+          ) : null}
+          <button
+            type="button"
+            className="t-workModalClose"
+            onClick={onClose}
+            aria-label="Close case study"
+          >
+            ×
+          </button>
+        </div>
+        <CaseStudyModalBody
+          item={openItem}
+          items={items}
+          openIndex={openIndex}
+          itemSlug={openItemSlug}
+          navigateCase={navigateCase}
+        />
+      </div>
+    </div>,
+    document.body,
   );
 }
 

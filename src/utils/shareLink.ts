@@ -12,6 +12,7 @@ type AllowedCommand = {
 const ALLOWED: AllowedCommand[] = [
   { command: "blog", subcommand: "read", maxArgLength: 50 },
   { command: "selected_cases", maxArgLength: 0 },
+  { command: "selected_cases", subcommand: "read", maxArgLength: 80 },
 ];
 
 function normalizeTokens(value: string): string[] {
