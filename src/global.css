@@ -6469,11 +6469,23 @@ a.blog-backLink:hover {
 }
 
 .landing-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  max-width: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 22px 0;
+  padding: 14px 20px;
+  border: 1px solid rgba(24, 32, 28, 0.1);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  background: rgba(247, 248, 245, 0.76);
+  box-shadow: 0 14px 34px rgba(24, 32, 28, 0.08);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
 }
 
 .landing-brand,
@@ -7010,7 +7022,6 @@ a.blog-backLink:hover {
 }
 
 @media (max-width: 640px) {
-  .landing-nav,
   .landing-hero,
   .landing-section,
   .landing-cta {
@@ -7018,12 +7029,14 @@ a.blog-backLink:hover {
   }
 
   .landing-nav {
-    align-items: flex-start;
-    flex-direction: column;
+    gap: 14px;
+    padding-inline: 18px;
   }
 
   .landing-links {
-    justify-content: flex-start;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 14px;
   }
 
   .landing-serviceSelector,
