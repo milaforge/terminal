@@ -5261,6 +5261,18 @@
     text-transform: uppercase;
   }
 
+  .landing-contextMenu {
+    min-width: 56px;
+    width: 56px;
+  }
+
+  .landing-contextTerminal {
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px;
+  }
+
   .t-contextMenuDivider {
     height: 1px;
     background: rgba(255, 255, 255, 0.08);

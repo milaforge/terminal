@@ -4,7 +4,7 @@
     {
       "id": "start-a-new-project",
       "title": "Start a new project",
-      "hook": "Turn an idea into something real people can evaluate.",
+      "hook": "Turn the idea into the first thing people can judge.",
       "fits": [
         "You have an idea and want to test market fit.",
         "You want a working demo to share with selected users.",
@@ -51,7 +51,7 @@
     {
       "id": "get-ready-for-real-users",
       "title": "Get ready for real users",
-      "hook": "Your prototype works — make it safe to launch and operate.",
+      "hook": "The prototype works. Now the operating assumptions matter.",
       "fits": [
         "The demo works, but real users are about to arrive.",
         "Failures are silent and releases feel like a gamble.",
@@ -73,7 +73,7 @@
     {
       "id": "scale-without-scaling-cost",
       "title": "Scale without scaling cost",
-      "hook": "Handle growth without buying more servers by default.",
+      "hook": "Find the constraint before buying your way around it.",
       "fits": [
         "Traffic is growing and reliability is dropping.",
         "Infrastructure spend is eating the runway.",
@@ -95,7 +95,7 @@
     {
       "id": "automate-repetitive-work",
       "title": "Automate repetitive work",
-      "hook": "Give skilled people their time back — without hiding failures.",
+      "hook": "Move repeated work into a system people can still question.",
       "fits": [
         "Experts spend hours a day on manual, repeatable checks.",
         "Manual repetition is causing inconsistency and errors.",

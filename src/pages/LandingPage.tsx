@@ -13,6 +13,9 @@ type LandingPageProps = {
 
 const TELEGRAM_URL = "https://t.me/milaforge";
 const GITHUB_URL = "https://github.com/milaforge";
+const MENU_MARGIN = 12;
+const MENU_WIDTH = 72;
+const MENU_HEIGHT = 56;
 
 function setMeta(name: string, content: string) {
   let node = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
@@ -33,12 +36,13 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
   const hiddenCaseCount = Math.max(0, SELECTED_CASES.length - defaultVisibleCaseCount);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
   const [terminalOpen, setTerminalOpen] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     document.title = "Milad | Product, Reliability, and Automation Engineering";
     setMeta(
       "description",
-      "Product engineering, launch readiness, reliability, performance, cloud cost, security, and automation services for founders and software teams.",
+      "Product engineering for founders and software teams moving from working prototype to operated system.",
     );
   }, []);
 
@@ -55,25 +59,79 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [terminalOpen]);
 
+  useEffect(() => {
+    if (!contextMenu) return;
+
+    const closeContextMenu = (event: Event) => {
+      const target = event.target as Element | null;
+      if (target?.closest(".landing-contextMenu")) return;
+      setContextMenu(null);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setContextMenu(null);
+    };
+
+    document.addEventListener("mousedown", closeContextMenu);
+    document.addEventListener("scroll", closeContextMenu, true);
+    document.addEventListener("contextmenu", closeContextMenu, true);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeContextMenu);
+      document.removeEventListener("scroll", closeContextMenu, true);
+      document.removeEventListener("contextmenu", closeContextMenu, true);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [contextMenu]);
+
+  const handleContextMenu = (event: MouseEvent<HTMLElement>) => {
+    const target = event.target as Element | null;
+    if (
+      target?.closest(
+        "a, button, input, textarea, select, .landing-contextMenu, .story-terminalOverlay, .t-root",
+      )
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    const maxX = Math.max(
+      MENU_MARGIN,
+      window.innerWidth - MENU_WIDTH - MENU_MARGIN,
+    );
+    const maxY = Math.max(
+      MENU_MARGIN,
+      window.innerHeight - MENU_HEIGHT - MENU_MARGIN,
+    );
+    setContextMenu({
+      x: Math.min(Math.max(event.clientX, MENU_MARGIN), maxX),
+      y: Math.min(Math.max(event.clientY, MENU_MARGIN), maxY),
+    });
+  };
+
+  const openTerminalFromContextMenu = () => {
+    setTerminalOpen(true);
+    setContextMenu(null);
+  };
+
   return (
-    <main className="landing-page">
+    <main className="landing-page" onContextMenu={handleContextMenu}>
       <header className="landing-nav" aria-label="Primary">
         <a className="landing-brand" href={withBasePath("/")}>Milad</a>
         <nav className="landing-links" aria-label="Site sections">
-          <a href="#services">Services</a>
-          <a href="#proof">Proof</a>
+          <a href="#services">Fit</a>
+          <a href="#proof">Work</a>
           <a href={withBasePath("/blog/")}>Blog</a>
-          <button type="button" onClick={() => setTerminalOpen(true)}>Terminal</button>
         </nav>
       </header>
 
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-heroCopy">
           <p className="landing-eyebrow">For founders and software teams</p>
-          <h1 id="landing-title">I build and harden software before real users expose the weak parts.</h1>
+          <h1 id="landing-title">When a product starts to matter, the engineering changes. I handle that transition.</h1>
           <p>
-            Full-stack product engineering, launch readiness, reliability, performance,
-            cloud cost control, security-sensitive workflows, and practical automation.
+            I work where demos turn into obligations: release paths, failure boundaries,
+            operating cost, review points, and the small decisions that decide whether a
+            system stays usable after launch.
           </p>
           <div className="landing-actions" aria-label="Primary actions">
             <button className="landing-action is-primary" type="button" onClick={onBookCall}>
@@ -111,7 +169,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
 
       <section className="landing-section" id="services" aria-labelledby="services-title">
         <div className="landing-sectionIntro">
-          <p className="landing-eyebrow">Services</p>
+          <p className="landing-eyebrow">Fit</p>
           <h2 id="services-title">Pick the situation that sounds like yours.</h2>
         </div>
         <div className="landing-serviceGrid">
@@ -131,8 +189,8 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
 
       <section className="landing-section" id="proof" aria-labelledby="proof-title">
         <div className="landing-sectionIntro">
-          <p className="landing-eyebrow">Evidence</p>
-          <h2 id="proof-title">Concrete work you can inspect.</h2>
+          <p className="landing-eyebrow">Selected work</p>
+          <h2 id="proof-title">A few things worth opening.</h2>
         </div>
         <div className="landing-caseList">
           {proofCases.map((item, index) => {
@@ -176,7 +234,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
         <div>
           <p className="landing-eyebrow">Next step</p>
           <h2 id="cta-title">Bring the current risk, bottleneck, or product question.</h2>
-          <p>I will help reduce it to the smallest useful decision and a build path that can be verified.</p>
+          <p>We can reduce it to the next decision, the constraint behind it, and the smallest build path that proves something real.</p>
         </div>
         <div className="landing-actions">
           <button className="landing-action is-primary" type="button" onClick={onBookCall}>
@@ -186,17 +244,26 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
           <a className="landing-action" href={withBasePath("/blog/")}>
             Read the blog
           </a>
+        </div>
+      </section>
+      {contextMenu ? (
+        <div
+          className="t-contextMenu landing-contextMenu"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+          role="menu"
+          aria-label="Landing page actions"
+        >
           <button
-            className="landing-iconAction"
             type="button"
-            onClick={() => setTerminalOpen(true)}
+            className="t-contextMenuItem landing-contextTerminal t-pressable"
+            onClick={openTerminalFromContextMenu}
             aria-label="Open terminal"
             title="Open terminal"
           >
-            <TerminalSquare size={18} aria-hidden="true" />
+            <TerminalSquare size={20} aria-hidden="true" />
           </button>
         </div>
-      </section>
+      ) : null}
       {terminalOpen ? (
         <div
           className="story-terminalOverlay"

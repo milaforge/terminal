@@ -25,7 +25,7 @@ const BOOK_EXPLANATION =
   "This is not a chronological blog. It is a book in progress: arguments being refined, principles being tested, and observations connected over time.";
 const LANDING_TITLE = "Milad | Product, Reliability, and Automation Engineering";
 const LANDING_DESCRIPTION =
-  "Product engineering, launch readiness, reliability, performance, cloud cost, security, and automation services for founders and software teams.";
+  "Product engineering for founders and software teams moving from working prototype to operated system.";
 const TERMINAL_DESCRIPTION =
   "Interactive terminal portfolio for Milad's selected work, services, writing, and contact paths.";
 
@@ -441,8 +441,8 @@ function renderLandingPage() {
       <header class="landing-nav" aria-label="Primary">
         <a class="landing-brand" href="${escapeHtml(withBase("/"))}">Milad</a>
         <nav class="landing-links" aria-label="Site sections">
-          <a href="#services">Services</a>
-          <a href="#proof">Proof</a>
+          <a href="#services">Fit</a>
+          <a href="#proof">Work</a>
           <a href="${escapeHtml(withBase("/book/"))}">Blog</a>
           <a href="${escapeHtml(withBase("/terminal/"))}">Terminal</a>
         </nav>
@@ -450,8 +450,8 @@ function renderLandingPage() {
       <section class="landing-hero" aria-labelledby="landing-title">
         <div class="landing-heroCopy">
           <p class="landing-eyebrow">For founders and software teams</p>
-          <h1 id="landing-title">I build and harden software before real users expose the weak parts.</h1>
-          <p>Full-stack product engineering, launch readiness, reliability, performance, cloud cost control, security-sensitive workflows, and practical automation.</p>
+          <h1 id="landing-title">When a product starts to matter, the engineering changes. I handle that transition.</h1>
+          <p>I work where demos turn into obligations: release paths, failure boundaries, operating cost, review points, and the small decisions that decide whether a system stays usable after launch.</p>
           <div class="landing-actions" aria-label="Primary actions">
             <a class="landing-action is-primary" href="${escapeHtml(withBase("/#contact"))}">Book a call</a>
             <a class="landing-action" href="mailto:milaforge@proton.me">Email</a>
@@ -465,20 +465,20 @@ function renderLandingPage() {
       </section>
       <section class="landing-section" id="services" aria-labelledby="services-title">
         <div class="landing-sectionIntro">
-          <p class="landing-eyebrow">Services</p>
+          <p class="landing-eyebrow">Fit</p>
           <h2 id="services-title">Pick the situation that sounds like yours.</h2>
         </div>
         <div class="landing-serviceGrid">
-          <article class="landing-service"><h3>Start a new project</h3><p>Turn an idea into something real people can evaluate.</p><ul><li>Working demos</li><li>MVP scope</li><li>Investor proof</li></ul></article>
-          <article class="landing-service"><h3>Get ready for real users</h3><p>Your prototype works. Make it safe to launch and operate.</p><ul><li>Validation</li><li>Monitoring</li><li>Deploy paths</li></ul></article>
-          <article class="landing-service"><h3>Scale without scaling cost</h3><p>Handle growth without buying more servers by default.</p><ul><li>Performance</li><li>Cloud cost</li><li>Reliability</li></ul></article>
-          <article class="landing-service"><h3>Automate repetitive work</h3><p>Give skilled people their time back without hiding failures.</p><ul><li>Auditable automation</li><li>Human review points</li><li>Operational controls</li></ul></article>
+          <article class="landing-service"><h3>Start a new project</h3><p>Turn the idea into the first thing people can judge.</p><ul><li>Working demos</li><li>MVP scope</li><li>Investor proof</li></ul></article>
+          <article class="landing-service"><h3>Get ready for real users</h3><p>The prototype works. Now the operating assumptions matter.</p><ul><li>Validation</li><li>Monitoring</li><li>Deploy paths</li></ul></article>
+          <article class="landing-service"><h3>Scale without scaling cost</h3><p>Find the constraint before buying your way around it.</p><ul><li>Performance</li><li>Cloud cost</li><li>Reliability</li></ul></article>
+          <article class="landing-service"><h3>Automate repetitive work</h3><p>Move repeated work into a system people can still question.</p><ul><li>Auditable automation</li><li>Human review points</li><li>Operational controls</li></ul></article>
         </div>
       </section>
       <section class="landing-section" id="proof" aria-labelledby="proof-title">
         <div class="landing-sectionIntro">
-          <p class="landing-eyebrow">Evidence</p>
-          <h2 id="proof-title">Concrete work you can inspect.</h2>
+          <p class="landing-eyebrow">Selected work</p>
+          <h2 id="proof-title">A few things worth opening.</h2>
         </div>
       </section>
     </main>`.trim();
