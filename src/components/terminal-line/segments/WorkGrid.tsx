@@ -342,7 +342,6 @@ function CaseStudyModalBody({
           {item.role ? (
             <div className="t-caseStudyRole">
               <span>My role</span>
-              <strong>{item.role}</strong>
             </div>
           ) : null}
           <InlineMeta items={[item.company, item.role].filter(isPresentString)} />
