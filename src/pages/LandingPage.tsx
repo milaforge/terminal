@@ -1,7 +1,9 @@
 import { SELECTED_CASES } from "@data/selectedCases";
 import servicesData from "@data/services.json";
 import Terminal from "@components/terminal";
+import ChatDock from "@components/terminal/chat";
 import { WorkCaseModal } from "@components/terminal-line/segments/WorkGrid";
+import { openChat, useChatStore } from "@stores/chatStore";
 import { withBasePath } from "@utils/appRouting";
 import { CalendarCheck, Github, Mail, Send, TerminalSquare } from "lucide-react";
 import { MouseEvent, useEffect, useState } from "react";
@@ -13,6 +15,7 @@ type LandingPageProps = {
 
 const TELEGRAM_URL = "https://t.me/milaforge";
 const GITHUB_URL = "https://github.com/milaforge";
+const AVATAR_SRC = `${import.meta.env.BASE_URL}images/avatar.jpg`;
 const MENU_MARGIN = 12;
 const MENU_WIDTH = 72;
 const MENU_HEIGHT = 56;
@@ -71,6 +74,7 @@ function scrollDisclosureIntoView(id: string) {
 }
 
 export function LandingPage({ email, onBookCall }: LandingPageProps) {
+  const unread = useChatStore((state) => state.unread);
   const visibleServices = servicesData.services.slice(0, 4);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
   const [activeWorkCategory, setActiveWorkCategory] = useState<string | null>(null);
@@ -236,6 +240,33 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
             <a className="landing-iconAction" href={GITHUB_URL} aria-label="GitHub" title="GitHub">
               <Github size={17} aria-hidden="true" />
             </a>
+            <button
+              className="landing-chatAvatarButton"
+              type="button"
+              aria-label="Open chatbot"
+              title="Open chatbot"
+              onClick={openChat}
+            >
+              <img
+                className="landing-chatAvatar"
+                src={AVATAR_SRC}
+                alt="Portrait of Milad"
+                width={42}
+                height={42}
+              />
+              <span
+                className={`landing-chatAvatarStatus${unread > 0 ? " has-unread" : ""}`}
+                aria-hidden="true"
+              />
+              {unread > 0 ? (
+                <span
+                  className="landing-chatAvatarUnread"
+                  aria-label={`${unread} unread messages`}
+                >
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              ) : null}
+            </button>
           </div>
         </div>
 
@@ -355,17 +386,16 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
                   const caseIndex = SELECTED_CASES.findIndex((selectedCase) => selectedCase.title === item.title);
 
                   return (
-                    <article className="landing-workItem" key={item.title}>
+                    <button
+                      className="landing-workItem"
+                      key={item.title}
+                      type="button"
+                      onClick={() => setOpenCaseIndex(caseIndex)}
+                      aria-label={`Open case details for ${item.title}`}
+                    >
                       <strong>{item.title}</strong>
                       <p>{item.oneLiner}</p>
-                      <button
-                        className="landing-caseDetails"
-                        type="button"
-                        onClick={() => setOpenCaseIndex(caseIndex)}
-                      >
-                        Open details
-                      </button>
-                    </article>
+                    </button>
                   );
                 })}
               </div>
@@ -445,6 +475,11 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
         openIndex={openCaseIndex}
         onClose={() => setOpenCaseIndex(null)}
         onNavigate={setOpenCaseIndex}
+      />
+      <ChatDock
+        onBookCall={onBookCall}
+        contactEmail={email}
+        hideLauncher
       />
     </main>
   );
