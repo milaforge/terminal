@@ -6478,8 +6478,7 @@ a.blog-backLink:hover {
 
 .landing-brand,
 .landing-links a,
-.landing-links button,
-.landing-case {
+.landing-links button {
   color: inherit;
   text-decoration: none;
 }
@@ -6508,8 +6507,9 @@ a.blog-backLink:hover {
 .landing-links a:focus-visible,
 .landing-links button:hover,
 .landing-links button:focus-visible,
-.landing-case:hover strong,
-.landing-case:focus-visible strong {
+.landing-workTab:hover span,
+.landing-workTab:focus-visible span,
+.landing-workTab[aria-selected="true"] span {
   color: #0f766e;
 }
 
@@ -6547,7 +6547,7 @@ a.blog-backLink:hover {
 .landing-heroCopy>p:not(.landing-eyebrow),
 .landing-sectionIntro,
 .landing-cta p,
-.landing-case p,
+.landing-workItem p,
 .landing-proofPanel p {
   color: rgba(24, 32, 28, 0.7);
 }
@@ -6632,13 +6632,13 @@ a.blog-backLink:hover {
 
 .landing-proofPanel p,
 .landing-serviceDetail li,
-.landing-case p,
+.landing-workItem p,
 .landing-cta p {
   line-height: 1.5;
 }
 
 .landing-proofPanel p,
-.landing-case p {
+.landing-workItem p {
   margin: 0;
 }
 
@@ -6655,19 +6655,6 @@ a.blog-backLink:hover {
 .landing-sectionIntro h2,
 .landing-cta h2 {
   font-size: clamp(2rem, 4vw, 3.6rem);
-}
-
-.landing-caseList {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.landing-case {
-  border: 1px solid rgba(24, 32, 28, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.58);
-  padding: 18px;
 }
 
 .landing-serviceExplorer {
@@ -6756,29 +6743,145 @@ a.blog-backLink:hover {
   content: "";
 }
 
-.landing-case strong {
-  display: block;
-  margin: 0 0 10px;
-  color: #101612;
-  font-size: 1.05rem;
+.landing-workExplorer {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.34fr) minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 40px);
+  align-items: stretch;
+  padding-top: 8px;
 }
 
-.landing-case span {
-  display: block;
-  margin-bottom: 8px;
-  color: #0f766e;
+.landing-workIndex {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.landing-workTab,
+.landing-caseDetails {
+  font: inherit;
+  cursor: pointer;
+}
+
+.landing-workTab {
+  display: grid;
+  gap: 7px;
+  min-height: 76px;
+  padding: 16px 18px;
+  border: 1px solid transparent;
+  border-left: 3px solid rgba(24, 32, 28, 0.14);
+  border-radius: 0 8px 8px 0;
+  background: transparent;
+  color: rgba(24, 32, 28, 0.58);
+  text-align: left;
+}
+
+.landing-workTab span {
+  color: #101612;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 900;
+  line-height: 1.12;
+}
+
+.landing-workTab small {
+  color: rgba(24, 32, 28, 0.46);
   font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.landing-workTab:hover,
+.landing-workTab:focus-visible,
+.landing-workTab[aria-selected="true"] {
+  border-color: rgba(15, 118, 110, 0.24);
+  border-left-color: #0f766e;
+  background: rgba(255, 255, 255, 0.62);
+  color: #101612;
+}
+
+.landing-workTab:focus-visible,
+.landing-caseDetails:focus-visible {
+  outline: 2px solid rgba(15, 118, 110, 0.62);
+  outline-offset: 3px;
+}
+
+.landing-workDetail {
+  min-height: 316px;
+  padding: clamp(22px, 4vw, 38px);
+  border: 1px solid rgba(24, 32, 28, 0.12);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(116, 63, 93, 0.08), rgba(116, 63, 93, 0) 34%),
+    rgba(255, 255, 255, 0.62);
+}
+
+.landing-workDetailHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(24, 32, 28, 0.12);
+}
+
+.landing-workDetailHeader p,
+.landing-workDetailHeader span {
+  margin: 0;
+}
+
+.landing-workDetailHeader p {
+  color: #743f5d;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.landing-workDetailHeader span {
+  color: rgba(24, 32, 28, 0.5);
+  font-size: 0.86rem;
   font-weight: 800;
 }
 
-.landing-moreCases {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+.landing-workItems {
+  display: grid;
 }
 
-.landing-moreCases .is-open {
-  transform: rotate(180deg);
+.landing-workItem {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(24, 32, 28, 0.1);
+}
+
+.landing-workItem:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.landing-workItem strong {
+  color: #101612;
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+  line-height: 1.08;
+}
+
+.landing-caseDetails {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  border-radius: 8px;
+  background: rgba(15, 118, 110, 0.08);
+  color: #0f766e;
+  font-size: 0.86rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.landing-caseDetails:hover,
+.landing-caseDetails:focus-visible {
+  background: #0f766e;
+  color: #fff;
 }
 
 .landing-cta {
@@ -6803,38 +6906,45 @@ a.blog-backLink:hover {
     margin-top: 42px;
   }
 
-  .landing-caseList {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .landing-serviceExplorer {
+  .landing-serviceExplorer,
+  .landing-workExplorer {
     grid-template-columns: 1fr;
     gap: 22px;
   }
 
-  .landing-serviceSelector {
+  .landing-serviceSelector,
+  .landing-workIndex {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     border-top: 0;
     gap: 1px;
     background: rgba(24, 32, 28, 0.12);
   }
 
-  .landing-serviceTab {
+  .landing-serviceTab,
+  .landing-workTab {
     min-height: 84px;
     padding: 16px;
     border: 0;
+    border-radius: 0;
     background: #f7f8f5;
   }
 
-  .landing-serviceTab[aria-selected="true"] {
+  .landing-serviceTab[aria-selected="true"],
+  .landing-workTab[aria-selected="true"] {
     box-shadow: inset 0 -3px 0 #0f766e;
     padding-left: 16px;
   }
 
-  .landing-serviceDetail {
+  .landing-serviceDetail,
+  .landing-workDetail {
     min-height: 0;
     border-left: 0;
     border-top: 1px solid rgba(24, 32, 28, 0.14);
+  }
+
+  .landing-workItem {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .landing-cta {
@@ -6859,11 +6969,8 @@ a.blog-backLink:hover {
     justify-content: flex-start;
   }
 
-  .landing-caseList {
-    grid-template-columns: 1fr;
-  }
-
-  .landing-serviceSelector {
+  .landing-serviceSelector,
+  .landing-workIndex {
     grid-template-columns: 1fr;
   }
 

@@ -3,7 +3,7 @@ import servicesData from "@data/services.json";
 import Terminal from "@components/terminal";
 import { WorkCaseModal } from "@components/terminal-line/segments/WorkGrid";
 import { withBasePath } from "@utils/appRouting";
-import { CalendarCheck, ChevronDown, Github, Mail, Send, TerminalSquare } from "lucide-react";
+import { CalendarCheck, Github, Mail, Send, TerminalSquare } from "lucide-react";
 import { MouseEvent, useEffect, useState } from "react";
 
 type LandingPageProps = {
@@ -28,17 +28,26 @@ function setMeta(name: string, content: string) {
 }
 
 export function LandingPage({ email, onBookCall }: LandingPageProps) {
-  const defaultVisibleCaseCount = 4;
-  const [showAllCases, setShowAllCases] = useState(false);
-  const proofCases = showAllCases
-    ? SELECTED_CASES
-    : SELECTED_CASES.slice(0, defaultVisibleCaseCount);
   const visibleServices = servicesData.services.slice(0, 4);
-  const hiddenCaseCount = Math.max(0, SELECTED_CASES.length - defaultVisibleCaseCount);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
+  const [activeWorkCategory, setActiveWorkCategory] = useState(SELECTED_CASES[0]?.eyebrow ?? "");
   const [activeServiceId, setActiveServiceId] = useState(visibleServices[0]?.id ?? "");
   const activeService =
     visibleServices.find((service) => service.id === activeServiceId) ?? visibleServices[0];
+  const workCategories = SELECTED_CASES.reduce<Array<{ label: string; cases: typeof SELECTED_CASES }>>(
+    (categories, item) => {
+      const existingCategory = categories.find((category) => category.label === item.eyebrow);
+      if (existingCategory) {
+        existingCategory.cases.push(item);
+      } else {
+        categories.push({ label: item.eyebrow, cases: [item] });
+      }
+      return categories;
+    },
+    [],
+  );
+  const activeWork =
+    workCategories.find((category) => category.label === activeWorkCategory) ?? workCategories[0];
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
@@ -220,42 +229,61 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
           <p className="landing-eyebrow">Selected work</p>
           <h2 id="proof-title">A few things worth opening.</h2>
         </div>
-        <div className="landing-caseList">
-          {proofCases.map((item, index) => {
-            const openCase = (event: MouseEvent<HTMLAnchorElement>) => {
-              event.preventDefault();
-              setOpenCaseIndex(index);
-            };
+        <div className="landing-workExplorer">
+          <div className="landing-workIndex" role="tablist" aria-label="Selected work categories">
+            {workCategories.map((category) => {
+              const isActive = activeWork?.label === category.label;
 
-            return (
-              <a className="landing-case" href={withBasePath("/")} onClick={openCase} key={item.title}>
-                <span>{item.eyebrow}</span>
-                <strong>{item.title}</strong>
-                <p>{item.oneLiner}</p>
-              </a>
-            );
-          })}
-        </div>
-        {hiddenCaseCount > 0 ? (
-          <div className="landing-moreCases">
-            <button
-              className="landing-action"
-              type="button"
-              onClick={() => setShowAllCases((value) => !value)}
-              aria-expanded={showAllCases}
-              aria-controls="proof"
-            >
-              <ChevronDown
-                className={showAllCases ? "is-open" : ""}
-                size={17}
-                aria-hidden="true"
-              />
-              {showAllCases
-                ? "Show fewer"
-                : `See ${hiddenCaseCount} more`}
-            </button>
+              return (
+                <button
+                  className="landing-workTab"
+                  type="button"
+                  role="tab"
+                  onClick={() => setActiveWorkCategory(category.label)}
+                  aria-selected={isActive}
+                  aria-controls="work-detail"
+                  id={`work-tab-${category.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  key={category.label}
+                >
+                  <span>{category.label}</span>
+                  <small>{category.cases.length} {category.cases.length === 1 ? "case" : "cases"}</small>
+                </button>
+              );
+            })}
           </div>
-        ) : null}
+          {activeWork ? (
+            <div
+              className="landing-workDetail"
+              id="work-detail"
+              role="tabpanel"
+              aria-labelledby={`work-tab-${activeWork.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+            >
+              <div className="landing-workDetailHeader">
+                <p>{activeWork.label}</p>
+                <span>{activeWork.cases.length} {activeWork.cases.length === 1 ? "selected case" : "selected cases"}</span>
+              </div>
+              <div className="landing-workItems">
+                {activeWork.cases.map((item) => {
+                  const caseIndex = SELECTED_CASES.findIndex((selectedCase) => selectedCase.title === item.title);
+
+                  return (
+                    <article className="landing-workItem" key={item.title}>
+                      <strong>{item.title}</strong>
+                      <p>{item.oneLiner}</p>
+                      <button
+                        className="landing-caseDetails"
+                        type="button"
+                        onClick={() => setOpenCaseIndex(caseIndex)}
+                      >
+                        Open details
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+        </div>
       </section>
 
       <section className="landing-cta" id="contact" aria-labelledby="cta-title">

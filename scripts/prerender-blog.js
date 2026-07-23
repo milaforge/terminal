@@ -486,6 +486,22 @@ function renderLandingPage() {
           <p class="landing-eyebrow">Selected work</p>
           <h2 id="proof-title">A few things worth opening.</h2>
         </div>
+        <div class="landing-workExplorer">
+          <div class="landing-workIndex" role="tablist" aria-label="Selected work categories">
+            <button class="landing-workTab" type="button" role="tab" aria-selected="true" aria-controls="work-detail" id="work-tab-product-validation"><span>Product validation</span><small>1 case</small></button>
+            <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-ai-launch-readiness"><span>AI launch readiness</span><small>1 case</small></button>
+            <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-realtime-scaling"><span>Realtime scaling</span><small>1 case</small></button>
+            <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-infrastructure-efficiency"><span>Infrastructure efficiency</span><small>1 case</small></button>
+            <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-financial-reliability"><span>Financial reliability</span><small>1 case</small></button>
+            <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-security-automation"><span>Security automation</span><small>1 case</small></button>
+          </div>
+          <div class="landing-workDetail" id="work-detail" role="tabpanel" aria-labelledby="work-tab-product-validation">
+            <div class="landing-workDetailHeader"><p>Product validation</p><span>1 selected case</span></div>
+            <div class="landing-workItems">
+              <article class="landing-workItem"><strong>Investor Demo Shipped in 10 Days</strong><p>Scoped and shipped the smallest credible product flow before the founder committed to a larger build.</p><button class="landing-caseDetails" type="button">Open details</button></article>
+            </div>
+          </div>
+        </div>
       </section>
     </main>`.trim();
 }
