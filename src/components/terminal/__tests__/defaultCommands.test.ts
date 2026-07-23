@@ -534,7 +534,7 @@ describe("default commands", () => {
     );
     expect(avatarSegment).toMatchObject({
       lines: [
-        "Milad",
+        "Milaforge",
         "Software Engineering - Control & Reliability",
       ],
       emphasizeLines: [1],

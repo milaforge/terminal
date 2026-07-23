@@ -224,7 +224,7 @@ function BlogNavigation({ mode = "book", showBlogLink = false, isLight, onToggle
       <nav className="blog-nav" aria-label="Blog navigation">
         <a className="blog-homeLink" href={withBasePath("/")}>
           <Home className="blog-homeIcon" size={16} strokeWidth={2} aria-hidden="true" />
-          <span>Milad</span>
+          <span>Milaforge</span>
         </a>
         <ChevronRight className="blog-breadcrumbChevron" size={15} strokeWidth={2.1} aria-hidden="true" />
         {blogCrumb}

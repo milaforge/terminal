@@ -1072,15 +1072,15 @@ export function registerDefaultCommands({
 
   const whoamiHandler = () => {
     const lines = [
-      "Name: Milad TSX",
-      "Role: Software Backend Engineer",
+      "Name: Milaforge",
+      "Role: Software Engineer",
       "Focus: 0 -> 1 / Reliability / Infrastructure",
       "Open to collaboration",
     ];
     return [
       [
         buildAvatarSegment(lines, {
-          label: "Milad TSX",
+          label: "Milaforge",
           meta: "profile",
           image: "images/ai_avatar.jpg",
         }),
@@ -1095,7 +1095,7 @@ export function registerDefaultCommands({
       "about",
       () => {
         const aboutHeaderLines = [
-          "Milad",
+          "Milaforge",
           "Software Engineering - Control & Reliability",
         ];
         const aboutBioLines = props.aboutLines || [

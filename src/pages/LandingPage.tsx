@@ -129,11 +129,12 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
   return (
     <main className="landing-page" onContextMenu={handleContextMenu}>
       <header className="landing-nav" aria-label="Primary">
-        <a className="landing-brand" href={withBasePath("/")}>Milad</a>
+        <a className="landing-brand" href={withBasePath("/")}>Milaforge</a>
         <nav className="landing-links" aria-label="Site sections">
           <a href="#services">Fit</a>
           <a href="#proof">Work</a>
           <a href={withBasePath("/blog/")}>Blog</a>
+          <a href={withBasePath("/book/")}>Book</a>
         </nav>
       </header>
 
