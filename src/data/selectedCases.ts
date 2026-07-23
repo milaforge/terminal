@@ -704,6 +704,52 @@ export const SELECTED_CASES = [
     ],
     legacySlugs: ["hardening-threshold-signature-cryptography"],
   }),
+
+  defineCase({
+    index: 17,
+    eyebrow: "Blockchain Products",
+    company: "VENT Finance",
+    role: "Product and smart contract engineer",
+    title: "Token Utility Taken from Idea to $1.2M Staked",
+    oneLiner:
+      "Designed and built a scoring and staking product that gave the company’s token a practical use.",
+    metric: {
+      prefix: "$",
+      value: 1.2,
+      suffix: "M",
+      label: "in value staked on-chain",
+      points: [0.12, 0.24, 0.42, 0.64, 0.82, 0.92],
+    },
+    technologies: [
+      "Solidity",
+      "ERC-20",
+      "Staking contracts",
+      "Python",
+      "Backend services",
+      "Financial modeling",
+    ],
+    problem:
+      "The company needed to add meaningful utility to its token without introducing an isolated feature, unsafe incentives, or inconsistencies with the existing financial platform.",
+    decision:
+      "I designed the scoring and staking model with the finance team, implemented the smart contracts and backend systems, and coordinated integration with frontend and UX.",
+    proof: [
+      "Reached production six months after the initial idea",
+      "$1.2M in value staked through the system",
+      "Smart contracts and backend delivered under one technical owner",
+      "Integrated into the existing product rather than launched as a separate workflow",
+    ],
+    engineeringNote: {
+      constraint:
+        "Introduce a new financial mechanism without disrupting the existing platform.",
+      invariant:
+        "On-chain balances, staking state, scores, and backend records had to remain consistent.",
+    },
+    tags: ["web3", "product", "backend", "security", "stakeholder"],
+    legacySlugs: [
+      "taking-token-utility-from-idea-to-production",
+      "building-vent-finance-scoring-and-staking",
+    ],
+  }),
 ];
 
 const metricsByTitle = new Map(
