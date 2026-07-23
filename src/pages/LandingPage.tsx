@@ -16,6 +16,38 @@ const GITHUB_URL = "https://github.com/milaforge";
 const MENU_MARGIN = 12;
 const MENU_WIDTH = 72;
 const MENU_HEIGHT = 56;
+const PROOF_ITEMS = [
+  {
+    id: "software-development",
+    metric: "10+ years",
+    label: "Software development",
+    detail: "A decade-plus across product engineering, infrastructure, reliability work, and founder-facing delivery.",
+  },
+  {
+    id: "demo-delivery",
+    metric: "10 days",
+    label: "Demo delivery",
+    detail: "Investor-ready demo shipped from a short founder brief, scoped to the workflow people needed to judge.",
+  },
+  {
+    id: "mvp-delivery",
+    metric: "90 days",
+    label: "MVP delivery",
+    detail: "End-to-end MVP delivery for early products where the first usable release mattered more than breadth.",
+  },
+  {
+    id: "scaled-throughput",
+    metric: "10x",
+    label: "Scaled throughput",
+    detail: "Reworked realtime backend behavior to increase throughput without scaling hosting cost at the same rate.",
+  },
+  {
+    id: "runway-extended",
+    metric: "60%",
+    label: "Runway extended",
+    detail: "Reduced AWS spend by matching infrastructure to workload behavior while protecting product performance.",
+  },
+];
 
 function setMeta(name: string, content: string) {
   let node = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
@@ -27,13 +59,25 @@ function setMeta(name: string, content: string) {
   node.content = content;
 }
 
+function scrollDisclosureIntoView(id: string) {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    });
+  });
+}
+
 export function LandingPage({ email, onBookCall }: LandingPageProps) {
   const visibleServices = servicesData.services.slice(0, 4);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
-  const [activeWorkCategory, setActiveWorkCategory] = useState(SELECTED_CASES[0]?.eyebrow ?? "");
-  const [activeServiceId, setActiveServiceId] = useState(visibleServices[0]?.id ?? "");
+  const [activeWorkCategory, setActiveWorkCategory] = useState<string | null>(null);
+  const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
+  const [activeProofId, setActiveProofId] = useState<string | null>(null);
   const activeService =
-    visibleServices.find((service) => service.id === activeServiceId) ?? visibleServices[0];
+    visibleServices.find((service) => service.id === activeServiceId) ?? null;
   const workCategories = SELECTED_CASES.reduce<Array<{ label: string; cases: typeof SELECTED_CASES }>>(
     (categories, item) => {
       const existingCategory = categories.find((category) => category.label === item.eyebrow);
@@ -47,7 +91,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
     [],
   );
   const activeWork =
-    workCategories.find((category) => category.label === activeWorkCategory) ?? workCategories[0];
+    workCategories.find((category) => category.label === activeWorkCategory) ?? null;
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
@@ -96,6 +140,26 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
     };
   }, [contextMenu]);
 
+  useEffect(() => {
+    if (!activeProofId) return;
+
+    const closeProofTooltip = (event: Event) => {
+      const target = event.target as Element | null;
+      if (target?.closest(".landing-proofItem")) return;
+      setActiveProofId(null);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setActiveProofId(null);
+    };
+
+    document.addEventListener("click", closeProofTooltip);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("click", closeProofTooltip);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [activeProofId]);
+
   const handleContextMenu = (event: MouseEvent<HTMLElement>) => {
     const target = event.target as Element | null;
     if (
@@ -124,6 +188,16 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
   const openTerminalFromContextMenu = () => {
     setTerminalOpen(true);
     setContextMenu(null);
+  };
+
+  const showServiceDetail = (serviceId: string) => {
+    setActiveServiceId(serviceId);
+    scrollDisclosureIntoView("service-detail");
+  };
+
+  const showWorkDetail = (categoryLabel: string) => {
+    setActiveWorkCategory(categoryLabel);
+    scrollDisclosureIntoView("work-detail");
   };
 
   return (
@@ -166,18 +240,31 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
         </div>
 
         <aside className="landing-proofPanel" aria-label="Selected outcomes">
-          <div>
-            <span>10 days</span>
-            <p>Investor demo shipped for an early-stage founder</p>
-          </div>
-          <div>
-            <span>10x</span>
-            <p>Realtime throughput increase without proportional hosting cost</p>
-          </div>
-          <div>
-            <span>60%</span>
-            <p>AWS spend reduction while protecting performance</p>
-          </div>
+          {PROOF_ITEMS.map((item) => {
+            const isOpen = activeProofId === item.id;
+
+            return (
+              <button
+                className="landing-proofItem"
+                type="button"
+                aria-describedby={`proof-${item.id}`}
+                aria-expanded={isOpen}
+                onClick={() => setActiveProofId(isOpen ? null : item.id)}
+                key={item.id}
+              >
+                <span>{item.metric}</span>
+                <p>{item.label}</p>
+                <small
+                  className="landing-proofTooltip"
+                  id={`proof-${item.id}`}
+                  role="tooltip"
+                  hidden={!isOpen}
+                >
+                  {item.detail}
+                </small>
+              </button>
+            );
+          })}
         </aside>
       </section>
 
@@ -196,7 +283,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
                   className="landing-serviceTab"
                   type="button"
                   role="tab"
-                  onClick={() => setActiveServiceId(service.id)}
+                  onClick={() => showServiceDetail(service.id)}
                   aria-selected={isActive}
                   aria-controls="service-detail"
                   id={`service-tab-${service.id}`}
@@ -240,7 +327,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
                   className="landing-workTab"
                   type="button"
                   role="tab"
-                  onClick={() => setActiveWorkCategory(category.label)}
+                  onClick={() => showWorkDetail(category.label)}
                   aria-selected={isActive}
                   aria-controls="work-detail"
                   id={`work-tab-${category.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}

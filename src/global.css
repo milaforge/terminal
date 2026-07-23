@@ -6609,24 +6609,40 @@ a.blog-backLink:hover {
 }
 
 .landing-proofPanel {
+  grid-column: 1 / -1;
   display: grid;
-  gap: 14px;
-  padding: 18px 0 0;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  padding: 1px;
   border-top: 1px solid rgba(24, 32, 28, 0.16);
+  border-bottom: 1px solid rgba(24, 32, 28, 0.12);
+  background: rgba(24, 32, 28, 0.1);
 }
 
-.landing-proofPanel div {
+.landing-proofItem {
+  position: relative;
   display: grid;
-  grid-template-columns: 86px minmax(0, 1fr);
-  gap: 16px;
-  align-items: baseline;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(24, 32, 28, 0.1);
+  gap: 6px;
+  align-content: start;
+  min-height: 92px;
+  padding: 16px;
+  border: 0;
+  background: #f7f8f5;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: help;
+  outline: 0;
 }
 
-.landing-proofPanel span {
+.landing-proofItem:focus-visible {
+  z-index: 2;
+  box-shadow: inset 0 0 0 2px #0f766e;
+}
+
+.landing-proofItem span {
   color: #743f5d;
-  font-size: 1.6rem;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
   font-weight: 900;
 }
 
@@ -6640,6 +6656,46 @@ a.blog-backLink:hover {
 .landing-proofPanel p,
 .landing-workItem p {
   margin: 0;
+}
+
+.landing-proofTooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  z-index: 5;
+  width: min(260px, calc(100vw - 40px));
+  padding: 10px 12px;
+  border: 1px solid rgba(24, 32, 28, 0.14);
+  border-radius: 8px;
+  background: #101612;
+  color: #f7f8f5;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 6px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.landing-proofTooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 10px;
+  height: 10px;
+  background: #101612;
+  transform: translate(-50%, -5px) rotate(45deg);
+}
+
+.landing-proofItem[aria-expanded="true"] {
+  z-index: 3;
+}
+
+.landing-proofItem[aria-expanded="true"] .landing-proofTooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 .landing-section {
@@ -6903,6 +6959,7 @@ a.blog-backLink:hover {
   }
 
   .landing-proofPanel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 42px;
   }
 
@@ -6974,8 +7031,14 @@ a.blog-backLink:hover {
     grid-template-columns: 1fr;
   }
 
-  .landing-proofPanel div {
+  .landing-proofPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-proofItem {
     grid-template-columns: 1fr;
     gap: 4px;
+    min-height: 78px;
+    padding: 14px;
   }
 }

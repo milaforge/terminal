@@ -458,9 +458,11 @@ function renderLandingPage() {
           </div>
         </div>
         <aside class="landing-proofPanel" aria-label="Selected outcomes">
-          <div><span>10 days</span><p>Investor demo shipped for an early-stage founder</p></div>
-          <div><span>10x</span><p>Realtime throughput increase without proportional hosting cost</p></div>
-          <div><span>60%</span><p>AWS spend reduction while protecting performance</p></div>
+          <button class="landing-proofItem" type="button" aria-describedby="proof-software-development" aria-expanded="false"><span>10+ years</span><p>Software development</p><small class="landing-proofTooltip" id="proof-software-development" role="tooltip" hidden>A decade-plus across product engineering, infrastructure, reliability work, and founder-facing delivery.</small></button>
+          <button class="landing-proofItem" type="button" aria-describedby="proof-demo-delivery" aria-expanded="false"><span>10 days</span><p>Demo delivery</p><small class="landing-proofTooltip" id="proof-demo-delivery" role="tooltip" hidden>Investor-ready demo shipped from a short founder brief, scoped to the workflow people needed to judge.</small></button>
+          <button class="landing-proofItem" type="button" aria-describedby="proof-mvp-delivery" aria-expanded="false"><span>90 days</span><p>MVP delivery</p><small class="landing-proofTooltip" id="proof-mvp-delivery" role="tooltip" hidden>End-to-end MVP delivery for early products where the first usable release mattered more than breadth.</small></button>
+          <button class="landing-proofItem" type="button" aria-describedby="proof-scaled-throughput" aria-expanded="false"><span>10x</span><p>Scaled throughput</p><small class="landing-proofTooltip" id="proof-scaled-throughput" role="tooltip" hidden>Reworked realtime backend behavior to increase throughput without scaling hosting cost at the same rate.</small></button>
+          <button class="landing-proofItem" type="button" aria-describedby="proof-runway-extended" aria-expanded="false"><span>60%</span><p>Runway extended</p><small class="landing-proofTooltip" id="proof-runway-extended" role="tooltip" hidden>Reduced AWS spend by matching infrastructure to workload behavior while protecting product performance.</small></button>
         </aside>
       </section>
       <section class="landing-section" id="services" aria-labelledby="services-title">
@@ -470,15 +472,11 @@ function renderLandingPage() {
         </div>
         <div class="landing-serviceExplorer">
           <div class="landing-serviceSelector" role="tablist" aria-label="Project situations">
-            <button class="landing-serviceTab" type="button" role="tab" aria-selected="true" aria-controls="service-detail" id="service-tab-start-a-new-project">Start a new project</button>
+            <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-start-a-new-project">Start a new project</button>
             <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-get-ready-for-real-users">Get ready for real users</button>
             <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-scale-without-scaling-cost">Scale without scaling cost</button>
             <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-automate-repetitive-work">Automate repetitive work</button>
           </div>
-          <article class="landing-serviceDetail" id="service-detail" role="tabpanel" aria-labelledby="service-tab-start-a-new-project">
-            <p>Turn the idea into the first thing people can judge.</p>
-            <ul><li>You have an idea and want to test market fit.</li><li>You want a working demo to share with selected users.</li><li>You need something credible to present to investors.</li></ul>
-          </article>
         </div>
       </section>
       <section class="landing-section" id="proof" aria-labelledby="proof-title">
@@ -488,18 +486,12 @@ function renderLandingPage() {
         </div>
         <div class="landing-workExplorer">
           <div class="landing-workIndex" role="tablist" aria-label="Selected work categories">
-            <button class="landing-workTab" type="button" role="tab" aria-selected="true" aria-controls="work-detail" id="work-tab-product-validation"><span>Product validation</span><small>1 case</small></button>
+            <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-product-validation"><span>Product validation</span><small>1 case</small></button>
             <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-ai-launch-readiness"><span>AI launch readiness</span><small>1 case</small></button>
             <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-realtime-scaling"><span>Realtime scaling</span><small>1 case</small></button>
             <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-infrastructure-efficiency"><span>Infrastructure efficiency</span><small>1 case</small></button>
             <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-financial-reliability"><span>Financial reliability</span><small>1 case</small></button>
             <button class="landing-workTab" type="button" role="tab" aria-selected="false" aria-controls="work-detail" id="work-tab-security-automation"><span>Security automation</span><small>1 case</small></button>
-          </div>
-          <div class="landing-workDetail" id="work-detail" role="tabpanel" aria-labelledby="work-tab-product-validation">
-            <div class="landing-workDetailHeader"><p>Product validation</p><span>1 selected case</span></div>
-            <div class="landing-workItems">
-              <article class="landing-workItem"><strong>Investor Demo Shipped in 10 Days</strong><p>Scoped and shipped the smallest credible product flow before the founder committed to a larger build.</p><button class="landing-caseDetails" type="button">Open details</button></article>
-            </div>
           </div>
         </div>
       </section>
