@@ -1,4 +1,9 @@
 import { clearFontLoadingState } from "@stores/uiStore";
+import {
+  findTheme as findTerminalTheme,
+  SYSTEM_DARK_THEME_ID,
+  SYSTEM_LIGHT_THEME_ID,
+} from "./terminalThemes";
 
 export type TerminalColorOption = {
   id: string;
@@ -34,7 +39,10 @@ export type TerminalColorController = {
 };
 
 const STORAGE_KEY = "terminal.color";
-const DEFAULT_COLOR_ID = "clarity_light";
+const DEFAULT_LIGHT_COLOR_ID =
+  findTerminalTheme(SYSTEM_LIGHT_THEME_ID)?.colorId ?? "clarity_light";
+const DEFAULT_DARK_COLOR_ID =
+  findTerminalTheme(SYSTEM_DARK_THEME_ID)?.colorId ?? "night_sky";
 
 const buildLayer = (base: string, a: string, b: string) =>
   `radial-gradient(circle at 18% 18%, ${a}, transparent 38%), radial-gradient(circle at 82% 12%, ${b}, transparent 32%), ${base}`;
@@ -377,6 +385,17 @@ const readPersisted = () => {
   }
 };
 
+const hasPersistedTheme = () => Boolean(readPersisted());
+
+export function getSystemDefaultColorId(
+  prefersDark =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches,
+) {
+  return prefersDark ? DEFAULT_DARK_COLOR_ID : DEFAULT_LIGHT_COLOR_ID;
+}
+
 const applyTheme = (theme: TerminalColorOption) => {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
@@ -447,12 +466,27 @@ function getInitialTheme(): TerminalColorOption {
     const hit = findTheme(persisted);
     if (hit) return hit;
   }
-  return findTheme(DEFAULT_COLOR_ID) || COLOR_OPTIONS[0];
+  return findTheme(getSystemDefaultColorId()) || COLOR_OPTIONS[0];
 }
 
 export function createTerminalColorController(): TerminalColorController {
   let current = getInitialTheme();
   applyTheme(current);
+
+  if (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    !hasPersistedTheme()
+  ) {
+    const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    colorScheme.addEventListener?.("change", (event) => {
+      if (hasPersistedTheme()) return;
+      const theme = findTheme(getSystemDefaultColorId(event.matches));
+      if (!theme) return;
+      applyTheme(theme);
+      current = theme;
+    });
+  }
 
   const setTheme = async (id: string) => {
     const theme = findTheme(id);

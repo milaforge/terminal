@@ -51,6 +51,9 @@ const THEMES: TerminalTheme[] = [
 
 const normalize = (value: string) => value.trim().toLowerCase();
 
+export const SYSTEM_LIGHT_THEME_ID = "paper";
+export const SYSTEM_DARK_THEME_ID = "night_sky";
+
 export function listThemes(): TerminalTheme[] {
   return [...THEMES];
 }

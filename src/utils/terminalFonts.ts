@@ -1,4 +1,9 @@
 import { clearFontLoadingState, setFontLoadingState } from "@stores/uiStore";
+import {
+  findTheme as findTerminalTheme,
+  SYSTEM_DARK_THEME_ID,
+  SYSTEM_LIGHT_THEME_ID,
+} from "./terminalThemes";
 
 export type TerminalFontOption = {
   id: string;
@@ -20,7 +25,10 @@ export type TerminalFontController = {
 };
 
 const STORAGE_KEY = "terminal.font";
-const DEFAULT_FONT_ID = "plex";
+const DEFAULT_LIGHT_FONT_ID =
+  findTerminalTheme(SYSTEM_LIGHT_THEME_ID)?.fontId ?? "plex";
+const DEFAULT_DARK_FONT_ID =
+  findTerminalTheme(SYSTEM_DARK_THEME_ID)?.fontId ?? "fira";
 
 const FONT_OPTIONS: TerminalFontOption[] = [
   {
@@ -118,6 +126,17 @@ function readPersistedFont(): string | null {
   }
 }
 
+const hasPersistedFont = () => Boolean(readPersistedFont());
+
+export function getSystemDefaultFontId(
+  prefersDark =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches,
+) {
+  return prefersDark ? DEFAULT_DARK_FONT_ID : DEFAULT_LIGHT_FONT_ID;
+}
+
 function setCssVariable(family: string) {
   if (typeof document === "undefined") return;
   document.documentElement.style.setProperty("--terminal-font", family);
@@ -197,7 +216,7 @@ async function ensureLoaded(option: TerminalFontOption): Promise<void> {
 function getInitialFontId(): string {
   const persisted = readPersistedFont();
   if (persisted && getOption(persisted)) return persisted;
-  return DEFAULT_FONT_ID;
+  return getSystemDefaultFontId();
 }
 
 export function createTerminalFontController(): TerminalFontController {
@@ -205,6 +224,22 @@ export function createTerminalFontController(): TerminalFontController {
   const currentOption = getOption(currentId) || FONT_OPTIONS[0];
   setCssVariable(currentOption.family);
   void ensureLoaded(currentOption);
+
+  if (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    !hasPersistedFont()
+  ) {
+    const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    colorScheme.addEventListener?.("change", (event) => {
+      if (hasPersistedFont()) return;
+      const option = getOption(getSystemDefaultFontId(event.matches));
+      if (!option) return;
+      currentId = option.id;
+      setCssVariable(option.family);
+      void ensureLoaded(option);
+    });
+  }
 
   const setFont = async (id: string) => {
     const option = getOption(id);

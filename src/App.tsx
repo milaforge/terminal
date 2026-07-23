@@ -3,6 +3,8 @@ import BookingOverlay from "@components/BookingOverlay";
 import StoryPage from "@components/story";
 import BlogPage from "./pages/BlogPage";
 import { LandingPage } from "./pages/LandingPage";
+import { useTerminalColors } from "@hooks/useTerminalColors";
+import { useTerminalFonts } from "@hooks/useTerminalFonts";
 import {
   TEAM_CHAPTERS,
   TEAM_STORY_CTA_EYEBROW,
@@ -70,6 +72,8 @@ export function shouldShowStoryRoute(hash: string) {
 
 export default function App() {
   const [bookingOpen, setBookingOpen] = useState(false);
+  useTerminalColors();
+  useTerminalFonts();
   const location = useAppLocation();
   const route = parseAppRoute(location.pathname);
 
