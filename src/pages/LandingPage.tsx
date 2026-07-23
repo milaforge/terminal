@@ -385,8 +385,13 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
             <CalendarCheck size={17} aria-hidden="true" />
             Book a call
           </button>
-          <a className="landing-action" href={withBasePath("/blog/")}>
-            Read the blog
+          <a className="landing-action" href={`mailto:${email}`}>
+            <Mail size={17} aria-hidden="true" />
+            Email
+          </a>
+          <a className="landing-action" href={TELEGRAM_URL}>
+            <Send size={17} aria-hidden="true" />
+            DM
           </a>
         </div>
       </section>
