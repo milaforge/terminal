@@ -49,12 +49,12 @@ function defineCase(item: Omit<SelectedCase, "description">): SelectedCase {
 export const SELECTED_CASES = [
   defineCase({
     index: 1,
-    eyebrow: "Product Building",
+    eyebrow: "Product Delivery",
     company: "Early-stage founder",
     role: "Product engineer",
     title: "Investor Demo Shipped in 10 Days",
     oneLiner:
-      "Built the smallest convincing version of the product before the founder committed to a larger investment.",
+      "Owned product scoping and end-to-end delivery for an early-stage founder.",
     metric: {
       prefix: "",
       value: 10,
@@ -64,18 +64,18 @@ export const SELECTED_CASES = [
     },
     technologies: ["GCP", "Full-stack web app", "Third-party integrations"],
     problem:
-      "The founder needed evidence that the idea could work before spending months building the complete product.",
+      "The founder needed credible evidence before committing months of time and capital to a full product build.",
     decision:
-      "I focused the first release on one complete, demonstrable customer journey and avoided features that would not strengthen the validation.",
+      "I reduced the first release to one complete customer journey and deferred anything that did not strengthen validation.",
     proof: [
-      "Working demo shipped in 10 days",
       "Used in investor and early-customer conversations",
-      "Core foundations remained usable for the next release",
+      "Validated the core workflow before further investment",
+      "Foundations remained usable for the next release",
     ],
     engineeringNote: {
-      constraint: "Create credible proof within a fixed 10-day window.",
+      constraint: "Fixed 10-day validation window.",
       invariant:
-        "The main customer journey had to work from beginning to end.",
+        "A real user had to complete the core journey from end to end.",
     },
     tags: ["fullstack", "product", "stakeholder"],
     legacySlugs: [
@@ -86,17 +86,17 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 2,
-    eyebrow: "Scale & Efficiency",
-    title: "AI Product Prepared for Its First Real Users",
+    eyebrow: "Scale & Reliability",
     company: "Pre-beta AI product",
     role: "Product reliability engineer",
+    title: "AI Product Made Ready for Real Users",
     oneLiner:
-      "Made the product faster, safer to release, and easier to operate before its public beta.",
+      "Owned the reliability work required to turn a working prototype into an operable beta.",
     metric: {
       prefix: "",
       value: 40,
       suffix: "%",
-      label: "faster under tested demand",
+      label: "faster under tested load",
       points: [0.86, 0.72, 0.58, 0.42, 0.32],
     },
     technologies: [
@@ -107,18 +107,18 @@ export const SELECTED_CASES = [
       "Monitoring",
     ],
     problem:
-      "The prototype worked in demonstrations, but errors, repeated requests, unsafe traffic, and unreliable releases could create problems for real users.",
+      "Demo conditions hid failure modes that would surface under real traffic, repeated requests, unsafe input, and frequent releases.",
     decision:
-      "I added safeguards, reduced unnecessary work, improved error messages, introduced monitoring, automated releases, and separated test and live environments.",
+      "I introduced request controls, caching, actionable errors, monitoring, automated deployments, and separate development, staging, and production environments.",
     proof: [
-      "Roughly 40% faster under tested demand",
       "Initial beta launched without major reported technical incidents",
-      "Safer, controlled releases across development, staging, and production",
+      "Releases became controlled and repeatable",
+      "Production failures became visible and diagnosable",
     ],
     engineeringNote: {
-      constraint: "Improve readiness without delaying the planned beta.",
+      constraint: "Improve readiness without delaying the beta window.",
       invariant:
-        "Bad or abusive requests had to be stopped before consuming expensive resources.",
+        "Invalid or abusive requests had to stop before expensive work began.",
     },
     tags: ["fullstack", "reliability", "observability", "devops"],
     legacySlugs: [
@@ -130,17 +130,17 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 3,
-    eyebrow: "Scale & Efficiency",
-    title: "Supported 10x More Activity at the Same Hosting Cost",
+    eyebrow: "Scale & Reliability",
     company: "Realtime gaming platform",
     role: "Backend performance engineer",
+    title: "Realtime Capacity Increased 10x",
     oneLiner:
-      "Removed the system bottlenecks limiting growth instead of solving the problem by buying more servers.",
+      "Removed the backend bottlenecks limiting growth without increasing hosting cost.",
     metric: {
       prefix: "",
       value: 10,
       suffix: "x",
-      label: "more backend capacity",
+      label: "backend throughput",
       points: [0.14, 0.24, 0.42, 0.64, 0.82, 0.94],
     },
     technologies: [
@@ -149,19 +149,19 @@ export const SELECTED_CASES = [
       "Mobile coordination",
     ],
     problem:
-      "Growing usage was overloading important parts of the platform, while adding servers would have increased cost without fixing the underlying limits.",
+      "Growth was causing delayed and failed sessions, while adding servers would have increased spend without fixing the limiting paths.",
     decision:
-      "I measured where requests were slowing or failing, then fixed the small number of paths controlling the platform's overall capacity.",
+      "I profiled concurrency, isolated the highest-impact bottlenecks, and focused changes where they would improve the whole system.",
     proof: [
-      "Roughly 10x more backend capacity",
       "Reliability improved from about 65% to 92%",
-      "Thousands of concurrent users supported without higher hosting cost",
+      "Thousands of concurrent users supported",
+      "Hosting cost remained unchanged",
     ],
     engineeringNote: {
       constraint:
-        "Support growth without making infrastructure cost rise at the same rate.",
+        "Support growth without proportional infrastructure expansion.",
       invariant:
-        "One overloaded feature should not disrupt unrelated parts of the product.",
+        "One overloaded path could not destabilize unrelated product features.",
     },
     tags: ["backend", "performance", "reliability", "stakeholder"],
     legacySlugs: [
@@ -172,12 +172,12 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 4,
-    eyebrow: "Scale & Efficiency",
-    title: "AWS Spend Reduced by 60%",
+    eyebrow: "Scale & Reliability",
     company: "Cost-sensitive software company",
     role: "Cloud infrastructure engineer",
+    title: "AWS Spend Reduced by 60%",
     oneLiner:
-      "Reduced unnecessary cloud spending while protecting product speed and reliability.",
+      "Aligned cloud resources with actual workload demand instead of cutting capacity blindly.",
     metric: {
       prefix: "",
       value: 60,
@@ -187,18 +187,16 @@ export const SELECTED_CASES = [
     },
     technologies: ["AWS", "Service tuning", "Asynchronous processing"],
     problem:
-      "Cloud costs had grown beyond what the business needed, but indiscriminate cuts could have made the product slower or less reliable.",
+      "Cloud spend was reducing runway, but aggressive cuts could have shifted the cost into slower performance or incidents.",
     decision:
-      "I compared infrastructure usage with actual demand, removed waste, tuned services, and reorganized expensive workloads.",
+      "I audited usage, removed unnecessary resources, tuned services, and moved suitable work away from expensive synchronous paths.",
     proof: [
-      "Approximately 60% lower monthly AWS spend",
-      "Product performance protected during the reduction",
-      "Cloud resources better matched real usage",
+      "User-visible performance held during the reduction",
+      "Infrastructure capacity better matched measured demand",
     ],
     engineeringNote: {
-      constraint:
-        "Cut spending sharply without creating outages or slower customer experiences.",
-      invariant: "Every saving had to preserve user-visible performance.",
+      constraint: "Reduce spend without creating a reliability regression.",
+      invariant: "Every saving had to preserve the customer experience.",
     },
     tags: ["infra", "performance", "reliability"],
     legacySlugs: [
@@ -210,16 +208,16 @@ export const SELECTED_CASES = [
   defineCase({
     index: 5,
     eyebrow: "Security & Trust",
-    title: "$4M in Live Assets Protected",
     company: "Financial platform",
     role: "Financial systems and security engineer",
+    title: "$4M in Live Assets Protected",
     oneLiner:
-      "Strengthened the systems handling customer funds while the product continued to evolve.",
+      "Owned the controls around contracts, payments, releases, and production monitoring.",
     metric: {
       prefix: "$",
       value: 4,
       suffix: "M",
-      label: "protected with zero recorded incidents",
+      label: "in live assets protected",
       points: [0.54, 0.52, 0.55, 0.53, 0.56, 0.55],
     },
     technologies: [
@@ -229,19 +227,17 @@ export const SELECTED_CASES = [
       "CI/CD",
     ],
     problem:
-      "The company needed to keep releasing improvements even though a mistake in the payment or contract systems could affect customer funds.",
+      "The product had to keep evolving while a contract, payment, or release failure could directly affect customer funds.",
     decision:
-      "I added checks around transactions, releases, account records, security findings, and production behavior so failures could be prevented or detected early.",
+      "I established transaction checks, ledger consistency controls, automated releases, audit remediation, and production visibility.",
     proof: [
-      "Roughly $4M in live assets safeguarded",
       "Zero recorded security incidents over about three years",
       "9/10 external security audit score",
     ],
     engineeringNote: {
-      constraint:
-        "Continue shipping changes while protecting live customer funds.",
+      constraint: "Continue shipping while protecting live customer funds.",
       invariant:
-        "Deposits, withdrawals, and account records had to remain consistent after every release.",
+        "Deposits, withdrawals, and account records had to remain consistent across releases.",
     },
     tags: ["security", "reliability", "payments", "devops"],
     legacySlugs: [
@@ -253,16 +249,16 @@ export const SELECTED_CASES = [
   defineCase({
     index: 6,
     eyebrow: "Security & Trust",
-    title: "Security Team Saved Three Hours Every Day",
     company: "Security operations team",
     role: "Security automation engineer",
+    title: "Three Security Hours Reclaimed Daily",
     oneLiner:
-      "Automated repetitive security checks so specialists could spend more time on work requiring judgment.",
+      "Turned repetitive analyst work into consistent checks and earlier developer feedback.",
     metric: {
       prefix: "",
       value: 3,
       suffix: " hrs",
-      label: "saved every working day",
+      label: "reclaimed each day",
       points: [0.9, 0.76, 0.6, 0.46, 0.34, 0.26],
     },
     technologies: [
@@ -271,19 +267,17 @@ export const SELECTED_CASES = [
       "Operational checks",
     ],
     problem:
-      "Skilled analysts were spending hours on repeatable checks, while developers often received useful security feedback too late.",
+      "Skilled analysts were spending too much time on repeatable checks, while developers received important findings late.",
     decision:
-      "I standardized the recurring work, automated consistent results, and translated complex security requirements into clear actions for developers.",
+      "I standardized recurring checks, automated their outputs, and translated security requirements into clear developer actions.",
     proof: [
-      "Roughly three analyst hours reclaimed each day",
-      "Less exposure to human error in repetitive checks",
-      "Earlier and clearer security feedback for developers",
+      "Reduced exposure to manual error",
+      "Security feedback moved earlier in the development process",
     ],
     engineeringNote: {
-      constraint:
-        "Save time without hiding important findings or removing human judgment.",
+      constraint: "Save analyst time without removing human judgment.",
       invariant:
-        "Automation had to remove repetitive work, not silence meaningful risks.",
+        "Automation could reduce routine work, but not suppress meaningful findings.",
     },
     tags: ["security", "automation", "enablement", "stakeholder"],
     legacySlugs: [
@@ -294,17 +288,17 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 7,
-    eyebrow: "Product Building",
-    title: "Community Platform Built from Scratch",
+    eyebrow: "Product Delivery",
     company: "Block by Block",
     role: "Senior product engineer",
+    title: "Community Platform Built from Zero to Pre-Beta",
     oneLiner:
-      "Built the customer product, admin tools, backend, cloud infrastructure, and release process for a new community platform.",
+      "Owned the user product, admin product, backend, cloud infrastructure, and delivery pipeline.",
     metric: {
       prefix: "",
       value: 2,
       suffix: " products",
-      label: "customer and admin areas separated",
+      label: "user and admin surfaces",
       points: [0.16, 0.28, 0.44, 0.62, 0.78, 0.88],
     },
     technologies: [
@@ -317,19 +311,19 @@ export const SELECTED_CASES = [
       "Terraform",
     ],
     problem:
-      "The platform needed to support frequent member activity without giving ordinary product traffic access to sensitive administrative operations.",
+      "The platform needed to support high-volume member activity without exposing sensitive administrative operations to the same risks.",
     decision:
-      "I separated the customer and admin systems, created a traceable record of value movements, improved high-traffic rankings with caching, and kept releases independently controllable.",
+      "I separated user and admin APIs, modeled value movements as an auditable ledger, cached high-traffic rankings, and kept deployments independent.",
     proof: [
-      "Built from scratch toward pre-beta",
-      "Separate customer dashboard and admin panel",
-      "Sensitive admin actions isolated and recorded for review",
+      "Pre-beta platform delivered end to end",
+      "Admin operations isolated behind least-privilege access",
+      "Value movements recorded with a traceable history",
     ],
     engineeringNote: {
       constraint:
-        "Move quickly without mixing sensitive admin work into general customer traffic.",
+        "Move quickly without mixing sensitive and public workflows.",
       invariant:
-        "Customer actions, admin actions, and value records had to remain separate and traceable.",
+        "User actions, admin actions, and ledger state had to remain separate and auditable.",
     },
     tags: ["fullstack", "backend", "product", "infra", "security"],
     legacySlugs: ["building-bbb-from-scratch-into-pre-beta"],
@@ -338,16 +332,16 @@ export const SELECTED_CASES = [
   defineCase({
     index: 8,
     eyebrow: "Applied AI",
-    title: "Telegram Community Assistant Prepared for Alpha",
     company: "SEE / CommunityPulse",
     role: "AI product and reliability engineer",
+    title: "Telegram Community Assistant Stabilized for Alpha",
     oneLiner:
-      "Built a controlled workflow that turns community activity into reports, recommendations, approved actions, and measurable results.",
+      "Built the loop from community activity to reports, recommendations, approved actions, and measurement.",
     metric: {
       prefix: "",
       value: 1,
       suffix: " loop",
-      label: "from activity to action to results",
+      label: "from signal to measured action",
       points: [0.82, 0.72, 0.58, 0.46, 0.34, 0.24],
     },
     technologies: [
@@ -358,19 +352,18 @@ export const SELECTED_CASES = [
       "Typed JSON contracts",
     ],
     problem:
-      "Community managers needed useful guidance from noisy conversations, but unchecked AI replies could damage trust or create unwanted actions.",
+      "Community managers needed useful guidance from noisy conversations, but unchecked AI actions could damage trust.",
     decision:
-      "I kept important actions under human approval, made normal work available through a simple admin interface, added predictable fallbacks, restricted sensitive access, and included emergency controls.",
+      "I kept actions human-approved, added typed contracts and deterministic fallbacks, restricted sensitive APIs, and provided emergency controls.",
     proof: [
-      "Core alpha workflow implemented from activity collection to follow-up",
-      "Reports, AI guidance, admin access, and Telegram data collection connected",
-      "Human approval and predictable fallbacks reduced early-stage risk",
+      "Telegram ingestion, reports, AI guidance, and the admin Mini App connected",
+      "Normal admin work moved into one controlled interface",
+      "Unsupported actions failed safely instead of being invented",
     ],
     engineeringNote: {
-      constraint:
-        "Make AI useful without allowing it to act beyond an administrator's approval.",
+      constraint: "Make AI useful without allowing unapproved action.",
       invariant:
-        "Every recommendation had to lead to one realistic action and one measurable result.",
+        "Each recommendation had to map to one feasible action and one measurable outcome.",
     },
     tags: ["ai", "fullstack", "reliability", "product", "stakeholder"],
     legacySlugs: [
@@ -380,17 +373,17 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 9,
-    eyebrow: "Product Building",
-    title: "Security Platform Built from Scratch",
+    eyebrow: "Product Delivery",
     company: "BugDasht",
     role: "Founding engineer",
+    title: "Security Platform Built from Scratch",
     oneLiner:
-      "Turned a founder's security product idea into a working platform used by real customers.",
+      "Owned the backend, infrastructure, data model, integrations, reporting, and sensitive workflows.",
     metric: {
       prefix: "",
       value: 1,
       suffix: " product",
-      label: "from idea to customer use",
+      label: "delivered to real customers",
       points: [0.2, 0.36, 0.5, 0.64, 0.8],
     },
     technologies: [
@@ -401,19 +394,19 @@ export const SELECTED_CASES = [
       "Security workflows",
     ],
     problem:
-      "The founder needed a dependable product rather than a temporary prototype, in a market where customers expected clear records and trustworthy behavior.",
+      "The founder needed a production product in a market where customers expected traceability, reliable reporting, and trustworthy behavior.",
     decision:
-      "I owned the backend, infrastructure, database, integrations, reports, activity records, and security-sensitive workflows while partnering on the interface.",
+      "I designed the operational foundation and audit trail while partnering on the customer-facing interface.",
     proof: [
-      "Laravel/PHP product built from scratch",
       "Delivered into real customer use",
-      "Traceable activity and reporting added for regulatory expectations",
+      "Auditability and reporting built into core workflows",
+      "Critical technical ownership remained in-house",
     ],
     engineeringNote: {
       constraint:
-        "Turn demanding security requirements into workflows customers could actually use.",
+        "Turn complex security requirements into usable workflows.",
       invariant:
-        "Important customer actions needed a clear and reviewable history.",
+        "Important customer actions needed a clear, reviewable history.",
     },
     tags: ["security", "backend", "fullstack", "product", "stakeholder"],
     legacySlugs: [
@@ -423,17 +416,17 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 10,
-    eyebrow: "Product Building",
-    title: "Three Core Banking Systems Delivered",
+    eyebrow: "Product Delivery",
     company: "Saman Bank",
     role: "Software engineer",
+    title: "Three Core Banking Subsystems Delivered",
     oneLiner:
-      "Built and maintained important parts of a regulated banking product from its early version through its first full release.",
+      "Contributed from MVP to v1 inside a regulated, large-team banking environment.",
     metric: {
       prefix: "",
       value: 3,
       suffix: " systems",
-      label: "delivered inside core banking",
+      label: "built for core banking",
       points: [0.18, 0.34, 0.48, 0.62, 0.76],
     },
     technologies: [
@@ -444,19 +437,18 @@ export const SELECTED_CASES = [
       "Core banking APIs",
     ],
     problem:
-      "A large banking system needed new capabilities and ongoing maintenance under strict operational and regulatory constraints.",
+      "A large financial codebase needed new capabilities without disrupting established banking processes or production systems.",
     decision:
-      "I built three subsystems, maintained existing services, developed integrations, and learned to make careful changes inside a large production codebase.",
+      "I built subsystems and APIs, integrated newer interfaces, and maintained existing services with conservative release discipline.",
     proof: [
-      "Three ASP.NET/C# banking subsystems built",
-      "Contributed from MVP through version one",
-      "Worked with Oracle, DB2, and a large engineering team",
+      "Delivered across Oracle, DB2, ASP.NET, and C# systems",
+      "Worked within a large coordinated engineering team",
+      "Supported the product through its first full release",
     ],
     engineeringNote: {
-      constraint:
-        "Deliver changes in an environment where small mistakes could create operational risk.",
+      constraint: "Ship safely inside a regulated production environment.",
       invariant:
-        "New work had to remain compatible with established banking processes and systems.",
+        "New work had to remain compatible with established banking systems.",
     },
     tags: ["backend", "compliance", "fullstack"],
     legacySlugs: [
@@ -466,17 +458,17 @@ export const SELECTED_CASES = [
 
   defineCase({
     index: 11,
-    eyebrow: "Scale & Efficiency",
-    title: "Transaction Fees Cut by 99%",
+    eyebrow: "Scale & Reliability",
     company: "VENT Finance",
     role: "Web3 backend and smart contract engineer",
+    title: "Blockchain Transaction Fees Cut by 99%",
     oneLiner:
-      "Redesigned an expensive blockchain operation while preserving the business function it supported.",
+      "Redesigned a recurring on-chain operation without changing its business outcome.",
     metric: {
       prefix: "",
       value: 99,
       suffix: "%",
-      label: "lower fees on a critical operation",
+      label: "lower fees on a critical path",
       points: [0.9, 0.78, 0.64, 0.5, 0.36, 0.24],
     },
     technologies: [
@@ -486,19 +478,18 @@ export const SELECTED_CASES = [
       "Transaction checks",
     ],
     problem:
-      "A necessary blockchain operation created high recurring fees, but removing it would have weakened the product.",
+      "A necessary operation carried high recurring fees, but removing it would have weakened product behavior and transaction visibility.",
     decision:
-      "I reduced the number and cost of blockchain interactions while keeping the required transaction behavior and records intact.",
+      "I reduced the number and cost of blockchain interactions while preserving settlement, records, and backend consistency.",
     proof: [
-      "Approximately 99% reduction in transaction fees",
-      "Critical product operation preserved",
-      "Backend and blockchain behavior kept consistent",
+      "Critical product behavior preserved",
+      "Backend and smart-contract state remained aligned",
+      "Settlement and audit paths remained intact",
     ],
     engineeringNote: {
-      constraint:
-        "Reduce fees without hiding important changes or weakening transaction safety.",
+      constraint: "Reduce cost without weakening transaction integrity.",
       invariant:
-        "The settlement and review history had to remain correct after optimization.",
+        "Optimization could not break settlement or the audit trail.",
     },
     tags: ["web3", "performance", "backend", "security"],
     legacySlugs: [
@@ -509,11 +500,11 @@ export const SELECTED_CASES = [
   defineCase({
     index: 12,
     eyebrow: "Security & Trust",
-    title: "Fraud Detection Added to a Live Product",
     company: "Revision",
     role: "Backend and data engineer",
+    title: "Fraud Signals Added to a Live Gaming Product",
     oneLiner:
-      "Built an early-warning system that helped the team identify suspicious activity inside a busy gaming product.",
+      "Built a review pipeline that turned suspicious activity into actionable signals for product and operations.",
     metric: {
       prefix: "",
       value: 10,
@@ -528,19 +519,18 @@ export const SELECTED_CASES = [
       "Fraud signals",
     ],
     problem:
-      "The business needed to separate genuine customer activity from abuse without slowing down the live experience.",
+      "The business needed to distinguish genuine engagement from abuse without turning normal growth into noise.",
     decision:
-      "I built a system that surfaced likely fraud and worked with product and operations so the signals could support real decisions.",
+      "I designed explainable fraud signals and integrated them into the teams responsible for investigation and response.",
     proof: [
-      "About 10% of activity identified as likely fraudulent",
       "Signals used by product and operations teams",
-      "Earlier visibility into abuse within a high-traffic product",
+      "Suspicious activity became visible earlier",
     ],
     engineeringNote: {
       constraint:
-        "Find suspicious behavior without treating normal customer growth as fraud.",
+        "Detect abuse without overwhelming reviewers with false positives.",
       invariant:
-        "Every signal had to be understandable and useful enough for a person to review.",
+        "Each signal had to be understandable enough for human review.",
     },
     tags: ["data", "fraud", "backend", "product"],
     legacySlugs: [
@@ -551,16 +541,16 @@ export const SELECTED_CASES = [
   defineCase({
     index: 13,
     eyebrow: "Applied AI",
-    title: "Offline Security Monitoring Built for Staff",
     company: "Shahin",
     role: "Founder and applied AI engineer",
+    title: "Offline AI Monitoring Built for On-Site Staff",
     oneLiner:
-      "Turned security-camera activity into practical reports without sending footage to cloud AI services.",
+      "Converted camera activity into practical local reports without cloud inference.",
     metric: {
       prefix: "",
       value: 0,
       suffix: " cloud",
-      label: "AI processing required",
+      label: "inference dependency",
       points: [0.86, 0.74, 0.58, 0.42, 0.28],
     },
     technologies: [
@@ -570,19 +560,18 @@ export const SELECTED_CASES = [
       "Reporting workflows",
     ],
     problem:
-      "Local staff needed useful answers from camera footage, while cloud processing would add cost, dependency, and privacy concerns.",
+      "Staff needed clear answers from security footage, while cloud processing would add cost, dependency, and privacy risk.",
     decision:
-      "I built a local detection and reporting system, then shaped it around the question staff actually needed answered: who entered, and when.",
+      "I built a CPU-only detection and reporting flow around the operational question that mattered: who entered, and when.",
     proof: [
-      "Offline computer-vision system built for ordinary computers",
-      "No dependency on cloud AI processing",
-      "Custom reports made usable for non-technical staff",
+      "Ran locally on ordinary CPU hardware",
+      "Produced reports usable by non-technical staff",
+      "Kept footage and processing on site",
     ],
     engineeringNote: {
-      constraint:
-        "Provide useful monitoring without depending on cloud availability.",
+      constraint: "Remain useful without cloud availability.",
       invariant:
-        "Sensitive footage and results had to remain local, practical, and understandable.",
+        "Sensitive footage and results had to stay local and understandable.",
     },
     tags: ["ai", "product", "infra", "stakeholder", "ux"],
     legacySlugs: [
@@ -593,16 +582,16 @@ export const SELECTED_CASES = [
   defineCase({
     index: 14,
     eyebrow: "Blockchain Products",
-    title: "Transparent Crypto Donation MVP Shipped",
     company: "dTip",
     role: "Founder and full-stack Web3 engineer",
+    title: "Non-Custodial Donation MVP Shipped",
     oneLiner:
-      "Built an open-source donation product that kept donors in control and made transactions publicly verifiable.",
+      "Built the contracts, donor experience, public transaction view, and contributor documentation.",
     metric: {
       prefix: "",
       value: 1,
       suffix: " MVP",
-      label: "contracts, website, and donation flow",
+      label: "end-to-end donation product",
       points: [0.2, 0.36, 0.52, 0.7, 0.86],
     },
     technologies: [
@@ -612,19 +601,19 @@ export const SELECTED_CASES = [
       "Documentation",
     ],
     problem:
-      "Crypto donations can be transparent, but the process is often intimidating for donors and difficult for recipients to explain or verify.",
+      "Crypto donations were transparent in theory but still difficult for ordinary donors to use and recipients to verify.",
     decision:
-      "I connected the donation experience, blockchain contracts, public transaction visibility, website, and documentation into one simple product.",
+      "I simplified the complete donation flow while preserving donor control and public transaction visibility.",
     proof: [
-      "Open-source donation product built",
-      "Blockchain contracts and web interface connected",
+      "Released as an open-source product",
+      "Smart contracts and web experience integrated",
       "Documentation written for users and contributors",
     ],
     engineeringNote: {
       constraint:
-        "Keep the experience simple without taking control of donor funds.",
+        "Simplify the experience without taking custody of funds.",
       invariant:
-        "The donation process had to preserve transparency and user ownership.",
+        "Donors had to retain control throughout the transaction.",
     },
     tags: ["web3", "fullstack", "product", "ux", "documentation"],
     legacySlugs: ["shipping-a-non-custodial-donation-mvp"],
@@ -633,11 +622,11 @@ export const SELECTED_CASES = [
   defineCase({
     index: 15,
     eyebrow: "Blockchain Products",
-    title: "Car Customization MVP Built in 3 Months",
     company: "Khavar",
     role: "Technical co-founder",
+    title: "Verifiable Car Customization MVP Built in 3 Months",
     oneLiner:
-      "Built a system that let buyers verify each stage of a vehicle customization process instead of relying only on dealer promises.",
+      "Owned requirements, product design, blockchain modeling, and delivery as technical co-founder.",
     metric: {
       prefix: "",
       value: 3,
@@ -652,19 +641,19 @@ export const SELECTED_CASES = [
       "Auditable workflows",
     ],
     problem:
-      "Customers had no independent way to verify whether promised customization work had actually reached each stage.",
+      "Buyers had no independent way to verify whether promised customization work had reached each stage.",
     decision:
-      "I recorded manufacturing and customization milestones as verifiable events and built the complete product from requirements to working MVP.",
+      "I modeled manufacturing milestones as verifiable state changes and built the complete system around that audit trail.",
     proof: [
-      "Solo MVP built in about three months",
-      "Customization progress made verifiable",
-      "Important changes recorded on Hyperledger Fabric",
+      "Buyers could verify customization progress",
+      "Each important state change became traceable",
+      "End-to-end MVP delivered as a solo build",
     ],
     engineeringNote: {
       constraint:
-        "Use blockchain only where a permanent, shared record created real value.",
+        "Use blockchain only where shared auditability created value.",
       invariant:
-        "Every important customization milestone had to be traceable and verifiable.",
+        "Every customization milestone had to be traceable and verifiable.",
     },
     tags: ["blockchain", "backend", "fullstack", "compliance", "product"],
     legacySlugs: ["verifiable-car-customization-tracking"],
@@ -673,16 +662,16 @@ export const SELECTED_CASES = [
   defineCase({
     index: 16,
     eyebrow: "Security & Trust",
-    title: "Critical Cryptography Risks Found and Fixed",
     company: "NEAR Threshold Signatures",
     role: "Open-source security contributor",
+    title: "Critical Cryptography Risks Found and Fixed",
     oneLiner:
-      "Found and fixed security, stability, and performance problems in software responsible for sensitive cryptographic operations.",
+      "Improved security, portability, and performance in threshold-signature libraries.",
     metric: {
       prefix: "",
       value: 80,
       suffix: "x",
-      label: "faster on one critical operation",
+      label: "faster on one critical path",
       points: [0.18, 0.28, 0.44, 0.66, 0.84, 0.94],
     },
     technologies: [
@@ -693,19 +682,18 @@ export const SELECTED_CASES = [
       "Formal verification",
     ],
     problem:
-      "Small mistakes in cryptographic software can create security failures, crashes, or incorrect behavior across different systems.",
+      "Small portability, memory, or failure-handling mistakes in cryptographic code can become serious security issues.",
     decision:
-      "I reported a portability vulnerability, fixed denial-of-service and memory-safety risks, reduced side-channel exposure, strengthened type safety, contributed verification work, and added automated checks.",
+      "I prioritized correctness first, then performance, and backed changes with stronger typing, verification, and automated checks.",
     proof: [
-      "Reported a cryptographic vulnerability affecting big-endian systems",
+      "Reported a vulnerability affecting big-endian systems",
       "Fixed denial-of-service and buffer-overflow risks",
-      "Improved performance on a critical cryptographic operation",
+      "Accelerated a critical cryptographic path by up to 80x",
     ],
     engineeringNote: {
-      constraint:
-        "Improve speed without weakening security or correctness.",
+      constraint: "Improve speed without weakening security properties.",
       invariant:
-        "The software had to behave safely and consistently across supported systems.",
+        "The code had to remain portable, memory-safe, and predictable under failure.",
     },
     tags: [
       "security",
@@ -714,9 +702,7 @@ export const SELECTED_CASES = [
       "performance",
       "open_source",
     ],
-    legacySlugs: [
-      "hardening-threshold-signature-cryptography",
-    ],
+    legacySlugs: ["hardening-threshold-signature-cryptography"],
   }),
 ];
 
