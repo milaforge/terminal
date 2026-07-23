@@ -468,11 +468,17 @@ function renderLandingPage() {
           <p class="landing-eyebrow">Fit</p>
           <h2 id="services-title">Pick the situation that sounds like yours.</h2>
         </div>
-        <div class="landing-serviceGrid">
-          <article class="landing-service"><h3>Start a new project</h3><p>Turn the idea into the first thing people can judge.</p><ul><li>Working demos</li><li>MVP scope</li><li>Investor proof</li></ul></article>
-          <article class="landing-service"><h3>Get ready for real users</h3><p>The prototype works. Now the operating assumptions matter.</p><ul><li>Validation</li><li>Monitoring</li><li>Deploy paths</li></ul></article>
-          <article class="landing-service"><h3>Scale without scaling cost</h3><p>Find the constraint before buying your way around it.</p><ul><li>Performance</li><li>Cloud cost</li><li>Reliability</li></ul></article>
-          <article class="landing-service"><h3>Automate repetitive work</h3><p>Move repeated work into a system people can still question.</p><ul><li>Auditable automation</li><li>Human review points</li><li>Operational controls</li></ul></article>
+        <div class="landing-serviceExplorer">
+          <div class="landing-serviceSelector" role="tablist" aria-label="Project situations">
+            <button class="landing-serviceTab" type="button" role="tab" aria-selected="true" aria-controls="service-detail" id="service-tab-start-a-new-project">Start a new project</button>
+            <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-get-ready-for-real-users">Get ready for real users</button>
+            <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-scale-without-scaling-cost">Scale without scaling cost</button>
+            <button class="landing-serviceTab" type="button" role="tab" aria-selected="false" aria-controls="service-detail" id="service-tab-automate-repetitive-work">Automate repetitive work</button>
+          </div>
+          <article class="landing-serviceDetail" id="service-detail" role="tabpanel" aria-labelledby="service-tab-start-a-new-project">
+            <p>Turn the idea into the first thing people can judge.</p>
+            <ul><li>You have an idea and want to test market fit.</li><li>You want a working demo to share with selected users.</li><li>You need something credible to present to investors.</li></ul>
+          </article>
         </div>
       </section>
       <section class="landing-section" id="proof" aria-labelledby="proof-title">

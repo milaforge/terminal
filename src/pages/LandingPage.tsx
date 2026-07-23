@@ -33,8 +33,12 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
   const proofCases = showAllCases
     ? SELECTED_CASES
     : SELECTED_CASES.slice(0, defaultVisibleCaseCount);
+  const visibleServices = servicesData.services.slice(0, 4);
   const hiddenCaseCount = Math.max(0, SELECTED_CASES.length - defaultVisibleCaseCount);
   const [openCaseIndex, setOpenCaseIndex] = useState<number | null>(null);
+  const [activeServiceId, setActiveServiceId] = useState(visibleServices[0]?.id ?? "");
+  const activeService =
+    visibleServices.find((service) => service.id === activeServiceId) ?? visibleServices[0];
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
@@ -172,18 +176,42 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
           <p className="landing-eyebrow">Fit</p>
           <h2 id="services-title">Pick the situation that sounds like yours.</h2>
         </div>
-        <div className="landing-serviceGrid">
-          {servicesData.services.map((service) => (
-            <article className="landing-service" key={service.id}>
-              <h3>{service.title}</h3>
-              <p>{service.hook}</p>
+        <div className="landing-serviceExplorer">
+          <div className="landing-serviceSelector" role="tablist" aria-label="Project situations">
+            {visibleServices.map((service) => {
+              const isActive = activeService?.id === service.id;
+
+              return (
+                <button
+                  className="landing-serviceTab"
+                  type="button"
+                  role="tab"
+                  onClick={() => setActiveServiceId(service.id)}
+                  aria-selected={isActive}
+                  aria-controls="service-detail"
+                  id={`service-tab-${service.id}`}
+                  key={service.id}
+                >
+                  {service.title}
+                </button>
+              );
+            })}
+          </div>
+          {activeService ? (
+            <article
+              className="landing-serviceDetail"
+              id="service-detail"
+              role="tabpanel"
+              aria-labelledby={`service-tab-${activeService.id}`}
+            >
+              <p>{activeService.hook}</p>
               <ul>
-                {service.fits.map((fit) => (
+                {activeService.fits.map((fit) => (
                   <li key={fit}>{fit}</li>
                 ))}
               </ul>
             </article>
-          ))}
+          ) : null}
         </div>
       </section>
 
