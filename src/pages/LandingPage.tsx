@@ -6,7 +6,8 @@ import { WorkCaseModal } from "@components/terminal-line/segments/WorkGrid";
 import { openChat, useChatStore } from "@stores/chatStore";
 import { withBasePath } from "@utils/appRouting";
 import { CalendarCheck, Github, Mail, Send, TerminalSquare } from "lucide-react";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
 
 type LandingPageProps = {
   email: string;
@@ -52,6 +53,15 @@ const PROOF_ITEMS = [
   },
 ];
 
+type WorkCategory = {
+  label: string;
+  cases: typeof SELECTED_CASES;
+};
+
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (update: () => void) => void;
+};
+
 function setMeta(name: string, content: string) {
   let node = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
   if (!node) {
@@ -73,6 +83,27 @@ function scrollDisclosureIntoView(id: string) {
   });
 }
 
+function getTabTransitionName(prefix: string, value: string) {
+  return `${prefix}-${value.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+}
+
+function runMobileTabTransition(update: () => void) {
+  const viewTransitionDocument = document as ViewTransitionDocument;
+  const canAnimate =
+    window.matchMedia("(max-width: 900px)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    typeof viewTransitionDocument.startViewTransition === "function";
+
+  if (!canAnimate) {
+    update();
+    return;
+  }
+
+  viewTransitionDocument.startViewTransition(() => {
+    flushSync(update);
+  });
+}
+
 export function LandingPage({ email, onBookCall }: LandingPageProps) {
   const unread = useChatStore((state) => state.unread);
   const visibleServices = servicesData.services.slice(0, 4);
@@ -82,16 +113,17 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
   const [activeProofId, setActiveProofId] = useState<string | null>(null);
   const activeService =
     visibleServices.find((service) => service.id === activeServiceId) ?? null;
-  const workCategories = SELECTED_CASES.reduce<Array<{ label: string; cases: typeof SELECTED_CASES }>>(
-    (categories, item) => {
-      const existingCategory = categories.find((category) => category.label === item.eyebrow);
-      if (existingCategory) {
-        existingCategory.cases.push(item);
-      } else {
-        categories.push({ label: item.eyebrow, cases: [item] });
-      }
-      return categories;
-    },
+  const workCategories = useMemo(
+    () =>
+      SELECTED_CASES.reduce<WorkCategory[]>((categories, item) => {
+        const existingCategory = categories.find((category) => category.label === item.eyebrow);
+        if (existingCategory) {
+          existingCategory.cases.push(item);
+        } else {
+          categories.push({ label: item.eyebrow, cases: [item] });
+        }
+        return categories;
+      }, []),
     [],
   );
   const activeWork =
@@ -195,12 +227,12 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
   };
 
   const showServiceDetail = (serviceId: string) => {
-    setActiveServiceId(serviceId);
+    runMobileTabTransition(() => setActiveServiceId(serviceId));
     scrollDisclosureIntoView("service-detail");
   };
 
   const showWorkDetail = (categoryLabel: string) => {
-    setActiveWorkCategory(categoryLabel);
+    runMobileTabTransition(() => setActiveWorkCategory(categoryLabel));
     scrollDisclosureIntoView("work-detail");
   };
 
@@ -318,6 +350,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
                   aria-selected={isActive}
                   aria-controls="service-detail"
                   id={`service-tab-${service.id}`}
+                  style={{ viewTransitionName: getTabTransitionName("landing-service-tab", service.id) }}
                   key={service.id}
                 >
                   {service.title}
@@ -362,6 +395,7 @@ export function LandingPage({ email, onBookCall }: LandingPageProps) {
                   aria-selected={isActive}
                   aria-controls="work-detail"
                   id={`work-tab-${category.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  style={{ viewTransitionName: getTabTransitionName("landing-work-tab", category.label) }}
                   key={category.label}
                 >
                   <span>{category.label}</span>

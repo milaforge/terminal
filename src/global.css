@@ -7092,7 +7092,6 @@ a.blog-backLink:hover {
     background 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease,
-    padding 180ms ease,
     transform 180ms ease;
 }
 
@@ -7103,12 +7102,11 @@ a.blog-backLink:hover {
 
 .landing-workItem:hover,
 .landing-workItem:focus-visible {
-  padding-inline: 16px;
   border-color: color-mix(in srgb, var(--landing-accent) 28%, var(--landing-border));
   border-radius: 8px;
   background: var(--landing-panel-strong);
   box-shadow: 0 14px 30px -22px color-mix(in srgb, var(--landing-text) 46%, transparent);
-  transform: scale(1.018);
+  transform: scale(1.01);
 }
 
 .landing-workItem:active {
@@ -7119,6 +7117,12 @@ a.blog-backLink:hover {
   color: var(--landing-heading);
   font-size: clamp(1.25rem, 2vw, 1.8rem);
   line-height: 1.08;
+  transition: color 180ms ease;
+}
+
+.landing-workItem:hover strong,
+.landing-workItem:focus-visible strong {
+  color: var(--landing-secondary);
 }
 
 .landing-cta {
@@ -7135,6 +7139,11 @@ a.blog-backLink:hover {
 }
 
 @media (max-width: 900px) {
+  ::view-transition-group(*) {
+    animation-duration: 300ms;
+    animation-timing-function: ease;
+  }
+
   .landing-hero {
     display: block;
   }
@@ -7171,6 +7180,11 @@ a.blog-backLink:hover {
 .landing-workTab[aria-selected="true"] {
     box-shadow: inset 0 -3px 0 var(--landing-accent);
     padding-left: 16px;
+  }
+
+  .landing-serviceTab[aria-selected="true"],
+  .landing-workTab[aria-selected="true"] {
+    order: 1;
   }
 
   .landing-serviceDetail,
